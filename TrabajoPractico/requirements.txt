@@ -1,0 +1,10 @@
+# Entorno Jupyter
+ipykernel==6.29.4
+
+# Cálculo numérico y científico (Crucial para las matrices K y cálculo de Drag Force)
+numpy==1.26.4
+scipy==1.13.0
+pandas==2.2.2
+
+# Gráficos y animaciones (Para el punto 'd' del TP)
+matplotlib==3.8.4
