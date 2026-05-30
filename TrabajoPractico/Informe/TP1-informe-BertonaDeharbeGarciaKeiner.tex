@@ -1,0 +1,47 @@
+\documentclass[12pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel} 
+\usepackage{amsmath}
+
+% \title{Mecánica del Continuo \- Trabajo Práctico \#1}
+% \
+% \author{Bertona, Matias. Deharbe, Sebastián}
+% \date{02 de junio de 2026}
+
+\begin{document}
+\begin{center}
+    \vspace*{10mm}
+    {\Huge\bfseries Mecánica del Continuo -- Trabajo Práctico N°1} \\[4mm]
+    {\large\bfseries  Mecánica de estructura reticulada} \\[15mm]
+    
+    {\LARGE Bertona, Matías. Deharbe, Sebastián. García Avendaño, Joaquín. Keiner, Juan} \\[5mm]
+    {\large Universidad Nacional del Litoral -- Facultad de Ingeniería y Ciencias Hídricas} \\[3mm]
+    {\large Ingeniería en Informática} \\[6mm]
+    {\large 02 de junio de 2026}
+    \vspace*{15mm}
+\end{center}
+
+\section{Introducción}
+El presente informe tiene la finalidad de exponer el análisis y la resolución utilizando herramientas informáticas de la respuesta dinámica de una estructura reticulada plana bajo diferentes hipótesis de deformación y condiciones de amortiguamiento.
+Los sistemas estructurales expuestos a cargas variables en el tiempo requieren de un modelado para garantizar que se satisfagan los estados de deformación, resistencia y estabilidad. A través de la simulación numérica, es posible evaluar el comportamiento del sistema a lo largo del tiempo, simplificando el trabajo que sería complejo de manera analítica. 
+
+En este trabajo se abordará el problema dividiendo el estudio en tres etapas fundamentales:
+
+\begin{itemize}
+    \item \textbf{Evaluación de Hipótesis Cinemáticas:} Se desarrollará un programa computacional para calcular la respuesta dinámica de la estructura en un periodo de hasta 50 segundos, contrastando dos enfoques conceptuales. Por un lado, se considerará la hipótesis de \textbf{deformaciones finitas}, donde la dirección de las fuerzas acompaña la configuración deformada de las barras; por el otro, se aplicará la hipótesis simplificativa de \textbf{pequeños desplazamientos} (deformaciones infinitesimales), manteniendo las fuerzas en la dirección de la configuración de referencia no deformada. Se determinará el instante crítico de falla geométrica ($t_F$) mediante el criterio del cambio de signo en el área de los triángulos del reticulado.
+    
+    \item \textbf{Análisis de Tensiones y Desplazamientos:} Se obtendrán y compararán de manera gráfica las evoluciones temporales de las tensiones normales y tangenciales en componentes específicos, así como la trayectoria de los nodos y las normas de desplazamiento máximo. Este análisis permitirá evaluar el rango de validez y la adecuación de cada modelo matemático frente a la realidad física del fenómeno.
+    
+    \item \textbf{Inclusión de Mecanismos de Amortiguamiento (Fuerza de Arrastre):} Se modificará el código base de deformaciones finitas para incorporar un dispositivo amortiguador hidrodinámico en un nodo de la estructura. Se modelará el comportamiento de una esfera sólida sumergida variables veces en un fluido, calculando la fuerza de arrastre (\textit{Drag Force}) mediante la formulación:
+    \begin{equation*}
+        \mathbf{F}_a = -\frac{1}{2}\rho_{fl}C_d A_R |\mathbf{u}|\mathbf{u}
+    \end{equation*}
+\end{itemize}
+
+Se analizará la transición del área de referencia ($A_R$) según el nivel de inmersión, el impacto de la densidad del fluido ($\rho_{fl}$) y el radio de la esfera ($r_{esf}$) en la mitigación de las vibraciones estructurales.
+
+\section{Datos del Problema}
+
+\end{document}
