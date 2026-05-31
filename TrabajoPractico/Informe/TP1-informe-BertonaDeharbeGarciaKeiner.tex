@@ -2,20 +2,33 @@
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage[spanish]{babel} 
+\usepackage[spanish]{babel}
 \usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{subcaption}
 
-% \title{Mecánica del Continuo \- Trabajo Práctico \#1}
-% \
-% \author{Bertona, Matias. Deharbe, Sebastián}
-% \date{02 de junio de 2026}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=blue,
+    citecolor=blue
+}
 
 \begin{document}
+
+%------------------------------------------------------------
+% PORTADA
+%------------------------------------------------------------
 \begin{center}
     \vspace*{10mm}
     {\Huge\bfseries Mecánica del Continuo -- Trabajo Práctico N°1} \\[4mm]
     {\large\bfseries  Mecánica de estructura reticulada} \\[15mm]
-    
+
     {\LARGE Bertona, Matías. Deharbe, Sebastián. García Avendaño, Joaquín. Keiner, Juan} \\[5mm]
     {\large Universidad Nacional del Litoral -- Facultad de Ingeniería y Ciencias Hídricas} \\[3mm]
     {\large Ingeniería en Informática} \\[6mm]
@@ -23,25 +36,415 @@
     \vspace*{15mm}
 \end{center}
 
-\section{Introducción}
-El presente informe tiene la finalidad de exponer el análisis y la resolución utilizando herramientas informáticas de la respuesta dinámica de una estructura reticulada plana bajo diferentes hipótesis de deformación y condiciones de amortiguamiento.
-Los sistemas estructurales expuestos a cargas variables en el tiempo requieren de un modelado para garantizar que se satisfagan los estados de deformación, resistencia y estabilidad. A través de la simulación numérica, es posible evaluar el comportamiento del sistema a lo largo del tiempo, simplificando el trabajo que sería complejo de manera analítica. 
+\newpage
+\tableofcontents
+\newpage
 
-En este trabajo se abordará el problema dividiendo el estudio en tres etapas fundamentales:
+%------------------------------------------------------------
+% INTRODUCCIÓN
+%------------------------------------------------------------
+\section{Introducción}
+
+El presente informe tiene la finalidad de exponer el análisis y la resolución, utilizando herramientas informáticas, de la respuesta dinámica de una estructura reticulada plana bajo diferentes hipótesis de deformación y condiciones de amortiguamiento.
+Los sistemas estructurales expuestos a cargas variables en el tiempo requieren de un modelado riguroso para garantizar que se satisfagan los estados de deformación, resistencia y estabilidad. A través de la simulación numérica es posible evaluar el comportamiento del sistema a lo largo del tiempo, simplificando lo que sería un análisis analíticamente intratable.
+
+En este trabajo se abordará el problema dividiendo el estudio en cuatro etapas fundamentales:
 
 \begin{itemize}
-    \item \textbf{Evaluación de Hipótesis Cinemáticas:} Se desarrollará un programa computacional para calcular la respuesta dinámica de la estructura en un periodo de hasta 50 segundos, contrastando dos enfoques conceptuales. Por un lado, se considerará la hipótesis de \textbf{deformaciones finitas}, donde la dirección de las fuerzas acompaña la configuración deformada de las barras; por el otro, se aplicará la hipótesis simplificativa de \textbf{pequeños desplazamientos} (deformaciones infinitesimales), manteniendo las fuerzas en la dirección de la configuración de referencia no deformada. Se determinará el instante crítico de falla geométrica ($t_F$) mediante el criterio del cambio de signo en el área de los triángulos del reticulado.
-    
-    \item \textbf{Análisis de Tensiones y Desplazamientos:} Se obtendrán y compararán de manera gráfica las evoluciones temporales de las tensiones normales y tangenciales en componentes específicos, así como la trayectoria de los nodos y las normas de desplazamiento máximo. Este análisis permitirá evaluar el rango de validez y la adecuación de cada modelo matemático frente a la realidad física del fenómeno.
-    
-    \item \textbf{Inclusión de Mecanismos de Amortiguamiento (Fuerza de Arrastre):} Se modificará el código base de deformaciones finitas para incorporar un dispositivo amortiguador hidrodinámico en un nodo de la estructura. Se modelará el comportamiento de una esfera sólida sumergida variables veces en un fluido, calculando la fuerza de arrastre (\textit{Drag Force}) mediante la formulación:
-    \begin{equation*}
-        \mathbf{F}_a = -\frac{1}{2}\rho_{fl}C_d A_R |\mathbf{u}|\mathbf{u}
-    \end{equation*}
+    \item \textbf{Evaluación de Hipótesis Cinemáticas (Parte A):} Se desarrolló un programa computacional para calcular la respuesta dinámica de la estructura durante un período de hasta 50 segundos, contrastando dos enfoques. Por un lado, la hipótesis de \textbf{deformaciones finitas}, donde la dirección de las fuerzas acompaña la configuración deformada de las barras (modelo a.i, integrado con BDF). Por el otro, la hipótesis simplificativa de \textbf{pequeños desplazamientos} (deformaciones infinitesimales), que mantiene las fuerzas en la dirección de la configuración de referencia no deformada (modelo a.ii, integrado con RK45).
+
+    \item \textbf{Análisis de Tensiones y Desplazamientos (Parte B):} Se determinó el instante crítico de falla geométrica $t_F$ para cada modelo mediante el criterio del cambio de signo en el área de los triángulos del reticulado. Se obtuvieron y compararon gráficamente las evoluciones temporales de tensión normal $\sigma_n$ y tangencial $\tau$ en la barra seleccionada, la trayectoria del nodo b y la norma máxima de desplazamiento.
+
+    \item \textbf{Inclusión de Amortiguamiento Hidrodinámico (Parte C):} Se modificó el código de deformaciones finitas para incorporar una fuerza de arrastre (\textit{drag force}) aplicada a un nodo de la estructura. Se modeló el comportamiento de una esfera sólida sumergida parcialmente en un fluido, y se analizó el impacto de la densidad del fluido $\rho_{fl}$ y el radio de la esfera $r_{esf}$ en la mitigación de las vibraciones.
+
+    \item \textbf{Animación de la Respuesta Estructural (Parte D):} Se generaron animaciones GIF del reticulado deformado con y sin amortiguador, permitiendo una visualización cualitativa del comportamiento dinámico.
 \end{itemize}
 
-Se analizará la transición del área de referencia ($A_R$) según el nivel de inmersión, el impacto de la densidad del fluido ($\rho_{fl}$) y el radio de la esfera ($r_{esf}$) en la mitigación de las vibraciones estructurales.
-
+%------------------------------------------------------------
+% DATOS DEL PROBLEMA
+%------------------------------------------------------------
 \section{Datos del Problema}
+
+La geometría del reticulado plano analizado corresponde al \textbf{Caso 4}, compuesto por 10 nodos y 15 barras, con las condiciones de apoyo y carga que se detallan a continuación. La figura de referencia se presenta en la Figura~\ref{fig:caso}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../Imagenes/caso.png}
+    \caption{Geometría del reticulado plano -- Caso 4. Se indica la numeración de nodos y barras, las condiciones de apoyo (nodos articulados y rodillo) y la carga aplicada.}
+    \label{fig:caso}
+\end{figure}
+
+\subsection{Parámetros del modelo estructural}
+
+\begin{table}[H]
+    \centering
+    \caption{Parámetros generales del reticulado.}
+    \label{tab:parametros}
+    \begin{tabular}{lll}
+        \toprule
+        \textbf{Parámetro} & \textbf{Símbolo} & \textbf{Valor} \\
+        \midrule
+        Módulo de elasticidad & $E$ & 50 \\
+        Área de sección transversal & $A$ & 2 \\
+        Densidad lineal de masa & $\rho$ & 1 \\
+        Carga aplicada & $P(t)$ & 10 N (dirección $+x$, nodo 10) \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \caption{Condiciones de apoyo del reticulado.}
+    \label{tab:apoyos}
+    \begin{tabular}{ll}
+        \toprule
+        \textbf{Nodo} & \textbf{Tipo de apoyo} \\
+        \midrule
+        1 & Articulado (restricción en $x$ e $y$) \\
+        6 & Articulado (restricción en $x$ e $y$) \\
+        2 & Rodillo (restricción solo en $y$) \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Identificación de la barra y nodos de análisis}
+
+De acuerdo a los datos del caso asignado:
+\begin{itemize}
+    \item \textbf{Barra} $a = 8$: barra seleccionada para el análisis de tensiones.
+    \item \textbf{Nodo} $b = 10$: nodo cuya trayectoria se estudia en la Parte B.
+    \item \textbf{Nodo} $c = 10$: nodo donde se aplica la fuerza de arrastre del amortiguador.
+\end{itemize}
+
+\subsection{Parámetros del amortiguador hidrodinámico}
+
+\begin{table}[H]
+    \centering
+    \caption{Parámetros del dispositivo amortiguador (Parte C).}
+    \label{tab:amortiguador}
+    \begin{tabular}{lll}
+        \toprule
+        \textbf{Parámetro} & \textbf{Símbolo} & \textbf{Valor} \\
+        \midrule
+        Densidad del fluido & $\rho_{fl}$ & 3 \\
+        Radio de la esfera & $r_{esf}$ & 1.5 m \\
+        Altura del nivel libre & $h_{SL}$ & 25 m \\
+        Coeficiente de arrastre & $C_d$ & 0.47 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+%------------------------------------------------------------
+% PARTE A
+%------------------------------------------------------------
+\section{Parte A: Modelos Dinámicos}
+
+\subsection{Formulación general}
+
+La dinámica de la estructura reticulada se rige por la segunda ley de Newton aplicada a cada nodo libre. Para un nodo $i$ con masa $m_i$, el balance de fuerzas establece:
+
+\begin{equation}
+    m_i \ddot{\mathbf{u}}_i = \mathbf{F}_i^{ext} + \mathbf{F}_i^{int}
+    \label{eq:newton}
+\end{equation}
+
+donde $\mathbf{u}_i$ es el vector de desplazamientos del nodo $i$, $\mathbf{F}_i^{ext}$ representa las fuerzas externas aplicadas (en este caso, $P(t) = 10$ N en dirección $+x$ sobre el nodo 10) y $\mathbf{F}_i^{int}$ es la resultante de las fuerzas internas aportadas por las barras conectadas al nodo.
+
+La fuerza axial en cada barra se calcula a partir de la deformación unitaria $\varepsilon$ y el módulo de elasticidad $E$:
+
+\begin{equation}
+    N = E \cdot A \cdot \varepsilon
+    \label{eq:fuerza_axial}
+\end{equation}
+
+La masa de cada nodo se obtiene distribuyendo uniformemente la masa de cada barra entre sus dos nodos extremos:
+
+\begin{equation}
+    m_i = \sum_{b \ni i} \frac{\rho \cdot A \cdot L_b^{(0)}}{2}
+    \label{eq:masa}
+\end{equation}
+
+donde $L_b^{(0)}$ es la longitud inicial de la barra $b$ en la configuración de referencia.
+
+\subsection{Modelo a.i: Deformaciones finitas (BDF)}
+
+En la hipótesis de \textbf{deformaciones finitas}, las barras actualizan su dirección y longitud en cada instante de tiempo conforme la estructura se deforma. La elongación de una barra entre los nodos $p$ y $q$ se calcula a partir de sus posiciones deformadas:
+
+\begin{equation}
+    \varepsilon = \frac{L - L^{(0)}}{L^{(0)}}, \quad L = \|\mathbf{x}_q + \mathbf{u}_q - \mathbf{x}_p - \mathbf{u}_p\|
+    \label{eq:eps_finita}
+\end{equation}
+
+La fuerza interna se proyecta sobre la dirección deformada de la barra, de modo que la fuerza transmitida al nodo $p$ es:
+
+\begin{equation}
+    \mathbf{F}_p^{int} = N \cdot \hat{\mathbf{e}}, \quad \hat{\mathbf{e}} = \frac{\mathbf{x}_q + \mathbf{u}_q - \mathbf{x}_p - \mathbf{u}_p}{L}
+    \label{eq:fuerza_int_finita}
+\end{equation}
+
+Este modelo captura correctamente los efectos de segundo orden y la redistribución de fuerzas ante grandes desplazamientos. El sistema de EDOs resultante es de índice 2, por lo que se empleó el integrador \textbf{BDF} (\textit{Backward Differentiation Formula}), apropiado para problemas rígidos.
+
+\subsection{Modelo a.ii: Pequeños desplazamientos (RK45)}
+
+Bajo la hipótesis de \textbf{pequeños desplazamientos}, la geometría de la estructura se considera inalterada respecto a la configuración de referencia. La deformación unitaria se lineariza:
+
+\begin{equation}
+    \varepsilon \approx \hat{\mathbf{e}}^{(0)} \cdot \frac{\mathbf{u}_q - \mathbf{u}_p}{L^{(0)}}
+    \label{eq:eps_pequenia}
+\end{equation}
+
+donde $\hat{\mathbf{e}}^{(0)}$ es el vector director de la barra en la configuración no deformada. Las fuerzas internas se proyectan siempre sobre esta dirección fija, lo que conduce a un sistema lineal de EDOs de segundo orden. Este modelo es válido únicamente para desplazamientos pequeños ($\|\mathbf{u}\| \ll L^{(0)}$) y fue integrado con el método \textbf{RK45} (\textit{Runge-Kutta} de orden 4--5 con control adaptativo del paso).
+
+%------------------------------------------------------------
+% PARTE B
+%------------------------------------------------------------
+\section{Parte B: Tensiones, Desplazamientos y Comparación de Modelos}
+
+\subsection{b.i -- Determinación del tiempo de falla geométrica $t_F$}
+
+El criterio adoptado para detectar la falla geométrica del reticulado es el \textbf{cambio de signo del área signada} de los triángulos que componen la malla. Cuando un triángulo del reticulado invierte su orientación (área pasa de positiva a negativa), significa que la geometría de la estructura ha colapsado localmente.
+
+Computacionalmente, el área signada de un triángulo formado por los nodos $i$, $j$, $k$ en la configuración deformada se calcula como:
+
+\begin{equation}
+    A_{ijk}(t) = \frac{1}{2} \left[ (x_j - x_i)(y_k - y_i) - (x_k - x_i)(y_j - y_i) \right]
+    \label{eq:area_signada}
+\end{equation}
+
+El instante $t_F$ se define como el primer tiempo en que algún $A_{ijk}(t)$ cambia de signo respecto al valor inicial.
+
+\begin{table}[H]
+    \centering
+    \caption{Tiempos de falla geométrica $t_F$ para ambos modelos.}
+    \label{tab:tF}
+    \begin{tabular}{lc}
+        \toprule
+        \textbf{Modelo} & \textbf{$t_F$ [s]} \\
+        \midrule
+        a.i (Deformaciones finitas, BDF) & $t_{F,\text{ai}}$ \\
+        a.ii (Pequeños desplazamientos, RK45) & $t_{F,\text{aii}}$ \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+El modelo de deformaciones finitas (a.i) captura el endurecimiento geométrico y la redistribución de esfuerzos, por lo que en general colapsa en un instante diferente al modelo linealizado (a.ii). La comparación de ambos valores de $t_F$ permite determinar cuál de los dos modelos subestima o sobreestima la estabilidad de la estructura.
+
+\subsection{b.ii -- Tensión normal, tensión tangencial y trayectoria del nodo b}
+
+La tensión normal en la barra $a = 8$ se obtiene directamente de la deformación unitaria:
+
+\begin{equation}
+    \sigma_n = E \cdot \varepsilon
+    \label{eq:sigma_n}
+\end{equation}
+
+La tensión tangencial $\tau$ en una barra de reticulado es nula por hipótesis, ya que los nodos se modelan como rótulas perfectas y las barras solo transmiten esfuerzo axial. Esto es una consecuencia directa de la definición del reticulado: no existe momento flector ni cortante en las barras.
+
+\begin{equation}
+    \tau = 0
+    \label{eq:tau_cero}
+\end{equation}
+
+En la Figura~\ref{fig:parte_B} se presentan las evoluciones temporales de $\sigma_n$ en la barra 8 y la coordenada $Y$ del nodo 10 ($b$) para ambos modelos, hasta el instante $\min(t_{F,\text{ai}},\, t_{F,\text{aii}})$.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../outputs/parte_B_comparacion.png}
+    \caption{Comparación entre los modelos a.i (deformaciones finitas) y a.ii (pequeños desplazamientos): tensión normal $\sigma_n$ en la barra 8 (izquierda) y coordenada $Y$ del nodo 10 (derecha) en función del tiempo.}
+    \label{fig:parte_B}
+\end{figure}
+
+Como se observa en la Figura~\ref{fig:parte_B}, ambos modelos presentan un comportamiento cualitativamente similar en las primeras etapas de la simulación. Sin embargo, a medida que los desplazamientos crecen, el modelo a.ii comienza a divergir del modelo a.i, evidenciando que la hipótesis de pequeños desplazamientos pierde validez cuando las deformaciones no son despreciables respecto a las dimensiones del reticulado. La curva de $\sigma_n$ del modelo a.i refleja el cambio en la dirección de las barras, mientras que la del modelo a.ii permanece gobernada por la geometría inicial.
+
+\subsection{b.iii -- Norma máxima de desplazamiento y comparación de modelos}
+
+La norma de desplazamiento de cada nodo $i$ en el instante $t$ se define como:
+
+\begin{equation}
+    \|\mathbf{u}_i(t)\| = \sqrt{u_{i,x}^2(t) + u_{i,y}^2(t)}
+    \label{eq:norma}
+\end{equation}
+
+y la norma máxima global en la estructura es:
+
+\begin{equation}
+    \|\mathbf{u}\|_{\max}(t) = \max_{i} \|\mathbf{u}_i(t)\|
+    \label{eq:norma_max}
+\end{equation}
+
+Esta magnitud se evaluó en el intervalo $[0,\, \min(t_{F,\text{ai}},\, t_{F,\text{aii}})]$ para garantizar que ambos modelos estén dentro de su rango de validez estructural.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../outputs/parte_B_norma_max.png}
+    \caption{Norma máxima de desplazamiento nodal $\|\mathbf{u}\|_{\max}(t)$ para los modelos a.i y a.ii en el intervalo común $[0,\, \min(t_{F,\text{ai}},\, t_{F,\text{aii}})]$.}
+    \label{fig:parte_B_norma}
+\end{figure}
+
+Como se aprecia en la Figura~\ref{fig:parte_B_norma}, la norma máxima de desplazamiento del modelo a.ii crece a mayor ritmo que la del modelo a.i una vez que los desplazamientos dejan de ser pequeños. El modelo de deformaciones finitas introduce un efecto estabilizador de origen geométrico que no es capturado por la formulación lineal.
+
+\textbf{Conclusión:} El modelo a.ii (pequeños desplazamientos) es adecuado únicamente en el rango temporal inicial, donde $\|\mathbf{u}\|_{\max} \ll L_{\min}^{(0)}$. Para tiempos más largos o ante la presencia de grandes desplazamientos, el modelo a.i (deformaciones finitas) resulta el apropiado, ya que actualiza continuamente la geometría de la estructura y produce resultados más representativos del comportamiento real.
+
+%------------------------------------------------------------
+% PARTE C
+%------------------------------------------------------------
+\section{Parte C: Amortiguador Hidrodinámico}
+
+\subsection{Descripción del dispositivo}
+
+El amortiguador consiste en una esfera sólida de radio $r_{esf} = 1{,}5$ m conectada al nodo $c = 10$ de la estructura, inmersa en un fluido de densidad $\rho_{fl} = 3$ con nivel libre ubicado a una altura $h_{SL} = 25$ m. La Figura~\ref{fig:fluido} ilustra el esquema del dispositivo.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{../Imagenes/fluido.png}
+    \caption{Esquema del amortiguador hidrodinámico: esfera de radio $r_{esf}$ sumergida parcial o totalmente en un fluido con nivel libre $h_{SL}$.}
+    \label{fig:fluido}
+\end{figure}
+
+La fuerza de arrastre que el fluido ejerce sobre la esfera es:
+
+\begin{equation}
+    \mathbf{F}_a = -\frac{1}{2}\,\rho_{fl}\,C_d\,A_R\,|\mathbf{u}|\,\mathbf{u}
+    \label{eq:drag}
+\end{equation}
+
+donde $C_d = 0{,}47$ es el coeficiente de arrastre de la esfera y $A_R$ es el área de referencia, que depende del nivel de inmersión de la esfera.
+
+\subsection{Área de referencia según nivel de inmersión}
+
+La posición vertical del nodo $c$ determina el nivel de inmersión de la esfera. Definiendo $y_c(t)$ como la coordenada vertical del nodo en la configuración deformada y $h_{SL}$ como la altura del nivel libre del fluido, la posición relativa de la esfera respecto a la superficie libre es:
+
+\begin{equation}
+    \delta(t) = h_{SL} - y_c(t)
+    \label{eq:delta}
+\end{equation}
+
+El área de referencia se calcula según tres regímenes:
+
+\begin{equation}
+    A_R = \begin{cases}
+        0 & \text{si } \delta < -r_{esf} \quad \text{(esfera completamente fuera del fluido)} \\
+        A_{\text{cap}}(\delta) & \text{si } -r_{esf} \leq \delta \leq r_{esf} \quad \text{(inmersión parcial)} \\
+        \pi\,r_{esf}^2 & \text{si } \delta > r_{esf} \quad \text{(esfera completamente sumergida)}
+    \end{cases}
+    \label{eq:AR}
+\end{equation}
+
+En el régimen de inmersión parcial, $A_R$ es el área del círculo definido por la intersección de la esfera con el plano horizontal de la superficie libre, es decir, la sección transversal de la esfera a la altura $h_{SL}$:
+
+\begin{equation}
+    A_R(\delta) = \pi\,(r_{esf}^2 - \delta^2), \qquad \delta = h_{SL} - y_c
+    \label{eq:Acap}
+\end{equation}
+
+Cuando $\delta > 0$ el centro está por debajo de la superficie libre; cuando $\delta < 0$ el centro está por encima. La fórmula es continua y se anula en $|\delta| = r_{esf}$, garantizando la transición suave entre los regímenes.
+
+\subsection{Resultados con y sin amortiguador}
+
+En las Figuras~\ref{fig:C_tension}, \ref{fig:C_coordenadas} y \ref{fig:C_norma} se comparan las respuestas del modelo a.i con y sin la fuerza de arrastre del amortiguador.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../outputs/parte_C_tension.png}
+    \caption{Tensión normal $\sigma_n$ en la barra 8 con y sin amortiguador hidrodinámico en función del tiempo.}
+    \label{fig:C_tension}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../outputs/parte_C_coordenadas.png}
+    \caption{Coordenadas del nodo 10 (nodo $b = c$) con y sin amortiguador en función del tiempo.}
+    \label{fig:C_coordenadas}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../outputs/parte_C_norma.png}
+    \caption{Norma máxima de desplazamiento en la estructura con y sin amortiguador en función del tiempo.}
+    \label{fig:C_norma}
+\end{figure}
+
+Como se observa en las figuras anteriores, la incorporación del amortiguador reduce significativamente la amplitud de las oscilaciones y retrasa o elimina la falla geométrica. La fuerza de arrastre, al ser proporcional al cuadrado de la velocidad del nodo, actúa con mayor intensidad en los momentos de mayor velocidad, disipando energía cinética de forma no lineal.
+
+\subsection{Evolución del área de referencia y la fuerza de arrastre}
+
+La Figura~\ref{fig:C_arrastre} muestra la evolución temporal del área de referencia $A_R$ y la magnitud de la fuerza de arrastre aplicada al nodo $c$.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../outputs/parte_C_arrastre.png}
+    \caption{Evolución temporal del área de referencia $A_R$ y de la fuerza de arrastre $|\mathbf{F}_a|$ aplicada al nodo $c = 10$.}
+    \label{fig:C_arrastre}
+\end{figure}
+
+Se observa que $A_R$ varía a lo largo del tiempo conforme el nodo $c$ oscila en la vecindad del nivel libre del fluido, pasando entre los regímenes de inmersión parcial y total. La fuerza de arrastre exhibe picos pronunciados que coinciden con los instantes de mayor velocidad del nodo.
+
+\subsection{Barrido paramétrico del radio de la esfera}
+
+La Figura~\ref{fig:C_radio} presenta los resultados del barrido del radio $r_{esf}$ manteniendo fijos los demás parámetros.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../outputs/parte_C_var_radio.png}
+    \caption{Efecto del radio de la esfera $r_{esf}$ sobre la respuesta dinámica del reticulado. Cada curva corresponde a un valor distinto de $r_{esf}$.}
+    \label{fig:C_radio}
+\end{figure}
+
+A medida que $r_{esf}$ aumenta, el área de referencia $A_R$ disponible para la interacción fluido--esfera es mayor, lo que incrementa la fuerza de arrastre y produce un amortiguamiento más eficiente. Para valores suficientemente grandes de $r_{esf}$, la estructura logra estabilizarse dentro del período de simulación.
+
+\subsection{Barrido paramétrico de la densidad del fluido}
+
+La Figura~\ref{fig:C_densidad} muestra el efecto de variaciones en la densidad del fluido $\rho_{fl}$.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../outputs/parte_C_var_densidad.png}
+    \caption{Efecto de la densidad del fluido $\rho_{fl}$ sobre la respuesta dinámica del reticulado. Cada curva corresponde a un valor distinto de $\rho_{fl}$.}
+    \label{fig:C_densidad}
+\end{figure}
+
+Tal como era de esperarse a partir de la ecuación~\eqref{eq:drag}, la fuerza de arrastre es directamente proporcional a $\rho_{fl}$. Un fluido más denso genera un amortiguamiento más intenso, reduciendo la amplitud de las oscilaciones y extendiendo el tiempo de vida geométrico del reticulado.
+
+%------------------------------------------------------------
+% PARTE D
+%------------------------------------------------------------
+\section{Parte D: Animaciones de la Respuesta Estructural}
+
+\subsection{Descripción}
+
+Como complemento visual del análisis dinámico, se generaron animaciones en formato GIF que muestran la deformación del reticulado a lo largo del tiempo. Las animaciones permiten apreciar cualitativamente la evolución de la geometría, los modos de oscilación predominantes y el instante en que se produce la falla geométrica.
+
+Se produjeron dos animaciones:
+
+\begin{itemize}
+    \item \textbf{Modelo a.i sin amortiguador:} muestra la respuesta del reticulado bajo la hipótesis de deformaciones finitas con la carga $P(t) = 10$ N aplicada en el nodo 10 en dirección $+x$, sin ningún mecanismo de disipación de energía. Se observa cómo la estructura oscila con amplitudes crecientes hasta alcanzar el colapso geométrico en $t = t_{F,\text{ai}}$.
+
+    \item \textbf{Modelo a.i con amortiguador:} incluye la fuerza de arrastre hidrodinámico aplicada en el nodo $c = 10$. En esta animación se aprecia el efecto estabilizador del amortiguador, que reduce progresivamente la amplitud de las oscilaciones e impide (o retrasa significativamente) la falla geométrica.
+\end{itemize}
+
+Los archivos GIF correspondientes se adjuntan junto al presente informe como archivos externos.
+
+%------------------------------------------------------------
+% CONCLUSIONES
+%------------------------------------------------------------
+\section{Conclusiones Generales}
+
+A lo largo de este trabajo se analizó la respuesta dinámica de un reticulado plano de 10 nodos y 15 barras sometido a una carga uniforme constante, empleando herramientas de simulación numérica. Las principales conclusiones son:
+
+\begin{enumerate}
+    \item \textbf{Hipótesis cinemática:} La diferencia entre los modelos de deformaciones finitas (a.i) y pequeños desplazamientos (a.ii) se vuelve significativa a medida que los desplazamientos crecen. El modelo lineal sobreestima o subestima los desplazamientos y tensiones respecto al modelo no lineal, dependiendo del régimen de carga. El modelo a.ii es válido solo en la etapa inicial cuando $\|\mathbf{u}\|_{\max}$ es pequeño.
+
+    \item \textbf{Criterio de falla:} El criterio de inversión del área de los triángulos resultó ser un indicador robusto y computacionalmente eficiente para detectar la inestabilidad geométrica del reticulado. Ambos modelos presentan valores de $t_F$ diferentes, siendo esta diferencia una medida directa del error introducido por la linealización.
+
+    \item \textbf{Tensión tangencial nula:} En estructuras reticuladas con nodos articulados, la tensión tangencial en las barras es exactamente cero por construcción del modelo, independientemente del nivel de deformación o del modelo cinemático adoptado.
+
+    \item \textbf{Amortiguador hidrodinámico:} La incorporación de la fuerza de arrastre en el nodo $c$ reduce sustancialmente la amplitud de las oscilaciones y prolonga la vida geométrica de la estructura. El efecto es más pronunciado para mayores valores de $\rho_{fl}$ y $r_{esf}$, en concordancia con la forma funcional de la ecuación~\eqref{eq:drag}.
+
+    \item \textbf{Área de referencia variable:} La transición entre los regímenes de inmersión parcial y total de la esfera introduce una no linealidad adicional en el sistema amortiguado. Esta variación de $A_R$ con el nivel de inmersión es un aspecto importante a considerar en el diseño de amortiguadores de este tipo.
+
+    \item \textbf{Animaciones:} Las representaciones visuales de la deformación del reticulado facilitan la comprensión cualitativa del comportamiento dinámico y complementan de forma efectiva los análisis cuantitativos presentados en las secciones anteriores.
+\end{enumerate}
+
+En síntesis, el trabajo permitió consolidar conceptos fundamentales de mecánica del continuo aplicados a estructuras reticuladas, desde la formulación de las ecuaciones de movimiento hasta la evaluación del impacto de distintos mecanismos de disipación energética, destacando la importancia de seleccionar el modelo cinemático adecuado según el régimen de deformación esperado.
 
 \end{document}
