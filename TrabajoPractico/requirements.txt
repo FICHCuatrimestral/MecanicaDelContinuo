@@ -1,10 +1,15 @@
 # Entorno Jupyter
-ipykernel==6.29.4
+ipykernel>=6.29.4
 
 # Cálculo numérico y científico (Crucial para las matrices K y cálculo de Drag Force)
-numpy==1.26.4
-scipy==1.13.0
-pandas==2.2.2
+# Se usan versiones mínimas (>=) en lugar de pines exactos: las versiones fijas
+# originales no tienen wheels para Python 3.13/3.14 y obligan a compilar desde
+# fuente (lento y propenso a fallar). Con >= pip instala el wheel adecuado
+# para cada versión de Python (3.12 del devcontainer o 3.14 local).
+numpy>=1.26.4
+scipy>=1.13.0
+pandas>=2.2.2
 
 # Gráficos y animaciones (Para el punto 'd' del TP)
-matplotlib==3.8.4
+matplotlib>=3.8.4
+pillow>=10.0.0          # Necesario para guardar los GIF (PillowWriter)
