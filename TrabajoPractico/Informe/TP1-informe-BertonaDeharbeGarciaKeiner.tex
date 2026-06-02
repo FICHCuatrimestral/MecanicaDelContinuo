@@ -254,7 +254,7 @@ En la Figura~\ref{fig:parte_B} se presentan las evoluciones temporales de $\sigm
     \label{fig:parte_B}
 \end{figure}
 
-Como se observa en la Figura~\ref{fig:parte_B}, ambos modelos presentan un comportamiento cualitativamente similar en las primeras etapas de la simulación. Sin embargo, a medida que los desplazamientos crecen, el modelo a.ii comienza a divergir del modelo a.i, evidenciando que la hipótesis de pequeños desplazamientos pierde validez cuando las deformaciones no son despreciables respecto a las dimensiones del reticulado. La curva de $\sigma_n$ del modelo a.i refleja el cambio en la dirección de las barras, mientras que la del modelo a.ii permanece gobernada por la geometría inicial.
+Como se observa en la Figura~\ref{fig:parte_B}, ambos modelos presentan un comportamiento cualitativamente similar en las primeras etapas de la simulación. Sin embargo, a medida que los desplazamientos crecen (punto de quiebre t=15s), el modelo a.ii comienza a divergir del modelo a.i, evidenciando que la hipótesis de pequeños desplazamientos pierde validez cuando las deformaciones no son despreciables respecto a las dimensiones del reticulado. La curva de $\sigma_n$ del modelo a.i refleja como el esfuerzo que sufre la barra 8 cambia drásticamente a partir del segundo 15, la segunda gráfica indica que los cambios en la posición vertical del nodo 10 difieren en consecuencia, en el modelo de grandes deformaciones el nodo llega a una altura mucho menor que la de grandes deformaciones. La hipótesis de pequeñas deformaciones podría haber sido útil, pero en un contexto de tiempo de análisis mucho más acotado (<10s).
 
 \subsection{b.iii -- Norma máxima de desplazamiento y comparación de modelos}
 
@@ -281,9 +281,9 @@ Esta magnitud se evaluó en el intervalo $[0,\, \min(t_{F,\text{ai}},\, t_{F,\te
     \label{fig:parte_B_norma}
 \end{figure}
 
-Como se aprecia en la Figura~\ref{fig:parte_B_norma}, la norma máxima de desplazamiento del modelo a.ii crece a mayor ritmo que la del modelo a.i una vez que los desplazamientos dejan de ser pequeños. El modelo de deformaciones finitas introduce un efecto estabilizador de origen geométrico que no es capturado por la formulación lineal.
+Como se aprecia en la Figura~\ref{fig:parte_B_norma}, la norma máxima de desplazamiento del modelo a.ii difiere muchísimo a la del modelo a.i una vez que los desplazamientos dejan de ser pequeños. Se puede apreciar como los desplazamientos máximos entre nodos no difieren tanto en magnitud (ambos modelos llegan un máximo de 9m) pero si difieren en el tiempo en que lo alcanzan. Esto denota aún más que el modelo de pequeñas deformaciones no es una buena aproximación en esta escala de tiempo de la representación que contempla el cambio de las direcciones de las fuerzas intervinientes en el reticulado.
 
-\textbf{Conclusión:} El modelo a.ii (pequeños desplazamientos) es adecuado únicamente en el rango temporal inicial, donde $\|\mathbf{u}\|_{\max} \ll L_{\min}^{(0)}$. Para tiempos más largos o ante la presencia de grandes desplazamientos, el modelo a.i (deformaciones finitas) resulta el apropiado, ya que actualiza continuamente la geometría de la estructura y produce resultados más representativos del comportamiento real.
+\textbf{Conclusión:} El modelo a.ii (pequeños desplazamientos) es adecuado únicamente en el rango temporal inicial, donde $\|\mathbf{u}\|_{\max} < 10\,s \quad \text{(aprox.)}$. Para tiempos más largos o ante la presencia de grandes desplazamientos, el modelo a.i (deformaciones finitas) resulta el apropiado, ya que actualiza continuamente la geometría de la estructura y produce resultados más representativos del comportamiento real.
 
 %------------------------------------------------------------
 % PARTE C
