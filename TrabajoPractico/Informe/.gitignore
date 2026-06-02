@@ -2,3 +2,4 @@ test.tex
 *.aux
 *.log
 *.gz
+*.toc
