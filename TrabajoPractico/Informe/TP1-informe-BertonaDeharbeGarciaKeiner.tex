@@ -412,12 +412,14 @@ Tal como era de esperarse a partir de la ecuación~\eqref{eq:drag}, la fuerza de
 
 \subsection{Descripción}
 
-Como complemento visual del análisis dinámico, se generaron animaciones en formato GIF que muestran la deformación del reticulado a lo largo del tiempo. Las animaciones permiten apreciar cualitativamente la evolución de la geometría, los modos de oscilación predominantes y el instante en que se produce la falla geométrica.
+Como complemento visual del análisis dinámico, se generaron animaciones en formato GIF que muestran la deformación del reticulado a lo largo del tiempo. Las animaciones permiten apreciar cualitativamente la evolución de la geometría y los modos de oscilación predominantes.
 
 Se produjeron dos animaciones:
 
 \begin{itemize}
-    \item \textbf{Modelo a.i sin amortiguador:} muestra la respuesta del reticulado bajo la hipótesis de deformaciones finitas con la carga $P(t) = 10$ N aplicada en el nodo 10 en dirección $+x$, sin ningún mecanismo de disipación de energía. Se observa cómo la estructura oscila con amplitudes crecientes hasta alcanzar el colapso geométrico en $t = t_{F,\text{ai}}$.
+    \item \textbf{Modelo a.i sin amortiguador:} muestra la respuesta del reticulado bajo la hipótesis de deformaciones finitas con la carga $P(t) = 10$ N aplicada en el nodo 10 en dirección $+x$, sin ningún mecanismo de disipación de energía. Se observa cómo la estructura oscila y se deforma pero no alcanza el punto de deformación máxima dentro del intervalo de tiempo.
+    
+    \item \textbf{Modelo a.ii sin amortiguador:} muestra la respuesta del reticulado bajo la hipótesis de deformaciones infinitesimales con la carga $P(t) = 10$ N aplicada en el nodo 10 en dirección $+x$, sin ningún mecanismo de disipación de energía.
 
     \item \textbf{Modelo a.i con amortiguador:} incluye la fuerza de arrastre hidrodinámico aplicada en el nodo $c = 10$. En esta animación se aprecia el efecto estabilizador del amortiguador, que reduce progresivamente la amplitud de las oscilaciones.
 \end{itemize}
@@ -434,7 +436,7 @@ A lo largo de este trabajo se analizó la respuesta dinámica de un reticulado p
 \begin{enumerate}
     \item \textbf{Hipótesis cinemática:} La diferencia entre los modelos de deformaciones finitas (a.i) y pequeños desplazamientos (a.ii) se vuelve significativa a medida que los desplazamientos crecen. El modelo lineal sobreestima o subestima los desplazamientos y tensiones respecto al modelo no lineal, dependiendo del régimen de carga. El modelo a.ii es válido solo en la etapa inicial cuando $\|\mathbf{u}\|_{\max}$ es pequeño.
 
-    \item \textbf{Criterio de falla:} El criterio de inversión del área de los triángulos resultó ser un indicador robusto y computacionalmente eficiente para detectar la inestabilidad geométrica del reticulado. Ambos modelos presentan valores de $t_F$ diferentes, siendo esta diferencia una medida directa del error introducido por la linealización.
+    \item \textbf{Criterio de falla:} A pesar de no haberse alcanzado tal punto en las simulaciones dentro del período de análisis, el criterio de inversión del área de los triángulos resultó ser un indicador robusto y computacionalmente eficiente para detectar la inestabilidad geométrica del reticulado.
 
     \item \textbf{Tensión tangencial nula:} En estructuras reticuladas con nodos articulados, la tensión tangencial en las barras es exactamente cero por construcción del modelo, independientemente del nivel de deformación o del modelo cinemático adoptado.
 
