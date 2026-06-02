@@ -65,9 +65,9 @@ En este trabajo se abordará el problema dividiendo el estudio en cuatro etapas 
 %------------------------------------------------------------
 \section{Datos del Problema}
 
-La geometría del reticulado plano analizado corresponde al \textbf{Caso 4}, compuesto por 10 nodos y 15 barras, con las condiciones de apoyo y carga que se detallan a continuación. La figura de referencia se presenta en la Figura~\ref{fig:caso}.
+La geometría del reticulado plano analizado corresponde al \textbf{Caso 4}, compuesto por 10 nodos y 15 barras, con las condiciones de apoyo y carga que se detallan a continuación. La figura de referencia se presenta en la siguiente figura:
 
-\begin{figure}[H]
+\begin{figure}[h!]
     \centering
     \includegraphics[width=0.85\textwidth]{../Imagenes/caso.png}
     \caption{Geometría del reticulado plano -- Caso 4. Se indica la numeración de nodos y barras, las condiciones de apoyo (nodos articulados y rodillo) y la carga aplicada.}
@@ -247,7 +247,7 @@ La tensión tangencial $\tau$ en una barra de reticulado es nula por hipótesis,
 
 En la Figura~\ref{fig:parte_B} se presentan las evoluciones temporales de $\sigma_n$ en la barra 8 y la coordenada $Y$ del nodo 10 ($b$) para ambos modelos, hasta el instante $\min(t_{F,\text{ai}},\, t_{F,\text{aii}})$.
 
-\begin{figure}[H]
+\begin{figure}[h!]
     \centering
     \includegraphics[width=\textwidth]{../outputs/parte_B_comparacion.png}
     \caption{Comparación entre los modelos a.i (deformaciones finitas) y a.ii (pequeños desplazamientos): tensión normal $\sigma_n$ en la barra 8 (izquierda) y coordenada $Y$ del nodo 10 (derecha) en función del tiempo.}
@@ -274,7 +274,7 @@ y la norma máxima global en la estructura es:
 
 Esta magnitud se evaluó en el intervalo $[0,\, \min(t_{F,\text{ai}},\, t_{F,\text{aii}})]$ para garantizar que ambos modelos estén dentro de su rango de validez estructural.
 
-\begin{figure}[H]
+\begin{figure}[h!]
     \centering
     \includegraphics[width=\textwidth]{../outputs/parte_B_norma_max.png}
     \caption{Norma máxima de desplazamiento nodal $\|\mathbf{u}\|_{\max}(t)$ para los modelos a.i y a.ii en el intervalo común $[0,\, \min(t_{F,\text{ai}},\, t_{F,\text{aii}})]$.}
@@ -294,7 +294,7 @@ Como se aprecia en la Figura~\ref{fig:parte_B_norma}, la norma máxima de despla
 
 El amortiguador consiste en una esfera sólida de radio $r_{esf} = 1{,}5$ m conectada al nodo $c = 10$ de la estructura, inmersa en un fluido de densidad $\rho_{fl} = 3$ con nivel libre ubicado a una altura $h_{SL} = 25$ m. La Figura~\ref{fig:fluido} ilustra el esquema del dispositivo.
 
-\begin{figure}[H]
+\begin{figure}[h!]
     \centering
     \includegraphics[width=0.6\textwidth]{../Imagenes/fluido.png}
     \caption{Esquema del amortiguador hidrodinámico: esfera de radio $r_{esf}$ sumergida parcial o totalmente en un fluido con nivel libre $h_{SL}$.}
@@ -343,21 +343,21 @@ Cuando $\delta > 0$ el centro está por debajo de la superficie libre; cuando $\
 
 En las Figuras~\ref{fig:C_tension}, \ref{fig:C_coordenadas} y \ref{fig:C_norma} se comparan las respuestas del modelo a.i con y sin la fuerza de arrastre del amortiguador.
 
-\begin{figure}[H]
+\begin{figure}[h!]
     \centering
     \includegraphics[width=\textwidth]{../outputs/parte_C_tension.png}
     \caption{Tensión normal $\sigma_n$ en la barra 8 con y sin amortiguador hidrodinámico en función del tiempo.}
     \label{fig:C_tension}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[h!]
     \centering
     \includegraphics[width=\textwidth]{../outputs/parte_C_coordenadas.png}
     \caption{Coordenadas del nodo 10 (nodo $b = c$) con y sin amortiguador en función del tiempo.}
     \label{fig:C_coordenadas}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[h!]
     \centering
     \includegraphics[width=\textwidth]{../outputs/parte_C_norma.png}
     \caption{Norma máxima de desplazamiento en la estructura con y sin amortiguador en función del tiempo.}
@@ -370,7 +370,7 @@ Como se observa en las figuras anteriores, la incorporación del amortiguador re
 
 La Figura~\ref{fig:C_arrastre} muestra la evolución temporal del área de referencia $A_R$ y la magnitud de la fuerza de arrastre aplicada al nodo $c$.
 
-\begin{figure}[H]
+\begin{figure}[h!]
     \centering
     \includegraphics[width=\textwidth]{../outputs/parte_C_arrastre.png}
     \caption{Evolución temporal del área de referencia $A_R$ y de la fuerza de arrastre $|\mathbf{F}_a|$ aplicada al nodo $c = 10$.}
@@ -383,7 +383,7 @@ Se observa que $A_R$ varía a lo largo del tiempo conforme el nodo $c$ oscila en
 
 La Figura~\ref{fig:C_radio} presenta los resultados del barrido del radio $r_{esf}$ manteniendo fijos los demás parámetros.
 
-\begin{figure}[H]
+\begin{figure}[h!]
     \centering
     \includegraphics[width=\textwidth]{../outputs/parte_C_var_radio.png}
     \caption{Efecto del radio de la esfera $r_{esf}$ sobre la respuesta dinámica del reticulado. Cada curva corresponde a un valor distinto de $r_{esf}$.}
@@ -396,7 +396,7 @@ A medida que $r_{esf}$ aumenta, el área de referencia $A_R$ disponible para la 
 
 La Figura~\ref{fig:C_densidad} muestra el efecto de variaciones en la densidad del fluido $\rho_{fl}$.
 
-\begin{figure}[H]
+\begin{figure}[h!]
     \centering
     \includegraphics[width=\textwidth]{../outputs/parte_C_var_densidad.png}
     \caption{Efecto de la densidad del fluido $\rho_{fl}$ sobre la respuesta dinámica del reticulado. Cada curva corresponde a un valor distinto de $\rho_{fl}$.}
