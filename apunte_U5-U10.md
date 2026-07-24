@@ -1,7 +1,139 @@
 # Mecánica del Continuo — Apunte integrado de estudio
-## Unidades 5 a 10: el curso completo
+## Unidades 3 a 10: el curso completo
 
 > **Cómo usar este apunte:** cada desarrollo matemático va acompañado de su lectura física inmediata. Los bloques marcados 💡 son la interpretación ("qué significa esto"), los marcados ⚠️ son trampas conceptuales típicas de parcial, y los marcados 🔗 son conexiones entre unidades. La matemática sin el bloque 💡 es solo álgebra; el bloque 💡 sin la matemática es solo verso. Estudiá los dos juntos.
+
+---
+
+# UNIDAD 3 — TENSIONES
+
+## 3.0 El problema que organiza la unidad
+
+Hasta acá (U1-U2) el continuo era geometría pura: vectores, tensores, sistemas de referencia. Ahora entra la física de "qué le pasa a un cuerpo cuando algo lo toca": cómo una parte del material empuja o tira de la parte vecina. La apuesta central, que hace posible tratar un continuo (infinitas partículas) sin la complejidad de la mecánica de partículas discretas: la interacción entre el "adentro" y el "afuera" de una superficie imaginaria, en el límite, **solo puede depender del área y de la normal** de esa superficie — no de su forma ni de su tamaño. Esa apuesta es el **postulado de Cauchy**, y todo el capítulo es sacarle el jugo.
+
+## 3.1 Dos tipos de fuerza
+
+- **Fuerzas de cuerpo** $\mathbf X$ (por unidad de volumen): acciones a distancia — gravedad, electromagnetismo, centrífuga. Fuerza total sobre una porción $B$: $\int_B \mathbf X\,dV$.
+- **Fuerzas de superficie**: acciones de contacto, a través de una superficie $S$. Se definen por unidad de área.
+
+💡 Esta dicotomía volumen/superficie es la misma que organiza **todas** las leyes de balance de U9-U10: cada una tiene su término de volumen (fuente, inercia) y su término de superficie (flujo, tracción), y el teorema de Gauss es la máquina que convierte uno en el otro. 🔗 Acá nace la distinción que ese bloque entero explota.
+
+## 3.2 El vector de tensión y el principio de Cauchy
+
+**Postulado de Euler-Cauchy:** cuando $\Delta S\to 0$ alrededor de un punto, el cociente $\Delta\mathbf F/\Delta S$ tiende a un límite que depende del punto $\mathbf x$ y de la normal $\boldsymbol\nu$ — no de la forma de $\Delta S$:
+
+$$\boxed{\overset{\nu}{\mathbf T}(\mathbf x) = \lim_{\Delta S\to 0}\frac{\Delta\mathbf F}{\Delta S}}$$
+
+Se la llama **tracción de superficie** o **vector de tensión**. Segunda hipótesis: el momento de $\Delta\mathbf F$ en torno a cualquier punto de $\Delta S$ se anula en el límite (sin esto aparecerían "tensiones de par", modelos más exóticos que un continuo clásico no necesita).
+
+💡 La hipótesis fuerte acá no es que "exista tensión": es que el vector de tensión **no depende de la forma de la superficie**, solo de su normal. Eso es lo que permite reducir las infinitas superficies posibles por un punto a una función de un solo vector $\boldsymbol\nu$.
+
+## 3.3 Notación: tensiones normales y de corte
+
+Se ordenan las tracciones sobre las 3 caras coordenadas en una matriz $\tau_{ij}$ (o $\sigma_{ij}$): el primer índice indica la cara (normal según $x_i$), el segundo la dirección de la componente. Diagonal = **tensiones normales** ($\tau_{ii}>0$ tracción, $<0$ compresión); fuera de diagonal = **tensiones de corte**.
+
+## 3.4 Fórmula de Cauchy (la fórmula fundamental del capítulo)
+
+Con un tetraedro diferencial (3 caras coordenadas + una cara oblicua de normal $\boldsymbol\nu$), planteando equilibrio de fuerzas y achicando el tetraedro a un punto ($h\to0$: las fuerzas de cuerpo, que van con el volumen, se anulan antes que las de superficie):
+
+$$\boxed{T_i = \tau_{ji}\,\nu_j} \qquad \textbf{(fórmula de Cauchy)}$$
+
+💡 Esto es lo importante: **9 números ($\tau_{ji}$) alcanzan para calcular la tracción en *cualquier* dirección posible** por ese punto — infinitas superficies, un solo objeto. Como $T_i$ es un vector y la fórmula vale para $\boldsymbol\nu$ arbitrario, $\tau_{ji}$ son las componentes de un **tensor**: el **tensor de tensiones**.
+
+🔗 Esta fórmula reaparece sin cambios en U9-U10 como el paso "Cauchy + Gauss" de cada demostración de balance (momento lineal → ecuación de Cauchy; momento angular → simetría de σ) — ahí se la da por conocida y se la usa directo.
+
+Corolario inmediato (pastilla de espesor $\to0$ apoyada sobre una superficie interna): $\overset{\nu(-)}{\mathbf T} = -\overset{\nu(+)}{\mathbf T}$ — acción y reacción, punto a punto: la versión continua de la 3ª ley de Newton.
+
+## 3.5 Ecuaciones de equilibrio: traslación y rotación
+
+Planteando equilibrio de **fuerzas** sobre un cubo diferencial (Taylor a primer orden en cada cara):
+
+$$\boxed{\tau_{ji,j} + X_i = 0} \qquad \text{(equilibrio en traslación)}$$
+
+Planteando equilibrio de **momentos** sobre el mismo cubo:
+
+$$\boxed{\tau_{ij} = \tau_{ji}} \qquad \text{(equilibrio en rotación} \Rightarrow \text{el tensor de tensiones es simétrico)}$$
+
+💡 6 componentes independientes, no 9.
+
+🔗 Esta demostración —equilibrio de momentos en un diferencial de volumen— es el caso **estático** de la demostración de balance de momento angular de U9-U10 (§2.3 de ese apunte): allá se repite el mismo argumento pero con inercia ($\rho D\mathbf v/Dt \neq 0$ en vez de equilibrio puro) y con una integral sobre un volumen arbitrario en vez de un diferencial. Si esta demo te sale de memoria, esa otra te sale casi gratis.
+
+🔗 Y $\tau_{ji,j}+X_i=0$ es literalmente el caso $\rho D\mathbf v/Dt = 0$ de la ecuación de Cauchy dinámica de U9-U10 ($\rho Dv_i/Dt = \sigma_{ji,j}+X_i$): la misma cuenta (equilibrio de fuerzas en un cubo diferencial), solo que allá el cubo se mueve y acá está quieto.
+
+## 3.6 Transformación de coordenadas
+
+Bajo una rotación de ejes ($\beta_{ki}$ = cosenos directores de los nuevos ejes respecto de los viejos), el tensor de tensiones transforma como todo tensor de rango 2:
+
+$$\boxed{\tau'_{km} = \tau_{ji}\,\beta_{kj}\,\beta_{mi}}$$
+
+🔗 Es exactamente la misma ley que usa U5 para rotar $\varepsilon$, U6 para $V$, y que U8 explota para *definir* isotropía ("tensor isótropo = el que no cambia bajo esta transformación, para todo $\beta$"). La demostración del teorema de isotropía de U8 es, literalmente, aplicar esta fórmula con rotaciones especiales (180°, 90°) y ver qué sobrevive.
+
+## 3.7 Condiciones de borde en tensiones
+
+En la interfaz entre dos medios, el vector de tensión debe equilibrarse: $\overset{\nu}{\mathbf T}^{(1)} = -\overset{\nu}{\mathbf T}^{(2)}$. Las componentes que "atraviesan" la superficie (normal y las de corte alineadas con ella) son continuas; la componente paralela a la superficie **puede ser discontinua** (⚠️ trampa típica: asumir que todo $\sigma$ es continuo en una interfaz). Caso límite de frontera libre (contacto con un medio mucho más blando, ej. acero-aire): $\overset{\nu}{\mathbf T}=\mathbf 0$.
+
+🔗 Esta es exactamente la condición de borde natural $\Gamma_\sigma$ de todo el bloque variacional de U9-U10 (sección 4 de ese apunte): "$\sigma_{ij}n_j=\overset{n}{T}_i$ en $\Gamma_\sigma$" no es un dato nuevo ahí — es esta misma ecuación, con el lado "(2)" reemplazado por el valor de tracción prescripto.
+
+## 📝 Cómo cae la U3 en el parcial
+
+- Rara vez se pregunta sola: aparece **adentro** de casi todos los ejercicios de tensión (Airy, verificación de un $\sigma$ propuesto, demostraciones de U9-U10) como el paso "plantear equilibrio $\tau_{ji,j}+X_i=0$" o "usar Cauchy $T_i=\tau_{ji}\nu_j$", sin que el enunciado lo repita.
+- Teóricas: derivar la fórmula de Cauchy (tetraedro), derivar la simetría de σ (cubo, equilibrio de momentos), condición de borde libre vs. interfaz entre medios.
+
+---
+
+# UNIDAD 4 — TENSIONES Y DIRECCIONES PRINCIPALES
+
+## 4.0 El problema
+
+U3 dejó 9 (6 independientes) números por punto. La pregunta de U4: ¿hay una orientación especial de los ejes en la que ese lío de 6 números se simplifique al máximo? Sí — y la respuesta es un **problema de autovalores**, el mismo problema que va a reaparecer, casi sin cambiar una letra, para $\varepsilon$ en U5 y para $V$ en U6.
+
+## 4.1 Estado plano: rotación y extremos
+
+Rotando ejes un ángulo $\theta$ en el plano:
+
+$$\sigma'_{xx} = \frac{\sigma_{xx}+\sigma_{yy}}{2} + \frac{\sigma_{xx}-\sigma_{yy}}{2}\cos2\theta + \sigma_{xy}\sin2\theta \qquad (\text{y análogas para }\sigma'_{yy},\ \sigma'_{xy})$$
+
+💡 Invariante inmediato, sin necesidad de resolver nada: $\sigma'_{xx}+\sigma'_{yy}=\sigma_{xx}+\sigma_{yy}$ — la traza no rota (primer invariante, antes de que la sección siguiente lo nombre formalmente).
+
+Pidiendo $\partial\sigma'_{xx}/\partial\theta=0$ sale $\tan2\theta^*=\dfrac{2\sigma_{xy}}{\sigma_{xx}-\sigma_{yy}}$: el ángulo de los **ejes principales**, donde el corte se anula y las normales toman sus valores extremos:
+
+$$\boxed{\sigma_{\substack{\max\\\min}} = \frac{\sigma_{xx}+\sigma_{yy}}{2} \pm \sqrt{\left(\frac{\sigma_{xx}-\sigma_{yy}}{2}\right)^2+\sigma_{xy}^2}}$$
+
+El corte máximo ocurre a $45°$ de los ejes principales ($\theta^{**}=\theta^*+45°$) y vale $\tau_{\max}=(\sigma_{\max}-\sigma_{\min})/2$, con las normales asociadas iguales al promedio $(\sigma_{xx}+\sigma_{yy})/2$.
+
+💡 Esto **es** el Círculo de Mohr — acá se llega por cálculo directo (derivar e igualar a cero) en vez de geométricamente, mismo resultado.
+
+## 4.2 Tensiones principales en 3D: el problema de autovalores
+
+Se busca una dirección $\boldsymbol\nu$ tal que $\overset{\nu}{\mathbf T}$ sea **paralelo** a $\boldsymbol\nu$ (sin componente de corte):
+
+$$T_i = \sigma\,\nu_i \quad\text{y}\quad T_i=\sigma_{ji}\nu_j \quad\Longrightarrow\quad \boxed{(\sigma_{ji}-\sigma\delta_{ji})\,\nu_j = 0}$$
+
+Solución no trivial $\iff \det(\sigma_{ji}-\sigma\delta_{ji})=0$: ecuación cúbica (**ecuación característica**)
+
+$$-\sigma^3 + I_1\sigma^2 - I_2\sigma + I_3 = 0, \qquad I_1=\mathrm{tr}\,\sigma,\quad I_2 = \text{(suma de menores)},\quad I_3=\det\sigma$$
+
+$I_1,I_2,I_3$ son los **invariantes principales**: no cambian con la rotación de ejes (son los coeficientes de un polinomio que no depende de en qué base escribiste la matriz — por eso *tienen* que ser invariantes). Sus 3 raíces $\sigma_K$ son las **tensiones principales**; los autovectores $\boldsymbol\nu^{(K)}$ asociados, los **ejes principales**.
+
+**Por qué son reales y ortogonales** (demostración corta, conviene tenerla a mano): de $(\sigma_{ji}-\sigma_1\delta_{ji})\nu_j^{(1)}=0$ y su análoga con $\sigma_2$, restando y usando $\sigma_{ij}=\sigma_{ji}$ (🔗 la simetría de U3 — sin ella esto no cierra) se llega a $(\sigma_2-\sigma_1)\,\boldsymbol\nu^{(1)}\cdot\boldsymbol\nu^{(2)}=0$. Si los autovalores son distintos, los autovectores son ortogonales. Si $\sigma_1$ fuera compleja, su conjugada $\sigma_2=\bar\sigma_1$ también sería autovalor con autovector conjugado, y $\boldsymbol\nu^{(1)}\cdot\boldsymbol\nu^{(2)}=\boldsymbol\nu^{(1)}\cdot\overline{\boldsymbol\nu^{(1)}}>0$ haría imposible satisfacer la identidad — de ahí que los autovalores de un tensor simétrico son necesariamente reales.
+
+En la base principal, $\sigma$ es diagonal: $\mathrm{diag}(\sigma_1,\sigma_2,\sigma_3)$, con $I_1=\sigma_1+\sigma_2+\sigma_3$, $I_2=\sigma_1\sigma_2+\sigma_2\sigma_3+\sigma_3\sigma_1$, $I_3=\sigma_1\sigma_2\sigma_3$.
+
+💡 **Este problema —autovalor/autovector de un tensor simétrico de rango 2— es un solo problema matemático que U4 resuelve una vez, y que se reutiliza sin repetir la demostración para:** deformaciones y direcciones principales de $\varepsilon$ y $E$ (U5, sección 5.8), y direcciones principales de $V$ (U6). 🔗 Cuando U5 hable de "deformaciones principales, desviador e invariantes" sin volver a demostrar nada, es porque ya está probado acá.
+
+## 4.3 Tensión normal, tangencial, y el desviador
+
+Sobre un plano de normal $\boldsymbol\nu$ arbitraria: $\overset{\nu}{\mathbf T} = \sigma^{(n)}\boldsymbol\nu + \boldsymbol\tau$, con $\sigma^{(n)}=\sigma_{ji}\nu_j\nu_i$ (tensión normal) y $\tau=\sqrt{|\overset{\nu}{\mathbf T}|^2-(\sigma^{(n)})^2}$ (tensión de corte).
+
+**Desviador de tensión:** $\sigma'_{ij} = \sigma_{ij} - \sigma_0\delta_{ij}$, con $\sigma_0=\tfrac13\mathrm{tr}\,\sigma=\tfrac13 I_1$ la **tensión media** (parte hidrostática/esférica). Por construcción $\sigma'_{ii}=0$: el desviador no tiene parte esférica. Invariantes propios $J_1=0$, $J_2=\tfrac12\sigma'_{ij}\sigma'_{ij}$, $J_3=\det\sigma'$; sus autovalores son $\sigma'_K=\sigma_K-\sigma_0$, con los mismos autovectores que $\sigma$.
+
+💡🔗 **Esta es la separación tamaño/forma que organiza medio apunte.** U4 la introduce para la tensión — antes de que U5 introduzca la misma construcción (mismo nombre, "desviador") para la deformación, y antes de que U7 la use como "la clave del capítulo" para partir Hooke en dos leyes desacopladas: $K$ para $\sigma_0\leftrightarrow\varepsilon_0$, $2\mu$ para $\sigma'\leftrightarrow\varepsilon'$ (ver [`U7/fig_vol_desviador.png`](U7/fig_vol_desviador.png)). No es una idea nueva en cada unidad: es la misma descomposición (esférico + desviador), aplicada en orden a la tensión (U4), a la deformación (U5), y a la ley que las conecta (U7).
+
+## 📝 Cómo cae la U4 en el parcial
+
+- **Tipo clásico**: dado $\sigma_{ij}$, hallar tensiones y direcciones principales (autovalores/autovectores 3×3, o el atajo 2D directo si es estado plano).
+- Teóricas: por qué los autovalores de un tensor simétrico son reales y sus autovectores ortogonales (demo corta de 4.2); qué es el desviador y por qué su traza es nula; relación entre ejes principales y de máximo corte ($45°$).
+- 🔗 Reconocé cuándo un ejercicio de U5/U6 ("hallar deformaciones principales de $\varepsilon$") es **literalmente este mismo problema**, con otra letra en vez de $\sigma$.
 
 ---
 
@@ -650,7 +782,7 @@ C_{ijkl} \text{ debe ser tensor isótropo}\\
 
 **1. La descomposición tamaño / forma / orientación.** El gradiente ($\nabla u$ o $\nabla v$) siempre se parte en tres piezas físicas independientes:
 $$\underbrace{\tfrac{1}{3}\mathrm{tr}\,\boldsymbol\delta}_{\text{tamaño}} + \underbrace{(\cdot)'}_{\text{forma}} + \underbrace{\text{antisim.}}_{\text{orientación}}$$
-La U5 la descubre geométricamente, la U6 la traslada a tasas, la U7 muestra que el material le pone un precio a cada pieza deformante ($K$ y $\mu$; la orientación es gratis), y la U8 demuestra que en un isótropo no puede haber más precios que esos dos.
+🔗 La pieza tamaño/forma (esférico + desviador) en realidad **arranca en U4**, aplicada a la tensión, antes de que exista siquiera el concepto de deformación. La U5 la redescubre geométricamente para $\varepsilon$, la U6 la traslada a tasas ($V$), la U7 muestra que el material le pone un precio a cada pieza deformante ($K$ y $\mu$; la orientación es gratis), y la U8 demuestra que en un isótropo no puede haber más precios que esos dos.
 
 **2. El diccionario sólido ↔ fluido.** $u \leftrightarrow v$, $\varepsilon \leftrightarrow V$, $\omega \leftrightarrow \Omega$, Hooke ↔ Newton. La estructura de las ecuaciones es idéntica; cambia la variable a la que se acopla la tensión (deformación con memoria vs. tasa sin memoria). Sutileza: en tasas la teoría es exacta; en deformaciones, infinitesimal.
 
@@ -688,6 +820,19 @@ La U5 la descubre geométricamente, la U6 la traslada a tasas, la U7 muestra que
 # TABLA DE FÓRMULAS (referencia rápida)
 
 > Cada fila: **notación indicial** (compacta) · **forma completa/extendida** · **qué es / cuándo se usa**. Las fórmulas encajonadas en el texto son las que conviene llevar sabidas al parcial.
+
+## Tensiones (U3-U4)
+
+| Indicial | Forma completa | Definición / uso |
+|---|---|---|
+| $T_i = \tau_{ji}\nu_j$ | $\overset{\nu}{\mathbf T}=\boldsymbol\sigma^T\boldsymbol\nu$ | **Fórmula de Cauchy.** Tracción sobre una superficie de normal $\nu$, a partir de las 9 componentes de $\sigma$. |
+| $\tau_{ji,j} + X_i = 0$ | $\nabla\cdot\boldsymbol\sigma^T+\mathbf X=\mathbf 0$ | **Equilibrio (estático)** — caso $\rho D\mathbf v/Dt=0$ de la ecuación de Cauchy dinámica de U9-U10. |
+| $\tau_{ij}=\tau_{ji}$ | $\boldsymbol\sigma=\boldsymbol\sigma^T$ | **Simetría de σ**, de equilibrio de momentos — versión estática de la demo de momento angular (U9-U10 §2.3). |
+| $\tau'_{km}=\tau_{ji}\beta_{kj}\beta_{mi}$ | $\boldsymbol\sigma'=\boldsymbol\beta\boldsymbol\sigma\boldsymbol\beta^T$ | Transformación de $\sigma$ ante rotación de ejes — la misma ley que rota $\varepsilon$ (U5) y $V$ (U6), y que define isotropía (U8). |
+| $(\sigma_{ji}-\sigma\delta_{ji})\nu_j=0$ | $\det(\boldsymbol\sigma-\sigma\mathbf I)=0$ | **Tensiones/direcciones principales** — problema de autovalores; mismo problema para $\varepsilon$ (U5) y $V$ (U6). |
+| $I_1,I_2,I_3$ | $\mathrm{tr}\,\sigma,\ \Sigma\text{menores},\ \det\sigma$ | Invariantes principales de $\sigma$ (no cambian con la base). |
+| $\sigma_{\max/\min}=\tfrac{\sigma_{xx}+\sigma_{yy}}2\pm\sqrt{(\tfrac{\sigma_{xx}-\sigma_{yy}}2)^2+\sigma_{xy}^2}$ | — | Tensiones principales en 2D (estado plano) — equivalente algebraico del Círculo de Mohr. |
+| $\sigma'_{ij}=\sigma_{ij}-\sigma_0\delta_{ij}$ | $\sigma_0=\tfrac13\mathrm{tr}\,\sigma$ | **Desviador de tensión** — la separación tamaño/forma, previa a U5 y a la clave de U7. |
 
 ## Cinemática — Deformación (U5)
 
