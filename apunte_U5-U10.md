@@ -788,7 +788,7 @@ $$\underbrace{\tfrac{1}{3}\mathrm{tr}\,\boldsymbol\delta}_{\text{tamaño}} + \un
 
 **3. Las condiciones famosas = anular una pieza.** Rígido: $\varepsilon = 0$ (o $V=0$). Incompresible: traza $= 0$. Irrotacional: antisimétrica $= 0$. Independientes entre sí. Del lado sólido, incompresible = $\nu \to 1/2$ = $\lambda \to \infty$.
 
-**4. Invariantes = los números reales.** $I_1 = $ traza = volumen; $J_2$ = intensidad de distorsión. No dependen de los ejes porque miden física, no coordenadas.
+**4. Invariantes = los números reales.** $I_1$ = traza = volumen; $J_2$ = intensidad de distorsión. No dependen de los ejes porque miden física, no coordenadas.
 
 **5. El cierre del sistema (15 = 15).** Equilibrio (universal) + cinemática/compatibilidad (universal) + constitutiva (del material) = problema determinado. Navier-Stokes = conservación de momento + constitutiva Newtoniana. Elasticidad lineal = equilibrio + Hooke + compatibilidad. Este esquema es el mapa de todo lo que sigue en el curso.
 
@@ -1455,6 +1455,22 @@ Vale para CUALQUIER propiedad transportada (velocidad, temperatura, cada compone
 | Pagás el convectivo | Pagás la sustitución |
 
 **Deben dar lo mismo** (convertir con el mapeo para chequear). Verificación extra: $v_i=\partial x_i/\partial t|_\mathbf{a}$ debe reproducir el campo dado.
+
+### 🖼️ Visualización: derivada material, local + convectivo
+
+Antes del ejemplo de examen, el caso más limpio posible para que la fórmula de arriba deje de ser álgebra: un campo escalar **no estacionario** $T(x,t)=\sin(x-t)$ (una onda viajando sola, a velocidad de fase 1), visto por un sensor fijo en $x_0$ y por una partícula que viaja más rápido que la onda, con velocidad $V=2$:
+
+![Derivada material: lagrangiano vs euleriano](U9-U10/fig_derivada_material_lagr_euler.png)
+
+**Panel izquierdo:** el diagrama espacio-tiempo de $T(x,t)$. La línea vertical punteada es el sensor fijo — corta siempre la misma $x$. La línea diagonal amarilla es la partícula — al ir más rápido que la onda, la **atraviesa**: cruza crestas y valles con más frecuencia de la que la onda los genera.
+
+**Panel central:** eso se traduce en dos señales temporales genuinamente distintas para el mismo campo $T$. El sensor fijo mide $T(x_0,t)=-\sin t$; la partícula mide $T(x_0+Vt,t)=\sin t$ — literalmente señales opuestas, pese a describir el mismísimo campo físico. Esta es la diferencia entre $\partial T/\partial t$ (lo que ve el sensor) y $DT/Dt$ (lo que siente la partícula) hecha curva.
+
+**Panel derecho:** la descomposición de la fórmula boxeada, evaluada a lo largo de la trayectoria de la partícula: el término **local** ($\partial T/\partial t$, cómo cambia el campo ahí donde está la partícula en ese instante) más el término **convectivo** ($V\,\partial T/\partial x$, cuánto cambia $T$ solo por moverse la partícula a otro lugar) suman la curva **material** ($DT/Dt$). Ninguno de los dos términos por sí solo reproduce lo que siente la partícula — hacen falta los dos.
+
+💡 Si $V=0$ (partícula quieta) o si $T$ no dependiera de $x$ (campo espacialmente uniforme), el término convectivo se anula y $DT/Dt=\partial T/\partial t$: sensor fijo y partícula coinciden. Es exactamente el caso trivial que hace que mucha gente confunda ambas derivadas — coinciden justo cuando uno de los dos ingredientes (movimiento o no-uniformidad) falta.
+
+*(Generado con `U9-U10/visualizacion_derivada_material_lagr_euler.py`.)*
 
 ### 🖼️ Visualización: observador fijo vs. observador que viaja con la partícula (parcial 2023-1, tipo T2)
 
