@@ -13,4 +13,5 @@ Cada unidad tiene su carpeta (`U1`...`U8`, `U9-U10`) con el capítulo en PDF, la
 - `U1`–`U8`, `U9-U10`: material por unidad (teoría, guía, figuras).
 - `Parciales1`, `Parciales2`: parciales viejos resueltos, organizados por parte del examen.
 - `TrabajoPractico`: TP de la cursada (notebooks, informe, simulaciones).
+- `Simulaciones`: fluido (SPH) vs. sólido (masa-resorte) — la distinción de la U7 hecha animación. Ver [`Simulaciones/README.md`](Simulaciones/README.md).
 - `Material_General`: bibliografía y planificación de la materia, no atadas a una unidad puntual.
