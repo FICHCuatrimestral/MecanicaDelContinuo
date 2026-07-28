@@ -1,0 +1,1298 @@
+<title>Repaso furioso — Mecánica del Continuo</title>
+
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --paper:#E9EEEE;
+  --panel:#F6F9F9;
+  --panel-2:#DCE6E6;
+  --ink:#122228;
+  --ink-2:#42585F;
+  --ink-3:#71888F;
+  --line:#C2D0D1;
+  --line-2:#A9BCBE;
+  --accent:#0A6E78;
+  --accent-2:#0E8B92;
+  --accent-soft:#D2E6E7;
+  --heat:#8F520F;
+  --heat-soft:#EFDFC6;
+  --alarm:#94302E;
+  --alarm-soft:#F1DAD7;
+
+  --font-display:Constantia,Cambria,"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --font-body:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --font-math:"Cambria Math",Cambria,Constantia,"STIX Two Math","Latin Modern Math",Georgia,serif;
+  --font-mono:"Cascadia Mono",Consolas,"SF Mono",ui-monospace,"Roboto Mono",monospace;
+
+  --r:3px;
+  --maxw:1120px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#0B1317;
+    --panel:#121E23;
+    --panel-2:#1A2A31;
+    --ink:#DDE8E9;
+    --ink-2:#A1B5B9;
+    --ink-3:#7A9095;
+    --line:#25373E;
+    --line-2:#354C54;
+    --accent:#45B7C0;
+    --accent-2:#63CDD4;
+    --accent-soft:#0E3237;
+    --heat:#D8A05C;
+    --heat-soft:#372817;
+    --alarm:#E0837A;
+    --alarm-soft:#3A1D1B;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0B1317; --panel:#121E23; --panel-2:#1A2A31;
+  --ink:#DDE8E9; --ink-2:#A1B5B9; --ink-3:#7A9095;
+  --line:#25373E; --line-2:#354C54;
+  --accent:#45B7C0; --accent-2:#63CDD4; --accent-soft:#0E3237;
+  --heat:#D8A05C; --heat-soft:#372817;
+  --alarm:#E0837A; --alarm-soft:#3A1D1B;
+}
+:root[data-theme="light"]{
+  --paper:#E9EEEE; --panel:#F6F9F9; --panel-2:#DCE6E6;
+  --ink:#122228; --ink-2:#42585F; --ink-3:#71888F;
+  --line:#C2D0D1; --line-2:#A9BCBE;
+  --accent:#0A6E78; --accent-2:#0E8B92; --accent-soft:#D2E6E7;
+  --heat:#8F520F; --heat-soft:#EFDFC6;
+  --alarm:#94302E; --alarm-soft:#F1DAD7;
+}
+
+/* ============ BASE ============ */
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--font-body);
+  font-size:17px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px}
+.prose{max-width:68ch}
+h1,h2,h3,h4{font-family:var(--font-display);text-wrap:balance;margin:0;font-weight:600}
+p{margin:0}
+a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:2px}
+:focus-visible{outline:2px solid var(--accent-2);outline-offset:2px;border-radius:2px}
+hr{border:0;border-top:1px solid var(--line);margin:0}
+
+/* ============ TOPBAR ============ */
+.topbar{
+  position:sticky;top:0;z-index:50;
+  background:color-mix(in srgb,var(--paper) 88%, transparent);
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);
+}
+.topbar-in{
+  max-width:var(--maxw);margin:0 auto;padding:8px 20px;
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+}
+.brandmark{
+  font-family:var(--font-mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--accent);white-space:nowrap;font-weight:600;
+}
+.navchips{display:flex;gap:4px;overflow-x:auto;flex:1 1 320px;scrollbar-width:thin;padding-bottom:2px}
+.navchips a{
+  font-family:var(--font-mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-2);text-decoration:none;white-space:nowrap;
+  padding:5px 9px;border:1px solid transparent;border-radius:var(--r);
+}
+.navchips a:hover{color:var(--ink);background:var(--panel-2);border-color:var(--line)}
+.tools{display:flex;gap:6px;align-items:center}
+.btn{
+  font-family:var(--font-mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;
+  padding:6px 11px;border:1px solid var(--line-2);background:var(--panel);color:var(--ink-2);
+  border-radius:var(--r);cursor:pointer;white-space:nowrap;
+}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+
+/* ============ HERO ============ */
+.hero{padding:52px 0 40px;border-bottom:1px solid var(--line)}
+.eyebrow{
+  font-family:var(--font-mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:14px;
+}
+.hero h1{font-size:clamp(2.1rem,5.2vw,3.3rem);line-height:1.06;letter-spacing:-.015em;margin-bottom:16px}
+.hero h1 em{font-style:italic;color:var(--accent)}
+.lede{font-size:1.1rem;color:var(--ink-2);max-width:62ch}
+.stat-strip{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);margin-top:32px;border-radius:var(--r);overflow:hidden;
+}
+.stat{background:var(--panel);padding:14px 16px}
+.stat .n{font-family:var(--font-display);font-size:1.9rem;line-height:1;color:var(--accent);font-variant-numeric:tabular-nums}
+.stat .l{font-family:var(--font-mono);font-size:.66rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);margin-top:7px}
+
+/* ============ SECTIONS ============ */
+section{padding:52px 0;border-bottom:1px solid var(--line)}
+.sec-head{display:flex;gap:14px;align-items:baseline;margin-bottom:8px;flex-wrap:wrap}
+.sec-tag{
+  font-family:var(--font-mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--paper);background:var(--ink-2);padding:3px 8px;border-radius:var(--r);
+}
+.sec-head h2{font-size:clamp(1.5rem,3.4vw,2.1rem);letter-spacing:-.01em}
+.sec-sub{color:var(--ink-2);margin-bottom:30px;max-width:70ch}
+
+/* ============ CARDS / PANELS ============ */
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+
+.callout{
+  border-left:3px solid var(--accent);background:var(--accent-soft);
+  padding:14px 18px;border-radius:0 var(--r) var(--r) 0;
+}
+.callout.warn{border-left-color:var(--heat);background:var(--heat-soft)}
+.callout.bad{border-left-color:var(--alarm);background:var(--alarm-soft)}
+.callout .k{
+  font-family:var(--font-mono);font-size:.68rem;letter-spacing:.11em;text-transform:uppercase;
+  display:block;margin-bottom:5px;opacity:.85;font-weight:600;
+}
+
+/* ============ EXAM SKELETON ============ */
+.skeleton{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.sk-row{background:var(--panel);display:grid;grid-template-columns:44px 1fr;gap:0}
+.sk-n{
+  background:var(--panel-2);display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-display);font-size:1.5rem;color:var(--accent);
+}
+.sk-body{padding:14px 18px}
+.sk-body h4{font-size:1.05rem;margin-bottom:4px}
+.sk-body .meta{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.05em;color:var(--ink-3);text-transform:uppercase;margin-bottom:7px}
+.sk-body p{color:var(--ink-2);font-size:.94rem}
+
+/* ============ TABLES ============ */
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--panel)}
+table{border-collapse:collapse;width:100%;font-size:.88rem;min-width:640px}
+th,td{padding:9px 11px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+thead th{
+  font-family:var(--font-mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:600;background:var(--panel-2);position:sticky;top:0;
+}
+tbody tr:last-child td{border-bottom:0}
+td.c,th.c{text-align:center;font-variant-numeric:tabular-nums}
+.hit{color:var(--accent);font-weight:700}
+.miss{color:var(--ink-3);opacity:.5}
+.meter{display:inline-flex;gap:2px;vertical-align:middle}
+.meter i{width:7px;height:7px;border-radius:50%;background:var(--line-2);display:block}
+.meter i.on{background:var(--heat)}
+.verdict{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap}
+.v-hi{color:var(--heat);font-weight:700}
+.v-md{color:var(--ink-2)}
+.v-lo{color:var(--ink-3)}
+
+/* ============ FORMULA ROWS ============ */
+.fset{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.fset-head{
+  background:var(--panel-2);padding:9px 16px;
+  font-family:var(--font-mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);font-weight:600;
+}
+.f{background:var(--panel);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:0}
+.f-l{padding:13px 16px;border-right:1px solid var(--line)}
+.f-name{font-weight:600;font-size:.96rem;margin-bottom:3px}
+.f-why{font-size:.83rem;color:var(--ink-2);line-height:1.45}
+.f-eq{
+  all:unset;display:flex;align-items:center;padding:13px 16px;cursor:pointer;
+  font-family:var(--font-math);font-size:1.14rem;line-height:1.5;color:var(--ink);
+  min-height:100%;position:relative;
+}
+.f-eq:hover{background:var(--panel-2)}
+.f-eq .in{display:block;transition:filter .16s ease,opacity .16s ease}
+body.tapado .f-eq:not(.abierta) .in{filter:blur(6.5px);opacity:.5;user-select:none}
+body.tapado .f-eq:not(.abierta)::after{
+  content:"revelar";position:absolute;right:14px;top:50%;transform:translateY(-50%);
+  font-family:var(--font-mono);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);
+  background:var(--panel);padding:3px 6px;border:1px solid var(--line);border-radius:var(--r);
+}
+.f-eq sub,.f-eq sup{font-size:.68em}
+.hot{box-shadow:inset 3px 0 0 var(--heat)}
+.hot .f-name::after{
+  content:"U10";font-family:var(--font-mono);font-size:.58rem;letter-spacing:.1em;
+  color:var(--heat);border:1px solid var(--heat);padding:1px 4px;margin-left:7px;border-radius:2px;vertical-align:2px;
+}
+@media (max-width:620px){
+  .f{grid-template-columns:1fr}
+  .f-l{border-right:0;border-bottom:1px dashed var(--line);padding-bottom:9px}
+}
+
+/* ============ DEMOS ============ */
+.demo{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.demo-h{padding:13px 18px;background:var(--panel-2);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap}
+.demo-h h4{font-size:1.08rem}
+.demo-h .where{font-family:var(--font-mono);font-size:.66rem;letter-spacing:.06em;color:var(--heat);text-transform:uppercase}
+.steps{list-style:none;margin:0;padding:14px 18px;counter-reset:s}
+.steps li{
+  counter-increment:s;padding:7px 0 7px 34px;position:relative;font-size:.93rem;border-bottom:1px dotted var(--line);
+}
+.steps li:last-child{border-bottom:0}
+.steps li::before{
+  content:counter(s);position:absolute;left:0;top:8px;
+  width:21px;height:21px;border:1px solid var(--accent);color:var(--accent);border-radius:50%;
+  font-family:var(--font-mono);font-size:.68rem;display:flex;align-items:center;justify-content:center;
+}
+.eqbox{
+  font-family:var(--font-math);font-size:1.12rem;text-align:center;
+  padding:12px 14px;margin:0 18px 16px;border:1px solid var(--line-2);border-radius:var(--r);
+  background:var(--panel-2);overflow-x:auto;
+}
+.mono{font-family:var(--font-mono);font-size:.88em}
+.math{font-family:var(--font-math);font-size:1.05em}
+
+/* ============ PLAN ============ */
+.progress{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.bar{flex:1;height:7px;background:var(--panel-2);border:1px solid var(--line);border-radius:99px;overflow:hidden}
+.bar span{display:block;height:100%;width:0;background:var(--accent);transition:width .25s ease}
+.pct{font-family:var(--font-mono);font-size:.75rem;color:var(--ink-2);font-variant-numeric:tabular-nums;min-width:4ch}
+.blocks{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.blk{background:var(--panel);display:grid;grid-template-columns:76px 1fr;align-items:start;gap:0;cursor:pointer}
+.blk:hover{background:var(--panel-2)}
+.blk input{position:absolute;opacity:0;pointer-events:none}
+.blk .t{
+  padding:13px 10px;text-align:center;font-family:var(--font-mono);font-size:.74rem;
+  color:var(--ink-3);border-right:1px solid var(--line);letter-spacing:.03em;
+}
+.blk .c{padding:13px 16px;display:flex;gap:11px;align-items:flex-start}
+.box{
+  width:17px;height:17px;border:1.5px solid var(--line-2);border-radius:2px;flex:0 0 auto;margin-top:2px;
+  display:flex;align-items:center;justify-content:center;font-size:.72rem;color:var(--paper);
+}
+.blk input:checked ~ .c .box{background:var(--accent);border-color:var(--accent)}
+.blk input:checked ~ .c .box::after{content:"✓"}
+.blk input:checked ~ .c .txt{opacity:.5;text-decoration:line-through;text-decoration-color:var(--ink-3)}
+.blk .txt strong{display:block;font-size:.98rem;margin-bottom:2px}
+.blk .txt span{font-size:.86rem;color:var(--ink-2)}
+.blk.pausa .t,.blk.pausa .txt strong{color:var(--ink-3)}
+.blk.star{box-shadow:inset 3px 0 0 var(--heat)}
+
+/* ============ VISUALS ============ */
+.viz{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:10px}
+.viz h4{font-size:.98rem}
+.viz p{font-size:.85rem;color:var(--ink-2)}
+.viz canvas{width:100%;height:190px;display:block;border:1px solid var(--line);border-radius:2px;background:transparent}
+.viz svg{width:100%;height:auto;display:block}
+.tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{
+  font-family:var(--font-mono);font-size:.63rem;letter-spacing:.06em;text-transform:uppercase;
+  padding:2px 7px;border:1px solid var(--line-2);border-radius:99px;color:var(--ink-2);
+}
+.tag.ok{color:var(--accent);border-color:var(--accent)}
+.tag.no{color:var(--alarm);border-color:var(--alarm)}
+.repo{font-family:var(--font-mono);font-size:.68rem;color:var(--ink-3)}
+
+/* SVG theming */
+.dia{color:var(--ink-2)}
+.dia .st{stroke:currentColor;fill:none;stroke-width:1.2}
+.dia .ac{stroke:var(--accent);fill:none;stroke-width:1.6}
+.dia .acf{fill:var(--accent)}
+.dia .ht{stroke:var(--heat);fill:none;stroke-width:1.6}
+.dia .htf{fill:var(--heat)}
+.dia .fill{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.2}
+.dia .dash{stroke:currentColor;fill:none;stroke-width:1;stroke-dasharray:4 3}
+.dia text{font-family:var(--font-mono);font-size:9.5px;fill:var(--ink-2)}
+.dia text.big{font-family:var(--font-math);font-size:13px;fill:var(--ink)}
+.dia text.lab{fill:var(--accent);font-weight:600}
+
+/* ============ PIPELINE ============ */
+.pipe{display:flex;gap:8px;align-items:stretch;flex-wrap:wrap}
+.pipe-n{
+  flex:1 1 150px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
+  padding:12px 14px;min-width:0;
+}
+.pipe-n .k{font-family:var(--font-mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-bottom:5px}
+.pipe-n .v{font-family:var(--font-math);font-size:1rem;color:var(--ink)}
+.pipe-n.mid{background:var(--accent-soft);border-color:var(--accent)}
+.pipe-n.out{border-color:var(--heat);background:var(--heat-soft)}
+.pipe-arrow{align-self:center;color:var(--ink-3);font-size:1.2rem}
+@media (max-width:700px){.pipe-arrow{transform:rotate(90deg)}}
+
+/* ============ QA CARDS ============ */
+.qa{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.qa-q{padding:13px 16px;font-weight:600;font-size:.97rem;border-bottom:1px solid var(--line);display:flex;gap:10px}
+.qa-q .n{font-family:var(--font-mono);font-size:.7rem;color:var(--accent);flex:0 0 auto;padding-top:3px}
+.qa-a{all:unset;display:block;padding:13px 16px;cursor:pointer;position:relative;font-size:.9rem;line-height:1.55;color:var(--ink-2)}
+.qa-a:hover{background:var(--panel-2)}
+.qa-a .in{display:block;transition:filter .16s ease,opacity .16s ease}
+body.tapado .qa-a:not(.abierta) .in{filter:blur(6px);opacity:.45;user-select:none}
+.qa-a b{color:var(--ink)}
+
+/* ============ ERRORS ============ */
+.errs{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.err{background:var(--panel);padding:11px 16px;display:flex;gap:12px;font-size:.9rem}
+.err .n{font-family:var(--font-mono);font-size:.72rem;color:var(--alarm);flex:0 0 22px;padding-top:2px;font-weight:700}
+.err b{color:var(--ink)}
+
+/* ============ FOOTER ============ */
+footer{padding:40px 0 60px;color:var(--ink-3);font-size:.85rem}
+
+/* ============ PRINT ============ */
+@media print{
+  .topbar,.tools,.navchips,.viz canvas{display:none}
+  body{background:#fff;color:#000;font-size:11pt}
+  body.tapado .f-eq .in,body.tapado .qa-a .in{filter:none!important;opacity:1!important}
+  body.tapado .f-eq::after{display:none}
+  section{page-break-inside:avoid;padding:20px 0}
+  .panel,.f,.fset{background:#fff}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+</style>
+
+<div class="topbar">
+  <div class="topbar-in">
+    <span class="brandmark">Repaso furioso</span>
+    <nav class="navchips">
+      <a href="#patrones">Patrones</a>
+      <a href="#plan">Plan del día</a>
+      <a href="#u910">Fórmulas U9–U10</a>
+      <a href="#demos">Las 5 demos</a>
+      <a href="#mapa">Mapa visual</a>
+      <a href="#u38">Fórmulas U3–U8</a>
+      <a href="#sinteticas">Sintéticas</a>
+      <a href="#errores">Lista negra</a>
+      <a href="#simulacro">Simulacro</a>
+    </nav>
+    <div class="tools">
+      <button class="btn" id="tapar" aria-pressed="false">Tapar fórmulas</button>
+      <button class="btn" id="revelar">Revelar todo</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<header class="hero">
+  <div class="eyebrow">UNL · FICH · Mecánica del Continuo · Unidades 3 a 10</div>
+  <h1>Un día para meter <em>todo</em> el continuo en la cabeza.</h1>
+  <p class="lede">Los dos parciales de junio 2025 que tenés guardados —24/06 y 26/06— comparten el mismo esqueleto de cuatro bloques, con las mismas dos preguntas pesadas al final. Este documento está armado alrededor de esa repetición: primero el patrón, después el plan, después las fórmulas en modo tapado para memorizar, y las cinco demostraciones que hay que poder escribir sin mirar.</p>
+  <div class="stat-strip">
+    <div class="stat"><div class="n">4</div><div class="l">bloques por examen (2025)</div></div>
+    <div class="stat"><div class="n">4 de 4</div><div class="l">exámenes recientes abren con teoría</div></div>
+    <div class="stat"><div class="n">5</div><div class="l">demos que hay que saber</div></div>
+    <div class="stat"><div class="n">≈50%</div><div class="l">del puntaje es predecible</div></div>
+  </div>
+</header>
+
+<!-- ===================== PATRONES ===================== -->
+<section id="patrones">
+  <div class="sec-head"><span class="sec-tag">Patrones</span><h2>Cómo está armado el examen</h2></div>
+  <p class="sec-sub">Esqueleto observado en los parciales 2 del 24/06/2025 y 26/06/2025 (los dos que están escaneados en <span class="mono">Parciales2/</span>). Los de 2024 tenían 5 preguntas en vez de 4, pero los ingredientes son los mismos.</p>
+
+  <div class="skeleton" style="margin-bottom:26px">
+    <div class="sk-row">
+      <div class="sk-n">1</div>
+      <div class="sk-body">
+        <div class="meta">4 de los 4 exámenes recientes · 4 a 5 incisos · vale mucho por minuto</div>
+        <h4>«Responda las siguientes preguntas en forma sintética»</h4>
+        <p>Teoría pura, sin cuentas (salvo una demo de dos líneas). Pool cerrado: potencial vs. función de corriente, homogéneo vs. isótropo, qué concluye el momento angular, qué se asume para ∇·v=0, ε vs. V, qué garantiza compatibilidad, rotor de v, qué relaciona Gauss, derivada material vs. espacial. <b>Están todas resueltas abajo.</b></p>
+      </div>
+    </div>
+    <div class="sk-row">
+      <div class="sk-n">2</div>
+      <div class="sk-body">
+        <div class="meta">4 de los 4 exámenes recientes · siempre con figura · unidad 5</div>
+        <h4>Deformaciones a partir de una figura</h4>
+        <p>Dos variantes que se alternan: <b>(a)</b> Green‑Lagrange/Almansi de un movimiento homogéneo dibujado —armás el mapeo lineal desde los vértices y hacés E = ½(FᵀF − I)—, o <b>(b)</b> cambio de longitud de una fibra compuesta con ε uniforme, casi siempre con un tramo de dilatación térmica. En 2025 salió una de cada.</p>
+      </div>
+    </div>
+    <div class="sk-row">
+      <div class="sk-n">3</div>
+      <div class="sk-body">
+        <div class="meta">alguna variante en los 6 · 3 incisos encadenados · el más mecánico</div>
+        <h4>Un campo (velocidad o temperatura) con tres preguntas</h4>
+        <p>Casi calcado los dos años: <b>a)</b> derivada material en euleriana, <b>b)</b> lo mismo en lagrangiana <i>o</i> flujo neto saliente por una superficie de volumen arbitrario (= Gauss inmediato), <b>c)</b> ¿es incompresible? ¿es irrotacional? demostrarlo. Es plata gratis si lo tenés automatizado.</p>
+      </div>
+    </div>
+    <div class="sk-row">
+      <div class="sk-n">4</div>
+      <div class="sk-body">
+        <div class="meta">Cayó en 4 de 6 · la pregunta más pesada · unidad 10</div>
+        <h4>Deducir una gran ecuación indicando la razón de cada simplificación</h4>
+        <p>Navier‑Stokes incompresible en 2025 (las dos fechas) y en 2024, ecuación de Navier de elasticidad en el otro 2024, simetría de σ en el recuperatorio. Siempre parte del balance de cantidad de movimiento y siempre pide <b>escribir el porqué de cada término que se tacha</b>. El 26/06/2025 agregó un inciso b) conceptual («¿qué nombre recibe μ?»).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout" style="margin-bottom:26px">
+    <span class="k">La lectura corta</span>
+    Los bloques <b>3</b> y <b>4</b> juntos son cerca de la mitad del examen y son los más predecibles de todos. Si mañana solo pudieras entrenar dos cosas: derivada material + Gauss + irrotacional/incompresible (bloque 3), y la deducción de Navier‑Stokes con razones (bloque 4).
+  </div>
+
+  <h3 style="font-size:1.15rem;margin-bottom:12px">Matriz de frecuencia por tipo de ejercicio</h3>
+  <div class="tablewrap" style="margin-bottom:14px">
+    <table>
+      <thead>
+        <tr>
+          <th>Tipo de ejercicio</th>
+          <th class="c">2023</th><th class="c">2023R</th>
+          <th class="c">2024</th><th class="c">2024R</th>
+          <th class="c">24/06/25</th><th class="c">26/06/25</th>
+          <th class="c">Frec.</th>
+          <th>Veredicto</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><b>Preguntas sintéticas</b> (teoría)</td>
+          <td class="c miss">?</td><td class="c miss">?</td><td class="c hit">●</td><td class="c hit">●</td><td class="c hit">●</td><td class="c hit">●</td>
+          <td class="c"><span class="meter"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td>
+          <td><span class="verdict v-hi">Cae seguro</span></td></tr>
+        <tr><td><b>Derivada material</b> de un campo (euler./lagr.)</td>
+          <td class="c hit">●</td><td class="c miss">·</td><td class="c hit">●</td><td class="c hit">●</td><td class="c hit">●</td><td class="c hit">●</td>
+          <td class="c"><span class="meter"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td>
+          <td><span class="verdict v-hi">Cae seguro</span></td></tr>
+        <tr><td><b>Deformación desde figura</b> (fibra Δl · Green‑Lagrange)</td>
+          <td class="c hit">●</td><td class="c miss">·</td><td class="c hit">●</td><td class="c hit">●</td><td class="c hit">●</td><td class="c hit">●</td>
+          <td class="c"><span class="meter"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td>
+          <td><span class="verdict v-hi">Cae seguro</span></td></tr>
+        <tr><td><b>Deducir NS o Navier</b> con razones</td>
+          <td class="c miss">·</td><td class="c miss">·</td><td class="c hit">●</td><td class="c miss">·</td><td class="c hit">●</td><td class="c hit">●</td>
+          <td class="c"><span class="meter"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></td>
+          <td><span class="verdict v-hi">3 de los últimos 3</span></td></tr>
+        <tr><td><b>¿Irrotacional? ¿Incompresible?</b> + función de corriente</td>
+          <td class="c miss">·</td><td class="c hit">●</td><td class="c miss">·</td><td class="c hit">●</td><td class="c hit">●</td><td class="c hit">●</td>
+          <td class="c"><span class="meter"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></td>
+          <td><span class="verdict v-hi">Muy probable</span></td></tr>
+        <tr><td><b>Flujo por superficie</b> con Gauss</td>
+          <td class="c miss">·</td><td class="c hit">●</td><td class="c hit">●</td><td class="c miss">·</td><td class="c miss">·</td><td class="c hit">●</td>
+          <td class="c"><span class="meter"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></td>
+          <td><span class="verdict v-md">Probable</span></td></tr>
+        <tr><td><b>Verificar campo de tensiones</b> (Airy · placa · viga)</td>
+          <td class="c hit">●</td><td class="c miss">·</td><td class="c hit">●</td><td class="c hit">●</td><td class="c miss">·</td><td class="c miss">·</td>
+          <td class="c"><span class="meter"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></td>
+          <td><span class="verdict v-md">Probable</span></td></tr>
+        <tr><td><b>Demo simetría de σ</b> (momento angular)</td>
+          <td class="c miss">·</td><td class="c miss">·</td><td class="c miss">·</td><td class="c hit">●</td><td class="c miss">·</td><td class="c miss">·</td>
+          <td class="c"><span class="meter"><i class="on"></i><i></i><i></i><i></i><i></i></span></td>
+          <td><span class="verdict v-lo">Puede caer</span></td></tr>
+        <tr><td><b>Demo variacional</b> / identidad tipo Green</td>
+          <td class="c hit">●</td><td class="c miss">·</td><td class="c miss">·</td><td class="c miss">·</td><td class="c miss">·</td><td class="c miss">·</td>
+          <td class="c"><span class="meter"><i class="on"></i><i></i><i></i><i></i><i></i></span></td>
+          <td><span class="verdict v-lo">Puede caer</span></td></tr>
+        <tr><td><b>Verificar isotropía</b> de un tensor</td>
+          <td class="c miss">·</td><td class="c miss">·</td><td class="c hit">●</td><td class="c miss">·</td><td class="c miss">·</td><td class="c miss">·</td>
+          <td class="c"><span class="meter"><i class="on"></i><i></i><i></i><i></i><i></i></span></td>
+          <td><span class="verdict v-lo">Puede caer</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="repo">● cayó · · no cayó · ? no consta en el material. Fuente: los enunciados escaneados de <span class="mono">Parciales2/</span> (24/06/25 y 26/06/25, leídos directamente) y el análisis por año que ya está en <span class="mono">apunte_U5-U10.md</span> para 2023 y 2024.</p>
+
+  <h3 style="font-size:1.15rem;margin:30px 0 12px">Señales del enunciado → herramienta</h3>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Si el enunciado dice…</th><th>Significa</th><th>Hacés</th></tr></thead>
+      <tbody>
+        <tr><td>«x<sub>i</sub> son las coordenadas <b>actuales o espaciales</b>»</td><td>descripción euleriana</td><td>D/Dt <b>con</b> término convectivo</td></tr>
+        <tr><td>«a<sub>i</sub> son las coordenadas de <b>referencia</b>» / te dan x<sub>i</sub>(a,t)</td><td>descripción lagrangiana</td><td>sustituir el mapeo y derivar ∂/∂t|<sub>a</sub>, <b>sin</b> convectivo</td></tr>
+        <tr><td>«volumen <b>fijo y arbitrario</b> V, superficie S con normal n<sub>i</sub>»</td><td>no hay que parametrizar nada</td><td>Gauss directo: ∬f<sub>i</sub>n<sub>i</sub>dS = ∫div f dV</td></tr>
+        <tr><td>«<b>demuestre</b> su respuesta» en irrotacional/incompresible</td><td>quieren la cuenta, no el sí/no</td><td>escribir rot v componente a componente / ∂<sub>k</sub>v<sub>k</sub></td></tr>
+        <tr><td>«indique la <b>razón de las simplificaciones</b>»</td><td>el puntaje está en los porqués</td><td>cada término tachado con su justificación al lado</td></tr>
+        <tr><td>«asumir que se cumple el balance de <b>momento angular</b>»</td><td>te habilitan σ simétrico</td><td>una línea: σ<sub>ij</sub>=σ<sub>ji</sub> ⇒ σ<sub>ji,j</sub>=σ<sub>ij,j</sub></td></tr>
+        <tr><td>«tensor isotrópico de <b>cuarto orden</b> ℂ<sub>ijkl</sub>»</td><td>versión larga de la constitutiva</td><td>contraer las deltas primero → λA<sub>kk</sub>δ<sub>ij</sub>+2μA<sub>ij</sub></td></tr>
+        <tr><td>«considerando el problema en <b>3D</b>» en una placa</td><td>trampa de Poisson</td><td>σ<sub>zz</sub>=0 pero ε<sub>zz</sub>≠0</td></tr>
+        <tr><td>«deformación <b>homogénea</b>»</td><td>F constante en todo el cuerpo</td><td>mapeo lineal x=F·a desde los vértices de la figura</td></tr>
+        <tr><td>«pequeñas deformaciones» en una deducción</td><td>linealizar</td><td>Dv/Dt ≈ ∂²u/∂t², ρ ≈ cte</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===================== PLAN ===================== -->
+<section id="plan">
+  <div class="sec-head"><span class="sec-tag">Plan</span><h2>El día, bloque por bloque</h2></div>
+  <p class="sec-sub">Orden por rentabilidad, no por número de unidad: primero lo que cae seguro. Los bloques con marca naranja son los innegociables — si el día se te acorta, esos tres se hacen igual.</p>
+
+  <div class="progress">
+    <div class="bar"><span id="barfill"></span></div>
+    <span class="pct" id="pct">0%</span>
+  </div>
+
+  <div class="blocks" id="blocks">
+    <label class="blk"><input type="checkbox"><span class="t">30 min</span><span class="c"><span class="box"></span><span class="txt"><strong>Orientación</strong><span>Leer esta página entera de arriba abajo, sin resolver nada. Sabés qué cae y en qué orden atacarlo.</span></span></span></label>
+
+    <label class="blk star"><input type="checkbox"><span class="t">90 min</span><span class="c"><span class="box"></span><span class="txt"><strong>Fórmulas U9–U10 con el modo tapado</strong><span>Tres pasadas: leer, tapar y recitar, tapar y escribir a mano. No pasás al bloque siguiente hasta que las de «Balance» salgan sin mirar.</span></span></span></label>
+
+    <label class="blk"><input type="checkbox"><span class="t">45 min</span><span class="c"><span class="box"></span><span class="txt"><strong>Las tres herramientas</strong><span>Gauss, derivada material, Reynolds + lema oro. Escribir la deducción de continuidad y la de Cauchy siguiendo la receta única.</span></span></span></label>
+
+    <label class="blk star"><input type="checkbox"><span class="t">60 min</span><span class="c"><span class="box"></span><span class="txt"><strong>Demo Navier‑Stokes, hasta que salga sola</strong><span>Escribirla completa tres veces con las razones R0–R5 al margen. Cuarta vez, cronometrada, en 12 minutos. Es la pregunta más cara del examen.</span></span></span></label>
+
+    <label class="blk pausa"><input type="checkbox"><span class="t">45 min</span><span class="c"><span class="box"></span><span class="txt"><strong>Almuerzo</strong><span>Lejos de la carpeta. En serio.</span></span></span></label>
+
+    <label class="blk"><input type="checkbox"><span class="t">50 min</span><span class="c"><span class="box"></span><span class="txt"><strong>Demo simetría de σ + demo Navier elasticidad</strong><span>La gemela de NS: misma cuenta, destino opuesto en dos términos. Tener clarísimo cuál sobrevive y por qué.</span></span></span></label>
+
+    <label class="blk"><input type="checkbox"><span class="t">60 min</span><span class="c"><span class="box"></span><span class="txt"><strong>Variacionales</strong><span>Ida del calor (5 movimientos), ida de elasticidad con el paso estrella, vuelta débil⇒fuerte, y Kα=f. Cerrar con la identidad tipo Green de 2023.</span></span></span></label>
+
+    <label class="blk star"><input type="checkbox"><span class="t">75 min</span><span class="c"><span class="box"></span><span class="txt"><strong>Bloque 3 del examen, en automático</strong><span>Diez campos inventados: derivada material euleriana, divergencia, rotor. Hasta que no tengas que pensar la fórmula. Sumar dos Green‑Lagrange desde figura.</span></span></span></label>
+
+    <label class="blk pausa"><input type="checkbox"><span class="t">20 min</span><span class="c"><span class="box"></span><span class="txt"><strong>Pausa</strong><span>Caminar. La memoria consolida en los huecos.</span></span></span></label>
+
+    <label class="blk"><input type="checkbox"><span class="t">45 min</span><span class="c"><span class="box"></span><span class="txt"><strong>U7–U8 y U3–U4 de repaso</strong><span>Hooke volumétrico/desviador, relaciones entre constantes, test de isotropía, Cauchy y principales. Rápido: es material de apoyo, no protagonista.</span></span></span></label>
+
+    <label class="blk"><input type="checkbox"><span class="t">40 min</span><span class="c"><span class="box"></span><span class="txt"><strong>Banco de sintéticas en voz alta</strong><span>Las nueve, dichas de memoria en 3–6 líneas cada una. Si titubeás en una, la escribís entera.</span></span></span></label>
+
+    <label class="blk"><input type="checkbox"><span class="t">60 min</span><span class="c"><span class="box"></span><span class="txt"><strong>Simulacro cronometrado</strong><span>El parcial del 26/06/2025 completo, sin apuntes, con reloj. Después corregirlo con el apunte al lado.</span></span></span></label>
+
+    <label class="blk"><input type="checkbox"><span class="t">25 min</span><span class="c"><span class="box"></span><span class="txt"><strong>Cierre: lista negra + tapado final</strong><span>Leer los 15 errores clásicos y hacer una última pasada de fórmulas tapadas. Después, dormir — no estudiar hasta tarde.</span></span></span></label>
+  </div>
+</section>
+
+<!-- ===================== U9-U10 ===================== -->
+<section id="u910">
+  <div class="sec-head"><span class="sec-tag">Prioridad 1</span><h2>Formulario Unidades 9 y 10</h2></div>
+  <p class="sec-sub">Tocá cualquier ecuación para revelarla. El botón <b>Tapar fórmulas</b> arriba las esconde todas de golpe: ese es el modo de estudio. La columna izquierda es la pista; la derecha, lo que tenés que poder escribir.</p>
+
+  <div class="callout" style="margin-bottom:22px">
+    <span class="k">La receta única de la unidad 10</span>
+    Una sola idea, aplicada cuatro veces: <b>ley física global (integral) → Gauss + derivada material + volumen arbitrario → ecuación local</b>. Masa da continuidad, momento lineal da Cauchy, momento angular <b>no da ninguna PDE nueva</b> (solo σ simétrico), energía da el balance térmico.
+  </div>
+
+  <div class="pipe" style="margin-bottom:30px">
+    <div class="pipe-n"><div class="k">Ley global</div><div class="v">D/Dt ∫<sub>V</sub> ρ A dV = ∫<sub>S</sub> … + ∫<sub>V</sub> …</div></div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-n mid"><div class="k">Tres herramientas</div><div class="v">Reynolds · Gauss · D/Dt</div></div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-n mid"><div class="k">∀ V arbitrario</div><div class="v">∫<sub>V</sub> f dV = 0 ⇒ f = 0</div></div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-n out"><div class="k">Ecuación local</div><div class="v">PDE punto a punto</div></div>
+  </div>
+
+  <div class="fset" style="margin-bottom:22px">
+    <div class="fset-head">A · Las tres herramientas + el lema</div>
+
+    <div class="f hot"><div class="f-l"><div class="f-name">Teorema de Gauss</div><div class="f-why">Integral de volumen de una derivada = integral de superficie del campo por la normal. Al cruzar la frontera, la ν<sub>i</sub> de afuera ↔ ∂/∂x<sub>i</sub> adentro.</div></div>
+      <button class="f-eq" type="button"><span class="in">∫<sub>V</sub> A<sub>jkl…,i</sub> dV = ∫<sub>S</sub> ν<sub>i</sub> A<sub>jkl…</sub> dS</span></button></div>
+
+    <div class="f hot"><div class="f-l"><div class="f-name">Derivada material</div><div class="f-why">Tasa de cambio de la propiedad <b>de la partícula</b>. Término 1: el campo cambia (sensor fijo). Término 2: la partícula se muda (convectivo).</div></div>
+      <button class="f-eq" type="button"><span class="in">DF/Dt = ∂F/∂t + v<sub>j</sub> ∂F/∂x<sub>j</sub></span></button></div>
+
+    <div class="f hot"><div class="f-l"><div class="f-name">Transporte de Reynolds</div><div class="f-why">Derivar una integral sobre volumen material. El término extra es la dilatación del volumen: por eso D/Dt <b>no</b> conmuta con ∫.</div></div>
+      <button class="f-eq" type="button"><span class="in">D/Dt ∫<sub>V</sub> A dV = ∫<sub>V</sub> [ ∂A/∂t + ∂(A v<sub>i</sub>)/∂x<sub>i</sub> ] dV = ∫<sub>V</sub> [ DA/Dt + A ∂v<sub>i</sub>/∂x<sub>i</sub> ] dV</span></button></div>
+
+    <div class="f hot"><div class="f-l"><div class="f-name">Lema oro (con ρ adelante)</div><div class="f-why">Con la densidad delante, la D/Dt entra limpia: el paréntesis sobrante muere por continuidad. Base de las demos de momento y de energía.</div></div>
+      <button class="f-eq" type="button"><span class="in">D/Dt ∫<sub>V</sub> ρA dV = ∫<sub>V</sub> ρ (DA/Dt) dV</span></button></div>
+
+    <div class="f"><div class="f-l"><div class="f-name">Volumen arbitrario</div><div class="f-why">Cierra <b>toda</b> derivación local. Si no lo escribís, la demo no está terminada.</div></div>
+      <button class="f-eq" type="button"><span class="in">∫<sub>V</sub> f dV = 0 ∀V ⇒ f = 0</span></button></div>
+  </div>
+
+  <div class="fset" style="margin-bottom:22px">
+    <div class="fset-head">B · Las cuatro leyes de balance — el corazón de la U10</div>
+
+    <div class="f hot"><div class="f-l"><div class="f-name">Conservación de masa, lagrangiana</div><div class="f-why">J = |∂x<sub>i</sub>/∂a<sub>j</sub>| es el factor local de cambio de volumen. J≠0 obligatorio: J=0 ⇒ densidad infinita, J&lt;0 ⇒ material invertido.</div></div>
+      <button class="f-eq" type="button"><span class="in">ρ<sub>0</sub>(a) = ρ(x) · J</span></button></div>
+
+    <div class="f hot"><div class="f-l"><div class="f-name">Continuidad (euleriana)</div><div class="f-why">La densidad cae a la tasa a la que el elemento se expande. Las dos formas son equivalentes; la integral es la más general (vale con choques).</div></div>
+      <button class="f-eq" type="button"><span class="in">∂ρ/∂t + ∂(ρv<sub>j</sub>)/∂x<sub>j</sub> = 0 ⟺ Dρ/Dt + ρ ∂v<sub>j</sub>/∂x<sub>j</sub> = 0</span></button></div>
+
+    <div class="f hot"><div class="f-l"><div class="f-name">Incompresibilidad</div><div class="f-why">Caso de continuidad con Dρ/Dt = 0: la partícula no cambia su densidad al moverse. No cambia volumen, sí forma. Es la traza de V.</div></div>
+      <button class="f-eq" type="button"><span class="in">∂v<sub>k</sub>/∂x<sub>k</sub> = tr V = 0</span></button></div>
+
+    <div class="f hot"><div class="f-l"><div class="f-name">Ecuación de Cauchy (momento lineal)</div><div class="f-why">Newton local. La fuerza interna neta es la <b>divergencia</b> de σ: una tensión uniforme no acelera nada. Con v=0 recuperás la estática.</div></div>
+      <button class="f-eq" type="button"><span class="in">ρ Dv<sub>i</sub>/Dt = σ<sub>ji,j</sub> + X<sub>i</sub></span></button></div>
+
+    <div class="f hot"><div class="f-l"><div class="f-name">Momento angular ⇒ simetría</div><div class="f-why">No es una PDE: es la condición algebraica que baja σ de 9 a 6 incógnitas. Por eso el momento angular «no suma ecuaciones» en el conteo de 15.</div></div>
+      <button class="f-eq" type="button"><span class="in">σ<sub>ij</sub> = σ<sub>ji</sub></span></button></div>
+
+    <div class="f hot"><div class="f-l"><div class="f-name">Fórmula de Cauchy (tracción)</div><div class="f-why">La tracción sobre una cara = σ actuando sobre su normal. Es el eslabón que permite convertir fuerzas de superficie en integrales de volumen.</div></div>
+      <button class="f-eq" type="button"><span class="in">T<sub>i</sub><sup>(n)</sup> = σ<sub>ji</sub> n<sub>j</sub></span></button></div>
+
+    <div class="f hot"><div class="f-l"><div class="f-name">Balance de energía (1.ª ley, cuerpo en reposo)</div><div class="f-why">Cambio de energía interna = calor generado − calor que sale por la frontera.</div></div>
+      <button class="f-eq" type="button"><span class="in">ρ ∂ε/∂t = q − ∂h<sub>i</sub>/∂x<sub>i</sub></span></button></div>
+
+    <div class="f"><div class="f-l"><div class="f-name">El cierre: conteo de incógnitas</div><div class="f-why">Balance + cinemática + constitutiva cierran el sistema. Frase de examen.</div></div>
+      <button class="f-eq" type="button"><span class="in">15 = 3 (movimiento) + 6 (cinemáticas) + 6 (constitutivas)</span></button></div>
+  </div>
+
+  <div class="fset" style="margin-bottom:22px">
+    <div class="fset-head">C · Constitutivas — el «material» que se enchufa</div>
+
+    <div class="f"><div class="f-l"><div class="f-name">Hooke isótropo (sólido)</div><div class="f-why">σ acoplado a la <b>deformación</b> ε. λ y μ = constantes de Lamé (μ = G). Exactamente dos constantes, por el teorema de isotropía.</div></div>
+      <button class="f-eq" type="button"><span class="in">σ<sub>ij</sub> = λ ε<sub>kk</sub> δ<sub>ij</sub> + 2μ ε<sub>ij</sub></span></button></div>
+
+    <div class="f hot"><div class="f-l"><div class="f-name">Fluido newtoniano isótropo</div><div class="f-why">σ acoplado a la <b>tasa</b> V. Misma estructura que Hooke, más la presión. Es la constitutiva que te dan en el enunciado de Navier‑Stokes.</div></div>
+      <button class="f-eq" type="button"><span class="in">σ<sub>ij</sub> = −p δ<sub>ij</sub> + λ V<sub>kk</sub> δ<sub>ij</sub> + 2μ V<sub>ij</sub></span></button></div>
+
+    <div class="f hot"><div class="f-l"><div class="f-name">Tensor isótropo de 4.º orden</div><div class="f-why">La versión larga que apareció en 2025. Contraelo <b>primero</b> con las deltas y recuperás la forma corta (para A simétrico).</div></div>
+      <button class="f-eq" type="button"><span class="in">ℂ<sub>ijkl</sub> = λ δ<sub>ij</sub>δ<sub>kl</sub> + μ(δ<sub>ik</sub>δ<sub>jl</sub> + δ<sub>il</sub>δ<sub>jk</sub>) ⇒ ℂ<sub>ijkl</sub>A<sub>kl</sub> = λA<sub>kk</sub>δ<sub>ij</sub> + 2μA<sub>ij</sub></span></button></div>
+
+    <div class="f"><div class="f-l"><div class="f-name">Hooke invertido (ε desde σ)</div><div class="f-why">Para verificar placas. Se deduce en dos líneas: traza de Hooke ⇒ σ<sub>kk</sub> = (3λ+2μ)ε<sub>kk</sub>, despejar y sustituir.</div></div>
+      <button class="f-eq" type="button"><span class="in">ε<sub>ij</sub> = σ<sub>ij</sub>/(2μ) − [λ/(2μ(3λ+2μ))] σ<sub>kk</sub> δ<sub>ij</sub></span></button></div>
+
+    <div class="f"><div class="f-l"><div class="f-name">Ley de Fourier</div><div class="f-why">El calor fluye contra el gradiente de temperatura. κ es escalar <b>por isotropía</b> — decilo, es la conexión con la U8.</div></div>
+      <button class="f-eq" type="button"><span class="in">h<sub>i</sub> = −κ T<sub>,i</sub></span></button></div>
+
+    <div class="f"><div class="f-l"><div class="f-name">Relaciones entre constantes elásticas</div><div class="f-why">Si un hookeano «no da cero», casi siempre falta usar una de estas antes de buscar el error.</div></div>
+      <button class="f-eq" type="button"><span class="in">λ = 2μν/(1−2ν) · E = 2μ(1+ν) · K = λ + 2μ/3</span></button></div>
+  </div>
+
+  <div class="fset" style="margin-bottom:22px">
+    <div class="fset-head">D · Las grandes PDEs (balance + constitutiva)</div>
+
+    <div class="f hot"><div class="f-l"><div class="f-name">Navier‑Stokes incompresible</div><div class="f-why">Cauchy + newtoniano + ∇·v=0. La p queda sin constitutiva: es incógnita / multiplicador de la incompresibilidad. Sistema 4×4.</div></div>
+      <button class="f-eq" type="button"><span class="in">ρ Dv<sub>i</sub>/Dt = ρb<sub>i</sub> − ∂p/∂x<sub>i</sub> + μ ∇²v<sub>i</sub> , con ∂<sub>k</sub>v<sub>k</sub> = 0</span></button></div>
+
+    <div class="f hot"><div class="f-l"><div class="f-name">Ecuación de Navier (elasticidad)</div><div class="f-why">Cauchy + Hooke + pequeñas deformaciones. Acá el término cruzado <b>sobrevive</b> — es la diferencia clave con el fluido.</div></div>
+      <button class="f-eq" type="button"><span class="in">ρ ∂²u<sub>i</sub>/∂t² = μ ∇²u<sub>i</sub> + (λ+μ) ∂e/∂x<sub>i</sub> + b<sub>i</sub></span></button></div>
+
+    <div class="f"><div class="f-l"><div class="f-name">Ecuación del calor</div><div class="f-why">Balance de energía + Fourier + almacenamiento ε = cT.</div></div>
+      <button class="f-eq" type="button"><span class="in">ρc ∂T/∂t = q + ∂/∂x<sub>i</sub> ( κ ∂T/∂x<sub>i</sub> )</span></button></div>
+  </div>
+
+  <div class="fset" style="margin-bottom:22px">
+    <div class="fset-head">E · Principios variacionales</div>
+
+    <div class="f"><div class="f-l"><div class="f-name">Trabajos virtuales</div><div class="f-why">El «∀ variación admisible» es lo que hace la forma débil <b>equivalente</b> a la fuerte, no una aproximación.</div></div>
+      <button class="f-eq" type="button"><span class="in">δW<sub>ext</sub> = δW<sub>int</sub> ∀ δ admisible</span></button></div>
+
+    <div class="f"><div class="f-l"><div class="f-name">Forma débil — calor</div><div class="f-why">Izquierda: los datos (fuente + flujo impuesto). Derecha: la «rigidez», gradiente contra gradiente.</div></div>
+      <button class="f-eq" type="button"><span class="in">∫<sub>Γφ</sub> φ̄ δT dS + ∫<sub>V</sub> q δT dV = ∫<sub>V</sub> κ ∇T · ∇(δT) dV</span></button></div>
+
+    <div class="f"><div class="f-l"><div class="f-name">Forma débil — elasticidad</div><div class="f-why">Fuerzas externas por desplazamiento virtual = tensión por deformación virtual.</div></div>
+      <button class="f-eq" type="button"><span class="in">∫<sub>V</sub> X<sub>i</sub> δu<sub>i</sub> dV + ∫<sub>Γσ</sub> T<sub>i</sub><sup>(n)</sup> δu<sub>i</sub> dΓ = ∫<sub>V</sub> σ<sub>ij</sub> δe<sub>ij</sub> dV</span></button></div>
+
+    <div class="f"><div class="f-l"><div class="f-name">El paso estrella</div><div class="f-why">σ simétrico solo trabaja contra la parte simétrica del gradiente virtual: <b>las tensiones no trabajan contra rotaciones</b>.</div></div>
+      <button class="f-eq" type="button"><span class="in">σ<sub>ij</sub> δu<sub>i,j</sub> = σ<sub>ij</sub> δe<sub>ij</sub> , porque σ<sub>ij</sub> δω<sub>ij</sub> = 0</span></button></div>
+
+    <div class="f"><div class="f-l"><div class="f-name">Admisibilidad</div><div class="f-why">La variación se anula donde el <b>valor</b> está impuesto (esencial) y es libre donde se impone la <b>fuerza</b> (natural). Declararlo antes de empezar la demo.</div></div>
+      <button class="f-eq" type="button"><span class="in">δ = 0 en Γ<sub>T</sub>, Γ<sub>u</sub> · δ libre en Γ<sub>φ</sub>, Γ<sub>σ</sub></span></button></div>
+
+    <div class="f"><div class="f-l"><div class="f-name">Discretización</div><div class="f-why">Campo admisible T = Nα, variación en la misma base (Galerkin), ∇T = Bα, arbitrariedad de δα. K simétrica porque κ (o ℂ) lo es.</div></div>
+      <button class="f-eq" type="button"><span class="in">K = ∫ Bᵀ κ B dV · f = ∫ Nᵀ q dV · Kα = f</span></button></div>
+  </div>
+
+  <div class="fset">
+    <div class="fset-head">F · Los cuatro trucos de índices que se repiten en todas las cuentas</div>
+    <div class="f"><div class="f-l"><div class="f-name">La delta mueve el índice de derivación</div><div class="f-why">Aparece al tomar la divergencia de σ, en NS y en Navier.</div></div>
+      <button class="f-eq" type="button"><span class="in">∂<sub>j</sub>(f δ<sub>ij</sub>) = ∂<sub>i</sub> f</span></button></div>
+    <div class="f"><div class="f-l"><div class="f-name">Conmutar derivadas parciales</div><div class="f-why">Es lo que mata el término cruzado en Navier‑Stokes (usando incompresibilidad por segunda vez).</div></div>
+      <button class="f-eq" type="button"><span class="in">∂<sub>j</sub>∂<sub>i</sub> = ∂<sub>i</sub>∂<sub>j</sub></span></button></div>
+    <div class="f"><div class="f-l"><div class="f-name">Simétrico : antisimétrico = 0</div><div class="f-why">El comodín. Mata e<sub>ijk</sub>v<sub>j</sub>v<sub>k</sub>, mata σ<sub>ij</sub>δω<sub>ij</sub>, y demuestra rot(∇φ)=0.</div></div>
+      <button class="f-eq" type="button"><span class="in">S<sub>ij</sub> A<sub>ij</sub> = 0 si S=Sᵀ y A=−Aᵀ</span></button></div>
+    <div class="f"><div class="f-l"><div class="f-name">Ortogonalidad de la rotación</div><div class="f-why">La herramienta para verificar isotropía de un tensor.</div></div>
+      <button class="f-eq" type="button"><span class="in">a<sub>ip</sub> a<sub>kp</sub> = δ<sub>ik</sub></span></button></div>
+  </div>
+</section>
+
+<!-- ===================== DEMOS ===================== -->
+<section id="demos">
+  <div class="sec-head"><span class="sec-tag">Demostraciones</span><h2>Las cinco que hay que poder escribir sin mirar</h2></div>
+  <p class="sec-sub">Cada una es una secuencia de movimientos con nombre. Si te acordás la secuencia, la cuenta sale sola. En el examen: <b>escribí el nombre del paso al margen</b> — ahí está buena parte del puntaje.</p>
+
+  <div class="grid2">
+    <div class="demo">
+      <div class="demo-h"><h4>1 · Navier‑Stokes incompresible</h4><span class="where">2024 · 24/06/25 · 26/06/25</span></div>
+      <ol class="steps">
+        <li><b>R0.</b> Si pide «partiendo del balance»: deducir Cauchy primero (Reynolds + lema oro + fórmula de Cauchy + Gauss + volumen arbitrario).</li>
+        <li>Si menciona momento angular: una línea, σ simétrico ⇒ σ<sub>ji,j</sub> = σ<sub>ij,j</sub>.</li>
+        <li>Si la constitutiva viene con ℂ<sub>ijkl</sub>: contraer las deltas y quedarte con la forma corta.</li>
+        <li><b>R1.</b> Continuidad + ρ constante ⇒ V<sub>kk</sub> = ∂<sub>k</sub>v<sub>k</sub> = 0.</li>
+        <li><b>R2.</b> Muere el término de λ: la viscosidad volumétrica no tiene cambio de volumen contra qué trabajar.</li>
+        <li><b>R3.</b> μ ∂<sub>j</sub>(∂<sub>i</sub>v<sub>j</sub>) = μ ∂<sub>i</sub>(∂<sub>j</sub>v<sub>j</sub>) = 0: conmutar derivadas + <b>otra vez</b> incompresibilidad.</li>
+        <li><b>R4.</b> μ constante sale fuera de las derivadas.</li>
+        <li><b>R5.</b> p queda sin constitutiva: es incógnita, multiplicador de ∇·v=0. Sistema 4×4.</li>
+      </ol>
+      <div class="eqbox">ρ Dv<sub>i</sub>/Dt = ρb<sub>i</sub> − ∂p/∂x<sub>i</sub> + μ ∇²v<sub>i</sub></div>
+      <div style="padding:0 18px 16px"><div class="callout warn"><span class="k">El inciso b) de 2025</span> μ es la <b>viscosidad dinámica</b>: la constante de proporcionalidad entre tensión de corte y gradiente de velocidad (σ<sub>12</sub> = μU/h entre dos placas — eso <i>define</i> newtoniano). Es fricción interna entre capas, y en la ecuación es el término difusivo de momento. El sólido resiste <i>estar</i> deformado; el fluido resiste <i>estar deformándose</i>.</div></div>
+    </div>
+
+    <div class="demo">
+      <div class="demo-h"><h4>2 · Ecuación de Navier (elasticidad)</h4><span class="where">2024‑4 · la gemela de NS</span></div>
+      <ol class="steps">
+        <li><b>R1.</b> Pequeñas deformaciones ⇒ el convectivo es de segundo orden ⇒ Dv<sub>i</sub>/Dt ≈ ∂²u<sub>i</sub>/∂t².</li>
+        <li><b>R2.</b> Masa + pequeñas deformaciones ⇒ ρ ≈ constante.</li>
+        <li><b>R3.</b> Divergencia de Hooke: el término λ da λ ∂<sub>i</sub>ε<sub>jj</sub>; los de μ dan μ∇²u<sub>i</sub> + μ ∂<sub>i</sub>(∂<sub>j</sub>u<sub>j</sub>).</li>
+        <li><b>⚠ Acá el cruzado SOBREVIVE</b> (ε<sub>jj</sub> = e ≠ 0: el sólido sí cambia de volumen) y se suma al de λ ⇒ (λ+μ)∂<sub>i</sub>e. Misma cuenta que NS, destino opuesto.</li>
+      </ol>
+      <div class="eqbox">ρ ∂²u<sub>i</sub>/∂t² = μ ∇²u<sub>i</sub> + (λ+μ) ∂e/∂x<sub>i</sub> + b<sub>i</sub></div>
+      <div style="padding:0 18px 16px">
+        <div class="tablewrap"><table style="min-width:0"><thead><tr><th></th><th>NS incompr.</th><th>Navier elast.</th></tr></thead>
+        <tbody>
+          <tr><td>Acopla a</td><td>tasa V</td><td>deformación ε</td></tr>
+          <tr><td>Inercia</td><td>Dv/Dt (no lineal)</td><td>∂²u/∂t² (lineal)</td></tr>
+          <tr><td>Término λ</td><td>muere</td><td>vive</td></tr>
+          <tr><td>Cruzado μ</td><td>muere</td><td>vive</td></tr>
+          <tr><td>Presión</td><td>incógnita</td><td>no hay</td></tr>
+        </tbody></table></div>
+      </div>
+    </div>
+
+    <div class="demo">
+      <div class="demo-h"><h4>3 · Simetría de σ desde el momento angular</h4><span class="where">2024R‑4</span></div>
+      <ol class="steps">
+        <li>Escribir la ley global del momento angular: D/Dt ∫ e<sub>ijk</sub> x<sub>j</sub> ρ v<sub>k</sub> dV = ∫ e<sub>ijk</sub> x<sub>j</sub> X<sub>k</sub> dV + ∫<sub>S</sub> e<sub>ijk</sub> x<sub>j</sub> T<sub>k</sub><sup>(n)</sup> dS.</li>
+        <li><b>Lema oro</b> en el lado izquierdo, con Dx<sub>j</sub>/Dt = v<sub>j</sub>.</li>
+        <li>e<sub>ijk</sub>v<sub>j</sub>v<sub>k</sub> = 0 (es v×v: antisimétrico contra simétrico).</li>
+        <li><b>Cauchy + Gauss</b> en el torque, derivando el producto — <b>x<sub>j</sub> también se deriva</b>: ∂x<sub>j</sub>/∂x<sub>l</sub> = δ<sub>jl</sub>. De ahí nace el término huérfano e<sub>ijk</sub>σ<sub>jk</sub>, que es el protagonista.</li>
+        <li>Agrupar todo lo que lleva x<sub>j</sub>: el corchete es la ecuación de movimiento ⇒ vale cero.</li>
+        <li>Queda ∫<sub>V</sub> e<sub>ijk</sub>σ<sub>jk</sub> dV = 0 y por <b>volumen arbitrario</b> e<sub>ijk</sub>σ<sub>jk</sub> = 0 para i=1,2,3.</li>
+      </ol>
+      <div class="eqbox">σ<sub>jk</sub> = σ<sub>kj</sub> ∎</div>
+      <div style="padding:0 18px 16px"><div class="callout bad"><span class="k">Dónde se cae</span> Perder el término que sale de derivar el brazo de palanca x<sub>j</sub>. Es <b>exactamente</b> el que da la simetría: sin él la demo no llega a ningún lado.</div></div>
+    </div>
+
+    <div class="demo">
+      <div class="demo-h"><h4>4 · Forma fuerte ⇒ forma débil</h4><span class="where">variacionales · anunciado</span></div>
+      <ol class="steps">
+        <li>Declarar hipótesis y <b>admisibilidad</b> (δT = 0 en Γ<sub>T</sub>; δu = 0 en Γ<sub>u</sub>). Sin esto no arranca.</li>
+        <li><b>Extender a todo Γ</b>: como la variación se anula en la parte esencial, la integral sobre Γ<sub>φ</sub> se puede escribir sobre Γ entero.</li>
+        <li><b>Gauss</b> sobre el producto (h δT, o σ<sub>ij</sub>δu<sub>i</sub>): pasa de superficie a volumen.</li>
+        <li><b>Regla del producto</b> = integración por partes: aparecen dos términos, uno con ∇(δ) y otro con la divergencia.</li>
+        <li><b>Balance</b>: ∇·h = q (calor) o σ<sub>ij,j</sub> = −X<sub>i</sub> (elasticidad) — cancela contra el término de volumen de δW<sub>ext</sub>.</li>
+        <li><b>Constitutiva</b>: h = −κ∇T (calor). En elasticidad, en cambio, va el <b>paso estrella</b>: σ<sub>ij</sub>δu<sub>i,j</sub> = σ<sub>ij</sub>δe<sub>ij</sub> por simetrización de índices mudos.</li>
+      </ol>
+      <div class="eqbox">∫<sub>V</sub> X<sub>i</sub> δu<sub>i</sub> dV + ∫<sub>Γσ</sub> T<sub>i</sub><sup>(n)</sup> δu<sub>i</sub> dΓ = ∫<sub>V</sub> σ<sub>ij</sub> δe<sub>ij</sub> dV ∎</div>
+      <div style="padding:0 18px 16px"><div class="callout"><span class="k">Diccionario calor ↔ elasticidad</span> T ↔ u<sub>i</sub> · ∇T ↔ e (con simetrización extra) · h = −κ∇T ↔ σ = ℂe · q ↔ X · (φ̄, Γ<sub>φ</sub>) ↔ (T<sup>(n)</sup>, Γ<sub>σ</sub>) · (T̄, Γ<sub>T</sub>) ↔ (ū, Γ<sub>u</sub>). Sabiendo una demo y este diccionario, tenés las dos.</div></div>
+    </div>
+
+    <div class="demo">
+      <div class="demo-h"><h4>5 · Forma débil ⇒ forma fuerte (la vuelta)</h4><span class="where">2023‑3 y variantes tipo Green</span></div>
+      <ol class="steps">
+        <li>Desandar: σ<sub>ij</sub>δe<sub>ij</sub> = σ<sub>ij</sub>δu<sub>i,j</sub> = (σ<sub>ij</sub>δu<sub>i</sub>)<sub>,j</sub> − σ<sub>ij,j</sub>δu<sub>i</sub>.</li>
+        <li><b>Gauss</b> sobre el primer término ⇒ integral de frontera.</li>
+        <li>Usar δu = 0 en Γ<sub>u</sub> y agrupar todo de un lado.</li>
+        <li><b>Lema fundamental en dos etapas</b>: primero con δu nulas en la frontera ⇒ el paréntesis de volumen es cero; después con δu libres en Γ<sub>σ</sub> ⇒ el de frontera también.</li>
+        <li>Remarcar: la <b>condición natural sale sola</b> — nunca fue impuesta. Eso es lo que quieren escuchar.</li>
+      </ol>
+      <div class="eqbox">σ<sub>ji,j</sub> + X<sub>i</sub> = 0 en V · σ<sub>ij</sub>n<sub>j</sub> = T<sub>i</sub><sup>(n)</sup> en Γ<sub>σ</sub> ∎</div>
+      <div style="padding:0 18px 16px"><div class="callout"><span class="k">Si te dan otra identidad para demostrar</span> Patrón general: <b>(i)</b> identificar el producto cuya divergencia genera los dos términos de la identidad; <b>(ii)</b> Gauss; <b>(iii)</b> usar la condición de borde dada para anular la superficie; <b>(iv)</b> despejar. Así sale la de 2023: ∫φ<sub>i</sub>Δψ<sub>i</sub>dV = −∫∇φ<sub>i</sub>·∇ψ<sub>i</sub>dV con φ=0 en S.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== MAPA ===================== -->
+<section id="mapa">
+  <div class="sec-head"><span class="sec-tag">Visual</span><h2>Mapa de conexiones y figuras de lectura rápida</h2></div>
+  <p class="sec-sub">Lo que hay que poder dibujar en una servilleta. Cada figura resume una relación que el examen pregunta de alguna forma.</p>
+
+  <div class="panel" style="margin-bottom:20px">
+    <h4 style="font-size:1rem;margin-bottom:12px">Cómo encajan las unidades</h4>
+    <svg class="dia" viewBox="0 0 720 300" role="img" aria-label="Mapa de conexiones entre unidades: cinemática y tensiones alimentan las constitutivas, y junto con las leyes de balance producen las grandes ecuaciones.">
+      <rect class="st" x="10" y="20" width="150" height="58" rx="3"/>
+      <text x="20" y="38" class="lab">U3 · U4</text>
+      <text x="20" y="53" class="big">σ, T = σn</text>
+      <text x="20" y="68">principales · invariantes</text>
+
+      <rect class="st" x="10" y="110" width="150" height="58" rx="3"/>
+      <text x="20" y="128" class="lab">U5</text>
+      <text x="20" y="143" class="big">ε = ½(∇u + ∇uᵀ)</text>
+      <text x="20" y="158">sólidos · referencia</text>
+
+      <rect class="st" x="10" y="200" width="150" height="58" rx="3"/>
+      <text x="20" y="218" class="lab">U6</text>
+      <text x="20" y="233" class="big">V = ½(∇v + ∇vᵀ)</text>
+      <text x="20" y="248">fluidos · tasa</text>
+
+      <rect class="fill" x="235" y="110" width="150" height="58" rx="3"/>
+      <text x="245" y="128" class="lab">U7 · U8</text>
+      <text x="245" y="143" class="big">σ = ℂ(ε) ó ℂ(V)</text>
+      <text x="245" y="158">isotropía ⇒ 2 constantes</text>
+
+      <rect class="st" x="235" y="20" width="150" height="58" rx="3"/>
+      <text x="245" y="38" class="lab">U9 · U10</text>
+      <text x="245" y="53" class="big">masa · momento · energía</text>
+      <text x="245" y="68">Gauss · D/Dt · ∀V</text>
+
+      <rect class="st" x="460" y="20" width="150" height="48" rx="3"/>
+      <text x="470" y="38" class="lab">Navier‑Stokes</text>
+      <text x="470" y="56" class="big">Cauchy + newtoniano</text>
+
+      <rect class="st" x="460" y="86" width="150" height="48" rx="3"/>
+      <text x="470" y="104" class="lab">Navier elasticidad</text>
+      <text x="470" y="122" class="big">Cauchy + Hooke</text>
+
+      <rect class="st" x="460" y="152" width="150" height="48" rx="3"/>
+      <text x="470" y="170" class="lab">Ecuación del calor</text>
+      <text x="470" y="188" class="big">energía + Fourier</text>
+
+      <rect class="st" x="460" y="218" width="150" height="48" rx="3" stroke-dasharray="4 3"/>
+      <text x="470" y="236" class="lab">Forma débil → Kα = f</text>
+      <text x="470" y="254" class="big">principios variacionales</text>
+
+      <path class="ac" d="M160 139 L235 139" marker-end="url(#ar)"/>
+      <path class="ac" d="M160 229 Q200 229 200 168 L235 155" marker-end="url(#ar)"/>
+      <path class="ac" d="M160 49 Q200 49 205 90 L235 128" marker-end="url(#ar)"/>
+      <path class="ac" d="M385 130 Q420 130 425 60 L460 46" marker-end="url(#ar)"/>
+      <path class="ac" d="M385 140 L460 110" marker-end="url(#ar)"/>
+      <path class="ac" d="M385 152 Q425 160 460 176" marker-end="url(#ar)"/>
+      <path class="ac" d="M385 49 L460 44" marker-end="url(#ar)"/>
+      <path class="dash" d="M610 44 Q660 44 665 130 Q670 230 610 242" marker-end="url(#ar)"/>
+      <text x="640" y="150" transform="rotate(90 640 150)">camino inverso</text>
+
+      <defs><marker id="ar" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="currentColor"/></marker></defs>
+    </svg>
+    <p style="font-size:.87rem;color:var(--ink-2);margin-top:10px">Las U5–U6 dan el <b>lenguaje cinemático</b>; las U7–U8, el <b>material</b>; las U9–U10 traducen las leyes universales a PDEs y las cierran enchufando la constitutiva. Los principios variacionales recorren el mismo camino al revés, hasta Kα = f — la puerta de elementos finitos.</p>
+  </div>
+
+  <div class="grid2" style="margin-bottom:20px">
+    <div class="viz">
+      <h4>El zoológico: incompresible ≠ irrotacional</h4>
+      <p>Las dos condiciones son <b>independientes</b> — este cuadro de cuatro campos lo demuestra de un vistazo, y es exactamente lo que pregunta el inciso c) del bloque 3.</p>
+      <div class="grid3" style="gap:10px">
+        <div><canvas id="fz1" style="height:132px"></canvas><div class="tags" style="margin-top:6px"><span class="tag">corte v=(y,0)</span><span class="tag ok">div 0</span><span class="tag no">rot ≠0</span></div></div>
+        <div><canvas id="fz2" style="height:132px"></canvas><div class="tags" style="margin-top:6px"><span class="tag">rígido v=(−y,x)</span><span class="tag ok">div 0</span><span class="tag no">rot ≠0</span></div></div>
+        <div><canvas id="fz3" style="height:132px"></canvas><div class="tags" style="margin-top:6px"><span class="tag">fuente v=(x,y)</span><span class="tag no">div ≠0</span><span class="tag ok">rot 0</span></div></div>
+        <div><canvas id="fz4" style="height:132px"></canvas><div class="tags" style="margin-top:6px"><span class="tag">vórtice libre</span><span class="tag ok">div 0</span><span class="tag ok">rot 0</span></div></div>
+      </div>
+      <p class="repo">versión extendida: U6/fig1_zoologico_divergencia.png</p>
+    </div>
+
+    <div class="viz">
+      <h4>Derivada material: sensor fijo vs. partícula</h4>
+      <p>Campo T(x,t) = sin(x − t), una onda que viaja a velocidad 1. El punto naranja es un sensor <b>anclado</b>; el punto turquesa es una partícula que viaja a velocidad 2 y por eso <b>atraviesa</b> la onda. Miden cosas distintas del mismo campo.</p>
+      <canvas id="dm"></canvas>
+      <div class="tags"><span class="tag" style="border-color:var(--heat);color:var(--heat)">∂T/∂t · sensor</span><span class="tag ok">DT/Dt · partícula</span></div>
+      <p style="font-size:.85rem">Si la partícula está quieta, o si el campo es uniforme en el espacio, el convectivo se anula y las dos derivadas coinciden. Ese caso trivial es el que hace que se confundan.</p>
+      <p class="repo">versión extendida: U9-U10/fig_derivada_material_lagr_euler.png</p>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="viz">
+      <h4>Gauss y Reynolds son la misma geometría</h4>
+      <p>Izquierda: el volumen rebanado en tubos; lo que entra por una cara sale por la otra, y la normal de afuera hace de ∂/∂x<sub>i</sub> adentro. Derecha: el mismo volumen en t y t+dt — la cáscara sombreada es el término extra A·div v que hace que D/Dt no conmute con la integral.</p>
+      <svg class="dia" viewBox="0 0 480 170" role="img" aria-label="Diagrama de Gauss con tubos y normales, junto a Reynolds con la cáscara barrida.">
+        <ellipse class="fill" cx="110" cy="85" rx="72" ry="55"/>
+        <line class="dash" x1="38" y1="65" x2="182" y2="65"/>
+        <line class="dash" x1="38" y1="85" x2="182" y2="85"/>
+        <line class="dash" x1="38" y1="105" x2="182" y2="105"/>
+        <path class="ht" d="M44 85 L20 85" marker-end="url(#ar2)"/>
+        <path class="ac" d="M176 85 L200 85" marker-end="url(#ar2)"/>
+        <text x="6" y="76">ν₁&lt;0</text>
+        <text x="188" y="76">ν₁&gt;0</text>
+        <text x="86" y="150" class="big">∫ div w dV = ∮ w·ν dS</text>
+
+        <ellipse class="st" cx="350" cy="85" rx="58" ry="44" stroke-dasharray="4 3"/>
+        <ellipse class="fill" cx="350" cy="85" rx="76" ry="58" fill-opacity=".35"/>
+        <ellipse class="ac" cx="350" cy="85" rx="76" ry="58"/>
+        <ellipse class="st" cx="350" cy="85" rx="58" ry="44"/>
+        <text x="336" y="30">t + dt</text>
+        <text x="338" y="90">t</text>
+        <text x="286" y="150" class="big">cáscara = (v·n) dt dS</text>
+        <defs><marker id="ar2" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="currentColor"/></marker></defs>
+      </svg>
+      <p class="repo">versión extendida: U9-U10/fig_gauss_reynolds.png</p>
+    </div>
+
+    <div class="viz">
+      <h4>Todo gradiente se parte en dos</h4>
+      <p>∇v = V + Ω, y ∇u = ε + ω. La parte simétrica deforma, la antisimétrica solo rota. Un corte simple es exactamente <b>mitad estiramiento a 45°, mitad rotación rígida</b> — por eso es incompresible pero no irrotacional.</p>
+      <svg class="dia" viewBox="0 0 480 170" role="img" aria-label="Descomposición de un corte simple en parte simétrica (deformación) y antisimétrica (rotación).">
+        <rect class="fill" x="26" y="52" width="70" height="70"/>
+        <path class="ac" d="M96 52 L131 52 L131 122 L96 122" stroke-dasharray="3 3"/>
+        <text x="30" y="145" class="big">corte simple</text>
+        <text x="152" y="92" class="big">=</text>
+
+        <polygon class="fill" points="196,87 231,52 266,87 231,122"/>
+        <path class="ht" d="M196 87 L176 87" marker-end="url(#ar3)"/>
+        <path class="ht" d="M266 87 L286 87" marker-end="url(#ar3)"/>
+        <path class="ht" d="M231 52 L231 36" marker-end="url(#ar3)"/>
+        <path class="ht" d="M231 122 L231 138" marker-end="url(#ar3)"/>
+        <text x="182" y="158" class="big">V · deformación</text>
+        <text x="306" y="92" class="big">+</text>
+
+        <rect class="fill" x="356" y="52" width="70" height="70" transform="rotate(-18 391 87)"/>
+        <path class="ac" d="M425 60 A48 48 0 0 1 435 100" marker-end="url(#ar3)"/>
+        <text x="360" y="158" class="big">Ω · rotación</text>
+        <defs><marker id="ar3" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="currentColor"/></marker></defs>
+      </svg>
+      <p style="font-size:.85rem"><b>Ojo con el factor 2:</b> la velocidad angular local es ½ rot v, no rot v.</p>
+      <p class="repo">versión extendida: U6/fig2_deformacion_vs_rotacion.png</p>
+    </div>
+
+    <div class="viz">
+      <h4>Volumétrico vs. desviador</h4>
+      <p>Toda la U7 se lee con esta partición: la traza cambia el <b>tamaño</b> (gobernada por K), el desviador cambia la <b>forma</b> (gobernado por μ). Un tensor de dilatación térmica es esférico puro: cambia tamaño, no forma, y lo hace igual en toda dirección.</p>
+      <svg class="dia" viewBox="0 0 480 150" role="img" aria-label="Un cuadrado que crece (parte volumétrica) y un cuadrado que se distorsiona (parte desviadora).">
+        <rect class="st" x="40" y="45" width="60" height="60" stroke-dasharray="3 3"/>
+        <rect class="fill" x="26" y="31" width="88" height="88"/>
+        <text x="24" y="140" class="big">volumétrico · tr ε</text>
+        <text x="150" y="80" class="big">+</text>
+
+        <rect class="st" x="200" y="45" width="60" height="60" stroke-dasharray="3 3"/>
+        <polygon class="fill" points="212,45 272,45 248,105 188,105"/>
+        <text x="186" y="140" class="big">desviador · s<tspan dy="3" font-size="9">ij</tspan></text>
+        <text x="330" y="60" class="big">σ<tspan dy="3" font-size="9">ij</tspan> = (σ<tspan dy="3" font-size="9">kk</tspan><tspan dy="-3">/3)δ</tspan><tspan dy="3" font-size="9">ij</tspan><tspan dy="-3"> + s</tspan><tspan dy="3" font-size="9">ij</tspan></text>
+        <text x="330" y="90">K gobierna el tamaño</text>
+        <text x="330" y="106">μ gobierna la forma</text>
+        <text x="330" y="122">ν→½ ⇒ K→∞ (incompr.)</text>
+      </svg>
+      <p class="repo">versión extendida: U7/fig_vol_desviador.png</p>
+    </div>
+
+    <div class="viz">
+      <h4>Fuerte, débil, discreto</h4>
+      <p>El mismo problema escrito tres veces. La ida y la vuelta son <b>demostrables</b>: no es una aproximación, es una reformulación equivalente. La aproximación entra recién en el último paso, al elegir un espacio finito.</p>
+      <div class="pipe" style="margin-top:4px">
+        <div class="pipe-n"><div class="k">Fuerte</div><div class="v">σ<sub>ji,j</sub> + X<sub>i</sub> = 0<br>+ bordes punto a punto</div></div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-n mid"><div class="k">Débil</div><div class="v">δW<sub>ext</sub> = δW<sub>int</sub><br>∀ δ admisible</div></div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-n out"><div class="k">Discreto</div><div class="v">Kα = f<br>K simétrica</div></div>
+      </div>
+      <p style="font-size:.85rem;margin-top:4px">Ventajas de la débil, para citar: pide <b>menos regularidad</b> (la integración por partes bajó un orden), <b>absorbe gratis</b> las condiciones naturales, y se discretiza directo.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== U3-U8 ===================== -->
+<section id="u38">
+  <div class="sec-head"><span class="sec-tag">Prioridad 2</span><h2>Formulario Unidades 3 a 8</h2></div>
+  <p class="sec-sub">Material de apoyo del examen: aparece en el bloque 2 y adentro de las deducciones. Mismo modo tapado.</p>
+
+  <div class="fset" style="margin-bottom:22px">
+    <div class="fset-head">Tensiones · U3 y U4</div>
+    <div class="f"><div class="f-l"><div class="f-name">Equilibrio (estática)</div><div class="f-why">Cauchy con aceleración nula. Es lo que se verifica en los ejercicios de Airy y de placa.</div></div>
+      <button class="f-eq" type="button"><span class="in">σ<sub>ji,j</sub> + X<sub>i</sub> = 0</span></button></div>
+    <div class="f"><div class="f-l"><div class="f-name">Tensiones principales</div><div class="f-why">Problema de autovalores. Las direcciones principales son ortogonales y en ellas no hay corte.</div></div>
+      <button class="f-eq" type="button"><span class="in">det(σ<sub>ij</sub> − σ δ<sub>ij</sub>) = 0</span></button></div>
+    <div class="f"><div class="f-l"><div class="f-name">Invariantes</div><div class="f-why">No cambian con la rotación de ejes: sirven de control de que no te equivocaste al diagonalizar.</div></div>
+      <button class="f-eq" type="button"><span class="in">I₁ = σ<sub>kk</sub> · I₂ = ½(σ<sub>ii</sub>σ<sub>jj</sub> − σ<sub>ij</sub>σ<sub>ij</sub>) · I₃ = det σ</span></button></div>
+    <div class="f"><div class="f-l"><div class="f-name">Estado plano: principales y ángulo</div><div class="f-why">Las fórmulas que el propio enunciado te regala al pie de la hoja. Aprovechalas.</div></div>
+      <button class="f-eq" type="button"><span class="in">σ<sub>1,2</sub> = (σ<sub>x</sub>+σ<sub>y</sub>)/2 ± √[((σ<sub>x</sub>−σ<sub>y</sub>)/2)² + τ<sub>xy</sub>²] · tan 2θ = 2τ<sub>xy</sub>/(σ<sub>x</sub>−σ<sub>y</sub>)</span></button></div>
+    <div class="f"><div class="f-l"><div class="f-name">Desviador de tensiones</div><div class="f-why">Quitarle la presión media. Traza nula por construcción.</div></div>
+      <button class="f-eq" type="button"><span class="in">s<sub>ij</sub> = σ<sub>ij</sub> − (σ<sub>kk</sub>/3) δ<sub>ij</sub></span></button></div>
+    <div class="f"><div class="f-l"><div class="f-name">Función de Airy</div><div class="f-why">Satisface el equilibrio <b>por construcción</b> (con fuerzas de cuerpo nulas). Igual verificalo en el examen: es una línea.</div></div>
+      <button class="f-eq" type="button"><span class="in">σ<sub>xx</sub> = Φ<sub>,yy</sub> · σ<sub>yy</sub> = Φ<sub>,xx</sub> · σ<sub>xy</sub> = −Φ<sub>,xy</sub> · ∇⁴Φ = 0</span></button></div>
+  </div>
+
+  <div class="fset" style="margin-bottom:22px">
+    <div class="fset-head">Deformaciones · U5 — el bloque 2 del examen</div>
+    <div class="f hot"><div class="f-l"><div class="f-name">Green‑Lagrange desde un mapeo</div><div class="f-why">Con deformación homogénea armás F leyendo los vértices de la figura y listo. Visión lagrangiana: compara contra la referencia.</div></div>
+      <button class="f-eq" type="button"><span class="in">E = ½(FᵀF − I) · ds² − ds₀² = 2 E<sub>ij</sub> da<sub>i</sub> da<sub>j</sub></span></button></div>
+    <div class="f"><div class="f-l"><div class="f-name">Green‑Lagrange en desplazamientos</div><div class="f-why">El término cuadrático es lo que la distingue de ε: si lo despreciás, volvés a pequeñas deformaciones.</div></div>
+      <button class="f-eq" type="button"><span class="in">E<sub>ij</sub> = ½(u<sub>i,j</sub> + u<sub>j,i</sub> + u<sub>k,i</sub> u<sub>k,j</sub>)</span></button></div>
+    <div class="f"><div class="f-l"><div class="f-name">Almansi (euleriana)</div><div class="f-why">La misma medida vista desde la configuración actual: se arma con F⁻¹.</div></div>
+      <button class="f-eq" type="button"><span class="in">ds² − ds₀² = 2 e<sub>ij</sub> dx<sub>i</sub> dx<sub>j</sub> , e = ½(I − F⁻ᵀF⁻¹)</span></button></div>
+    <div class="f hot"><div class="f-l"><div class="f-name">Deformación de una fibra</div><div class="f-why">La fórmula única que resuelve todo el tipo «cambio de longitud». Fibra compuesta: sumás segmento por segmento con el n de cada uno.</div></div>
+      <button class="f-eq" type="button"><span class="in">ε<sub>n</sub> = nᵀ ε n = n<sub>i</sub> ε<sub>ij</sub> n<sub>j</sub> · Δl = ε<sub>n</sub> · l</span></button></div>
+    <div class="f hot"><div class="f-l"><div class="f-name">Deformación térmica</div><div class="f-why">Esférica pura ⇒ ε<sub>n</sub> = αΔT <b>en cualquier dirección</b> ⇒ Δl<sub>total</sub> = αΔT · Σl<sub>i</sub>, sin importar los ángulos. Cambia tamaño, no forma.</div></div>
+      <button class="f-eq" type="button"><span class="in">ε<sub>ij</sub> = α δ<sub>ij</sub> ΔT</span></button></div>
+    <div class="f"><div class="f-l"><div class="f-name">Descomposición del gradiente de desplazamientos</div><div class="f-why">ε deforma, ω rota. Idéntico en forma a la descomposición de ∇v.</div></div>
+      <button class="f-eq" type="button"><span class="in">u<sub>i,j</sub> = ε<sub>ij</sub> + ω<sub>ij</sub> , ω<sub>ij</sub> = ½(u<sub>i,j</sub> − u<sub>j,i</sub>)</span></button></div>
+    <div class="f"><div class="f-l"><div class="f-name">Transformación de ε en el plano</div><div class="f-why">Otra que viene impresa al pie del enunciado. Sirve para chequear el resultado de una fibra a 45°.</div></div>
+      <button class="f-eq" type="button"><span class="in">ε<sub>x'x'</sub> = (ε<sub>xx</sub>+ε<sub>yy</sub>)/2 + [(ε<sub>xx</sub>−ε<sub>yy</sub>)/2] cos2θ + ε<sub>xy</sub> sin2θ</span></button></div>
+    <div class="f"><div class="f-l"><div class="f-name">Compatibilidad</div><div class="f-why">Garantiza que las 6 componentes de ε provengan de 3 desplazamientos continuos y univaluados: que el rompecabezas deformado cierre sin huecos ni solapamientos.</div></div>
+      <button class="f-eq" type="button"><span class="in">ε<sub>ij,kl</sub> + ε<sub>kl,ij</sub> − ε<sub>ik,jl</sub> − ε<sub>jl,ik</sub> = 0</span></button></div>
+  </div>
+
+  <div class="fset" style="margin-bottom:22px">
+    <div class="fset-head">Velocidades · U6 — el bloque 3 del examen</div>
+    <div class="f hot"><div class="f-l"><div class="f-name">Tasa de deformación y spin</div><div class="f-why">El diccionario u→v, ε→V es <b>exacto</b>, no aproximado: una tasa es intrínsecamente infinitesimal.</div></div>
+      <button class="f-eq" type="button"><span class="in">V<sub>ij</sub> = ½(v<sub>i,j</sub> + v<sub>j,i</sub>) · Ω<sub>ij</sub> = ½(v<sub>i,j</sub> − v<sub>j,i</sub>)</span></button></div>
+    <div class="f hot"><div class="f-l"><div class="f-name">Vorticidad y velocidad angular</div><div class="f-why">Irrotacional ⟺ rot v = 0. Evaluar componente a componente: basta una distinta de cero para responder que no.</div></div>
+      <button class="f-eq" type="button"><span class="in">(rot v)<sub>i</sub> = e<sub>ijk</sub> v<sub>k,j</sub> · ω = ½ rot v</span></button></div>
+    <div class="f hot"><div class="f-l"><div class="f-name">Función potencial</div><div class="f-why">Si v deriva de un potencial, es irrotacional automáticamente — y la demo es de dos renglones (antisimétrico contra simétrico).</div></div>
+      <button class="f-eq" type="button"><span class="in">v = ∇φ ⇒ rot v = e<sub>ijk</sub> φ<sub>,kj</sub> = 0</span></button></div>
+    <div class="f hot"><div class="f-l"><div class="f-name">Función de corriente (2D)</div><div class="f-why">Su existencia garantiza la incompresibilidad por Schwarz. Las curvas ψ = cte <b>son</b> las líneas de corriente; la diferencia de ψ entre dos de ellas es el caudal que pasa en el medio.</div></div>
+      <button class="f-eq" type="button"><span class="in">v<sub>x</sub> = ∂ψ/∂y · v<sub>y</sub> = −∂ψ/∂x</span></button></div>
+  </div>
+
+  <div class="fset">
+    <div class="fset-head">Constitutivas e isotropía · U7 y U8</div>
+    <div class="f"><div class="f-l"><div class="f-name">Lectura volumétrico / desviador de Hooke</div><div class="f-why">La clave de la U7: dos módulos independientes, uno para el tamaño y otro para la forma.</div></div>
+      <button class="f-eq" type="button"><span class="in">σ<sub>kk</sub> = 3K ε<sub>kk</sub> · s<sub>ij</sub> = 2μ e<sub>ij</sub><sup>dev</sup></span></button></div>
+    <div class="f"><div class="f-l"><div class="f-name">Límite incompresible</div><div class="f-why">ν→½ hace explotar K y λ mientras μ queda finito: el material resiste infinitamente el cambio de volumen pero sigue distorsionándose.</div></div>
+      <button class="f-eq" type="button"><span class="in">ν → ½ ⇒ K → ∞ , λ → ∞ , μ finito</span></button></div>
+    <div class="f"><div class="f-l"><div class="f-name">Test de isotropía de un tensor</div><div class="f-why">Transformar con la ley de su rango y usar ortogonalidad hasta recuperar el mismo tensor. Ejemplo 2024: A<sub>ijkl</sub> = δ<sub>ik</sub>δ<sub>jl</sub> sale en dos líneas.</div></div>
+      <button class="f-eq" type="button"><span class="in">A'<sub>ijkl</sub> = a<sub>ip</sub>a<sub>jq</sub>a<sub>kr</sub>a<sub>ls</sub> A<sub>pqrs</sub> = A<sub>ijkl</sub> ∀ rotación</span></button></div>
+    <div class="f"><div class="f-l"><div class="f-name">Homogéneo vs. isótropo</div><div class="f-why">Independientes: homogéneo = invariante ante <b>traslación</b>; isótropo = invariante ante <b>rotación</b>. Madera: homogénea y anisótropa. Material graduado: isótropo punto a punto y no homogéneo.</div></div>
+      <button class="f-eq" type="button"><span class="in">homogéneo: ∂ℂ/∂x = 0 · isótropo: ℂ' = ℂ ∀ rotación</span></button></div>
+  </div>
+</section>
+
+<!-- ===================== SINTETICAS ===================== -->
+<section id="sinteticas">
+  <div class="sec-head"><span class="sec-tag">Banco</span><h2>Las nueve sintéticas, con la respuesta que esperan</h2></div>
+  <p class="sec-sub">Todas cayeron en 2025 (las dos fechas). Formato de respuesta: 3 a 6 líneas, concepto + fórmula clave + demo de dos renglones si la piden. <b>No desarrolles de más</b>: piden síntesis y sobrar cuesta tiempo del bloque 4.</p>
+
+  <div class="grid2">
+    <div class="qa"><div class="qa-q"><span class="n">i</span><span>Interpretación física de la función potencial y de la función de línea de corriente.</span></div>
+      <button class="qa-a" type="button"><span class="in"><b>Potencial φ:</b> si v = ∇φ el flujo es automáticamente irrotacional (rot ∇φ = 0); recíprocamente, si rot v = 0 en un dominio simplemente conexo, existe φ. La velocidad «baja el gradiente» de φ y las superficies φ = cte son ortogonales al flujo. <b>Corriente ψ (2D):</b> v<sub>x</sub> = ∂ψ/∂y, v<sub>y</sub> = −∂ψ/∂x; su existencia garantiza la incompresibilidad por Schwarz. Las curvas ψ = cte son las líneas de corriente y la diferencia de ψ entre dos de ellas es el caudal entre ambas. <b>Síntesis:</b> potencial ↔ irrotacional, corriente ↔ incompresible; si el flujo 2D tiene las dos, ambas son armónicas.</span></button></div>
+
+    <div class="qa"><div class="qa-q"><span class="n">ii</span><span>Diferencia entre material homogéneo e isótropo. ¿Puede un cuerpo presentar ambas características?</span></div>
+      <button class="qa-a" type="button"><span class="in"><b>Homogéneo:</b> las propiedades no dependen de la <b>posición</b> (invariancia ante traslación). <b>Isótropo:</b> no dependen de la <b>dirección</b> (invariancia ante rotación, en un punto dado). Son propiedades independientes y sí, un cuerpo puede tener ambas — el acero estructural es el ejemplo típico. Contraejemplos cruzados: la madera es homogénea pero anisótropa (dirección de la fibra); un material funcionalmente graduado es isótropo punto a punto pero no homogéneo.</span></button></div>
+
+    <div class="qa"><div class="qa-q"><span class="n">iii</span><span>¿Qué conclusión se obtiene del balance de cantidad de movimiento angular?</span></div>
+      <button class="qa-a" type="button"><span class="in">Que el tensor de tensiones es <b>simétrico</b>: σ<sub>ij</sub> = σ<sub>ji</sub>. No aporta ninguna PDE nueva —todo lo que lleva brazo de palanca ya lo garantiza el balance de momento lineal—, solo la condición algebraica que reduce σ de 9 a 6 componentes independientes. Por eso en el conteo de las 15 ecuaciones el momento angular no suma: ya está gastado en esa reducción.</span></button></div>
+
+    <div class="qa"><div class="qa-q"><span class="n">iv</span><span>¿Qué se asume para reducir la ecuación de continuidad a la condición de incompresibilidad en descripción euleriana?</span></div>
+      <button class="qa-a" type="button"><span class="in">Se asume <b>incompresibilidad</b>: Dρ/Dt = 0, es decir que la densidad de cada partícula no cambia al moverse. Entonces la continuidad Dρ/Dt + ρ ∂<sub>j</sub>v<sub>j</sub> = 0 queda ρ ∂<sub>j</sub>v<sub>j</sub> = 0 y, con ρ ≠ 0, ∂<sub>j</sub>v<sub>j</sub> = 0. Caso particular más fuerte: ρ constante en todo el campo, que además exige homogeneidad.</span></button></div>
+
+    <div class="qa"><div class="qa-q"><span class="n">v</span><span>¿En qué se diferencian el tensor de pequeñas deformaciones y el tensor de tasa de deformación?</span></div>
+      <button class="qa-a" type="button"><span class="in"><b>ε</b> compara la configuración actual contra una <b>referencia</b>: se construye con desplazamientos, es adimensional y es propio de sólidos, que «recuerdan» su forma; vale solo si deformaciones <i>y</i> rotaciones son pequeñas. <b>V</b> es la <b>tasa instantánea</b>: se construye con velocidades, tiene unidades 1/s y es propia de fluidos, que no tienen configuración de referencia. El diccionario u→v, ε→V es exacto, no aproximado, porque una tasa es intrínsecamente infinitesimal.</span></button></div>
+
+    <div class="qa"><div class="qa-q"><span class="n">vi</span><span>¿Qué garantiza la ecuación de compatibilidad de deformaciones?</span></div>
+      <button class="qa-a" type="button"><span class="in">Que un campo de deformaciones dado <b>derive de un campo de desplazamientos continuo y univaluado</b>. Las 6 componentes de ε salen de solo 3 componentes u<sub>i</sub>: el camino inverso ε→u está sobredeterminado, y la compatibilidad es la condición que lo hace resoluble — geométricamente, que el rompecabezas deformado cierre sin huecos ni solapamientos.</span></button></div>
+
+    <div class="qa"><div class="qa-q"><span class="n">vii</span><span>Rotor del campo de velocidad: ¿qué comportamiento indica y con qué tensores se relaciona? ¿Qué ocurre si v deriva de un potencial? Demuestre.</span></div>
+      <button class="qa-a" type="button"><span class="in">Indica <b>rotación local</b> del fluido: rot v es la vorticidad y ½ rot v es la velocidad angular local (¡factor 2!). Se relaciona con el tensor de vorticidad o spin Ω<sub>ij</sub>, la parte <b>antisimétrica</b> del gradiente de velocidades (la simétrica es V). Si v = ∇φ el flujo es irrotacional: (rot ∇φ)<sub>i</sub> = e<sub>ijk</sub> φ<sub>,kj</sub> = 0, porque contrae e<sub>ijk</sub>, antisimétrico en (j,k), con φ<sub>,jk</sub>, simétrico en (j,k) por Schwarz. ∎</span></button></div>
+
+    <div class="qa"><div class="qa-q"><span class="n">viii</span><span>Explique qué relaciona el teorema de Gauss.</span></div>
+      <button class="qa-a" type="button"><span class="in">Relaciona la <b>integral de volumen de una derivada</b> con la <b>integral de superficie del campo por la normal externa</b>: ∫<sub>V</sub> A<sub>,i</sub> dV = ∫<sub>S</sub> ν<sub>i</sub> A dS. Físicamente conecta lo que se genera dentro del volumen con lo que atraviesa su frontera. En la materia es la herramienta que convierte términos de superficie (tracciones, flujos de calor) en términos de volumen, y sin ella no se puede pasar de una ley global a una ecuación local.</span></button></div>
+
+    <div class="qa"><div class="qa-q"><span class="n">ix</span><span>Interpretación de la derivada temporal material y de la espacial de un campo f en descripción euleriana. ¿Cómo se relacionan?</span></div>
+      <button class="qa-a" type="button"><span class="in"><b>Espacial ∂f/∂t:</b> tasa de cambio en un punto fijo del espacio — lo que mide un sensor anclado. <b>Material Df/Dt:</b> tasa de cambio de la propiedad de la <b>partícula</b> que pasa por ese punto — lo que siente una hoja que flota. Se relacionan por Df/Dt = ∂f/∂t + v·∇f. El término convectivo existe porque la partícula se muda dentro de un campo no homogéneo; por eso pueden diferir incluso con campo estacionario (∂f/∂t = 0 pero Df/Dt ≠ 0 si la partícula viaja hacia zonas de otro valor).</span></button></div>
+  </div>
+</section>
+
+<!-- ===================== ERRORES ===================== -->
+<section id="errores">
+  <div class="sec-head"><span class="sec-tag">Lista negra</span><h2>Los quince errores que cuestan puntos</h2></div>
+  <p class="sec-sub">Leelos completos antes de dormir y otra vez media hora antes de entrar.</p>
+  <div class="errs">
+    <div class="err"><span class="n">01</span><span>Poner <b>∂/∂t donde va D/Dt</b> o al revés. La lagrangiana no lleva convectivo; la euleriana sí.</span></div>
+    <div class="err"><span class="n">02</span><span>Meter <b>D/Dt dentro de la integral</b> sin el término de dilatación. Solo entra gratis con ρ adelante (lema oro).</span></div>
+    <div class="err"><span class="n">03</span><span>Cancelar el término cruzado <b>μ ∂<sub>i</sub>(∂<sub>j</sub>u<sub>j</sub>) en elasticidad</b> por reflejo de fluidos. Ahí <b>sobrevive</b>.</span></div>
+    <div class="err"><span class="n">04</span><span>Olvidar que en <b>tensión plana ε<sub>zz</sub> ≠ 0</b> aunque σ<sub>zz</sub> = 0. Es el efecto Poisson y siempre lo preguntan como «considerando el problema en 3D».</span></div>
+    <div class="err"><span class="n">05</span><span>Confundir <b>X por unidad de volumen con b por unidad de masa</b>. Define si en la ecuación aparece ρb o X solo.</span></div>
+    <div class="err"><span class="n">06</span><span>Evaluar la irrotacionalidad <b>sobre el campo equivocado</b>. Se evalúa sobre v, no sobre q ni sobre el otro campo del enunciado.</span></div>
+    <div class="err"><span class="n">07</span><span>Tratar <b>δ como d</b>. La variación compara campos distintos en el <b>mismo</b> instante; no es un incremento temporal.</span></div>
+    <div class="err"><span class="n">08</span><span>No declarar la <b>admisibilidad</b> antes de una demostración variacional. Es el primer renglón, no un detalle.</span></div>
+    <div class="err"><span class="n">09</span><span>Cancelar términos <b>sin escribir la razón</b>. En el bloque 4 el puntaje está literalmente en los porqués: el enunciado los pide.</span></div>
+    <div class="err"><span class="n">10</span><span>Perder el término de <b>derivar el brazo de palanca x<sub>j</sub></b> en la demo del momento angular. Es el que produce la simetría.</span></div>
+    <div class="err"><span class="n">11</span><span>No cerrar con <b>«y como V es arbitrario…»</b>. Sin ese renglón la demostración no tiene resultado local.</span></div>
+    <div class="err"><span class="n">12</span><span>Olvidar que en Navier‑Stokes la <b>continuidad se usa dos veces</b>: para bajar a Cauchy y para matar términos de la constitutiva.</span></div>
+    <div class="err"><span class="n">13</span><span>«No me da cero» en un hookeano: antes de buscar el error, revisá si falta una <b>identidad entre constantes</b> (λ = 2μν/(1−2ν), E = 2μ(1+ν)).</span></div>
+    <div class="err"><span class="n">14</span><span>Responder las <b>sintéticas con desarrollo largo</b>. Piden síntesis; el tiempo que gastás ahí lo perdés en la deducción.</span></div>
+    <div class="err"><span class="n">15</span><span>Equivocar las <b>normales de las caras «negativas»</b> al calcular tracciones: la normal externa de la cara x₁ = 0 es (−1, 0, 0).</span></div>
+  </div>
+</section>
+
+<!-- ===================== SIMULACRO ===================== -->
+<section id="simulacro">
+  <div class="sec-head"><span class="sec-tag">Control</span><h2>Autoevaluación de cierre</h2></div>
+  <p class="sec-sub">Doce preguntas. Si dudás en alguna, volvé a la sección que indica. Hacelas al final del día, en voz alta, sin apuntes.</p>
+  <div class="grid2">
+    <div class="qa"><div class="qa-q"><span class="n">01</span><span>Escribí la receta única de la unidad 10 y nombrá las cuatro leyes con su resultado local.</span></div><button class="qa-a" type="button"><span class="in">Ley global integral → Gauss + derivada material + volumen arbitrario → ecuación local. Masa → continuidad (1 PDE). Momento lineal → Cauchy (3 PDEs). Momento angular → ninguna PDE, σ simétrico (3 ecuaciones algebraicas). Energía → balance térmico (1 PDE).</span></button></div>
+    <div class="qa"><div class="qa-q"><span class="n">02</span><span>¿Por qué D/Dt no conmuta con la integral de volumen, y cuándo sí?</span></div><button class="qa-a" type="button"><span class="in">Porque el volumen material se dilata: sobra el término A·div v (Reynolds). Entra limpia solo cuando el integrando lleva ρ adelante, porque ahí el paréntesis sobrante es exactamente la ecuación de continuidad y vale cero.</span></button></div>
+    <div class="qa"><div class="qa-q"><span class="n">03</span><span>En Navier‑Stokes, ¿dónde se usa la incompresibilidad y cuántas veces?</span></div><button class="qa-a" type="button"><span class="in">Dos veces. Primero mata el término λV<sub>kk</sub>δ<sub>ij</sub> de la constitutiva. Segundo, después de conmutar derivadas, mata el cruzado μ∂<sub>i</sub>(∂<sub>j</sub>v<sub>j</sub>). (Y una tercera lectura: es la cuarta ecuación del sistema 4×4, la que determina p.)</span></button></div>
+    <div class="qa"><div class="qa-q"><span class="n">04</span><span>¿Qué papel juega la presión en un fluido incompresible?</span></div><button class="qa-a" type="button"><span class="in">No tiene ecuación constitutiva propia: es una incógnita más, el multiplicador que hace cumplir la restricción ∇·v = 0. Por eso el sistema es 4×4 (tres componentes de v más p).</span></button></div>
+    <div class="qa"><div class="qa-q"><span class="n">05</span><span>Un campo estacionario, ¿puede tener aceleración no nula?</span></div><button class="qa-a" type="button"><span class="in">Sí. Con ∂v/∂t = 0 la aceleración material sigue siendo v·∇v, que no tiene por qué anularse: la partícula se mueve hacia zonas donde el campo vale otra cosa. Ejemplo del parcial 2023: v = (0, z, y) es estacionario y la aceleración de la partícula crece como e<sup>t</sup>.</span></button></div>
+    <div class="qa"><div class="qa-q"><span class="n">06</span><span>¿Un flujo incompresible es necesariamente irrotacional?</span></div><button class="qa-a" type="button"><span class="in">No, son condiciones independientes. El corte simple y la rotación rígida son incompresibles y rotacionales; una fuente radial es irrotacional y compresible; el vórtice libre es las dos cosas a la vez (salvo en el origen).</span></button></div>
+    <div class="qa"><div class="qa-q"><span class="n">07</span><span>Una fibra a 45° en un cuerpo con dilatación térmica pura: ¿cuánto se alarga?</span></div><button class="qa-a" type="button"><span class="in">αΔT por unidad de longitud, igual que en cualquier otra dirección: el tensor térmico es esférico, así que ε<sub>n</sub> = nᵀ(αΔT I)n = αΔT para todo n unitario. El ángulo no interviene.</span></button></div>
+    <div class="qa"><div class="qa-q"><span class="n">08</span><span>¿Qué diferencia hay entre las condiciones de borde esenciales y las naturales en la forma débil?</span></div><button class="qa-a" type="button"><span class="in">Las esenciales (valor impuesto: T̄, ū) se construyen a mano dentro del campo admisible, y la variación se anula ahí. Las naturales (flujo o tracción impuestos) <b>no se imponen</b>: quedan absorbidas en δW<sub>ext</sub> y en la vuelta débil⇒fuerte reaparecen solas.</span></button></div>
+    <div class="qa"><div class="qa-q"><span class="n">09</span><span>¿Por qué K resulta simétrica?</span></div><button class="qa-a" type="button"><span class="in">Porque K = ∫BᵀκB dV con κ (o ℂ) simétrico: la simetría del tensor constitutivo baja intacta al álgebra lineal. Es la misma simetría que ya venía de σ = σᵀ.</span></button></div>
+    <div class="qa"><div class="qa-q"><span class="n">10</span><span>Contá las 15 ecuaciones que cierran el problema.</span></div><button class="qa-a" type="button"><span class="in">3 de movimiento (Cauchy) + 6 cinemáticas (ε en función de u) + 6 constitutivas (Hooke). Incógnitas: 3 u<sub>i</sub> + 6 ε<sub>ij</sub> + 6 σ<sub>ij</sub>. El momento angular no suma ecuaciones: ya se gastó en bajar σ de 9 a 6.</span></button></div>
+    <div class="qa"><div class="qa-q"><span class="n">11</span><span>¿Qué es μ físicamente y en qué se diferencia de su rol en un sólido?</span></div><button class="qa-a" type="button"><span class="in">Viscosidad dinámica: proporcionalidad entre tensión de corte y gradiente de velocidad (σ<sub>12</sub> = μU/h entre placas). En el sólido, el μ de Lamé relaciona tensión con deformación. La diferencia de fondo: el sólido resiste <i>estar</i> deformado, el fluido resiste <i>estar deformándose</i>.</span></button></div>
+    <div class="qa"><div class="qa-q"><span class="n">12</span><span>Te dan un mapeo x<sub>i</sub>(a,t) y te piden la derivada material en euleriana. ¿Cuál es el orden de trabajo?</span></div><button class="qa-a" type="button"><span class="in">Obtener v = ∂x/∂t a coordenadas materiales fijas, invertir el mapeo para eliminar las a y quedarte con v(x,t), y recién ahí aplicar DF/Dt = ∂F/∂t + v·∇F. Chequeo final: los dos caminos —el lagrangiano y el euleriano— tienen que dar lo mismo.</span></button></div>
+  </div>
+</section>
+
+<footer>
+  <p>Armado sobre el material de <span class="mono">MecanicaDelContinuo/</span>: los enunciados escaneados de <span class="mono">Parciales2/</span> y el análisis por año de <span class="mono">apunte_U5-U10.md</span>. Las figuras extendidas de cada visualización están en las carpetas de unidad (<span class="mono">U6/</span>, <span class="mono">U7/</span>, <span class="mono">U9-U10/</span>).</p>
+  <p style="margin-top:10px">Se imprime bien: <b>Ctrl+P</b> revela todas las fórmulas y saca la barra de navegación.</p>
+</footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- modo tapado ---------- */
+  var body = document.body;
+  var btnTapar = document.getElementById('tapar');
+  var btnRevelar = document.getElementById('revelar');
+  var reveals = Array.prototype.slice.call(document.querySelectorAll('.f-eq, .qa-a'));
+
+  reveals.forEach(function(el){
+    el.setAttribute('aria-expanded','true');
+    el.addEventListener('click', function(){
+      if(!body.classList.contains('tapado')) return;
+      var open = el.classList.toggle('abierta');
+      el.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  });
+
+  btnTapar.addEventListener('click', function(){
+    var on = !body.classList.contains('tapado');
+    body.classList.toggle('tapado', on);
+    btnTapar.setAttribute('aria-pressed', on ? 'true' : 'false');
+    btnTapar.textContent = on ? 'Modo tapado activo' : 'Tapar fórmulas';
+    if(on){
+      reveals.forEach(function(el){ el.classList.remove('abierta'); el.setAttribute('aria-expanded','false'); });
+    }
+  });
+
+  btnRevelar.addEventListener('click', function(){
+    reveals.forEach(function(el){ el.classList.add('abierta'); el.setAttribute('aria-expanded','true'); });
+  });
+
+  /* ---------- progreso del plan ---------- */
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('#blocks input'));
+  var fill = document.getElementById('barfill');
+  var pct = document.getElementById('pct');
+  function refresh(){
+    var done = boxes.filter(function(b){ return b.checked; }).length;
+    var p = boxes.length ? Math.round(done * 100 / boxes.length) : 0;
+    fill.style.width = p + '%';
+    pct.textContent = p + '%';
+    try { localStorage.setItem('mdc-plan', JSON.stringify(boxes.map(function(b){ return b.checked; }))); } catch(e){}
+  }
+  try {
+    var saved = JSON.parse(localStorage.getItem('mdc-plan') || 'null');
+    if(saved && saved.length === boxes.length){ boxes.forEach(function(b,i){ b.checked = !!saved[i]; }); }
+  } catch(e){}
+  boxes.forEach(function(b){ b.addEventListener('change', refresh); });
+  refresh();
+
+  /* ---------- canvas helpers ---------- */
+  function cssVar(name){
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+  function setup(cv){
+    var dpr = window.devicePixelRatio || 1;
+    var w = cv.clientWidth, h = cv.clientHeight;
+    if(!w || !h) return null;
+    cv.width = Math.round(w * dpr);
+    cv.height = Math.round(h * dpr);
+    var ctx = cv.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    return { ctx: ctx, w: w, h: h };
+  }
+  function arrow(ctx, x, y, dx, dy){
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + dx, y + dy);
+    ctx.stroke();
+    var L = Math.sqrt(dx*dx + dy*dy);
+    if(L < 1.5) return;
+    var ux = dx / L, uy = dy / L, hs = Math.min(4.5, L * 0.42);
+    ctx.beginPath();
+    ctx.moveTo(x + dx, y + dy);
+    ctx.lineTo(x + dx - ux*hs - uy*hs*0.55, y + dy - uy*hs + ux*hs*0.55);
+    ctx.lineTo(x + dx - ux*hs + uy*hs*0.55, y + dy - uy*hs - ux*hs*0.55);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  /* ---------- zoológico de flujos ---------- */
+  var flows = [
+    { id:'fz1', f:function(x,y){ return [y, 0]; } },
+    { id:'fz2', f:function(x,y){ return [-y, x]; } },
+    { id:'fz3', f:function(x,y){ return [x, y]; } },
+    { id:'fz4', f:function(x,y){ var r2 = Math.max(x*x + y*y, 0.09); return [-y/r2*0.55, x/r2*0.55]; } }
+  ];
+  function drawFlow(spec){
+    var cv = document.getElementById(spec.id);
+    if(!cv) return;
+    var s = setup(cv);
+    if(!s) return;
+    var ctx = s.ctx, w = s.w, h = s.h;
+    var accent = cssVar('--accent') || '#0A6E78';
+    var line = cssVar('--line') || '#ccc';
+    ctx.strokeStyle = line;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(0.5, 0.5, w - 1, h - 1);
+    ctx.strokeStyle = accent;
+    ctx.fillStyle = accent;
+    ctx.lineWidth = 1.15;
+    var n = 7, pad = 12;
+    var cw = (w - 2*pad) / (n - 1), ch = (h - 2*pad) / (n - 1);
+    var scale = Math.min(cw, ch) * 0.62;
+    for(var i = 0; i < n; i++){
+      for(var j = 0; j < n; j++){
+        var X = -1 + 2*i/(n-1), Y = -1 + 2*j/(n-1);
+        var v = spec.f(X, Y);
+        var m = Math.sqrt(v[0]*v[0] + v[1]*v[1]);
+        if(m < 1e-4) continue;
+        var k = Math.min(1, m) / m * scale;
+        var px = pad + i*cw, py = h - pad - j*ch;
+        ctx.globalAlpha = 0.35 + 0.65 * Math.min(1, m);
+        arrow(ctx, px - v[0]*k/2, py + v[1]*k/2, v[0]*k, -v[1]*k);
+      }
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  /* ---------- derivada material ---------- */
+  var dmStart = null, dmRaf = null;
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function drawDM(t){
+    var cv = document.getElementById('dm');
+    if(!cv) return;
+    var s = setup(cv);
+    if(!s) return;
+    var ctx = s.ctx, w = s.w, h = s.h;
+    var accent = cssVar('--accent') || '#0A6E78';
+    var heat = cssVar('--heat') || '#8F520F';
+    var line = cssVar('--line') || '#ccc';
+    var ink3 = cssVar('--ink-3') || '#888';
+
+    ctx.strokeStyle = line; ctx.lineWidth = 1;
+    ctx.strokeRect(0.5, 0.5, w - 1, h - 1);
+
+    var pad = 16, x0 = pad, x1 = w - pad, mid = h/2, amp = (h - 2*pad) * 0.36;
+    ctx.strokeStyle = ink3; ctx.setLineDash([3,3]); ctx.globalAlpha = .6;
+    ctx.beginPath(); ctx.moveTo(x0, mid); ctx.lineTo(x1, mid); ctx.stroke();
+    ctx.setLineDash([]); ctx.globalAlpha = 1;
+
+    var XMAX = 4 * Math.PI;
+    function px(X){ return x0 + (X / XMAX) * (x1 - x0); }
+    function T(X){ return Math.sin(X - t); }
+
+    ctx.strokeStyle = accent; ctx.lineWidth = 1.6; ctx.globalAlpha = .55;
+    ctx.beginPath();
+    for(var i = 0; i <= 200; i++){
+      var X = XMAX * i / 200;
+      var Y = mid - amp * T(X);
+      if(i === 0) ctx.moveTo(px(X), Y); else ctx.lineTo(px(X), Y);
+    }
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    var xs = XMAX * 0.22;
+    var xp = (XMAX * 0.22 + 2 * t) % XMAX;
+
+    ctx.strokeStyle = heat; ctx.setLineDash([2,3]); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(px(xs), pad*0.6); ctx.lineTo(px(xs), h - pad*0.6); ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = heat;
+    ctx.beginPath(); ctx.arc(px(xs), mid - amp*T(xs), 5, 0, 6.2832); ctx.fill();
+    ctx.fillStyle = accent;
+    ctx.beginPath(); ctx.arc(px(xp), mid - amp*T(xp), 5, 0, 6.2832); ctx.fill();
+
+    ctx.font = '10px ' + (cssVar('--font-mono') || 'monospace');
+    ctx.fillStyle = ink3;
+    ctx.fillText('sensor fijo', px(xs) - 8, h - 5);
+    ctx.fillText('partícula (v = 2)', 8, 13);
+  }
+  function loop(ts){
+    if(dmStart === null) dmStart = ts;
+    drawDM((ts - dmStart) / 900);
+    dmRaf = requestAnimationFrame(loop);
+  }
+
+  function drawAll(){
+    flows.forEach(drawFlow);
+    if(reduce) drawDM(0.8);
+  }
+
+  function start(){
+    drawAll();
+    if(!reduce && dmRaf === null) dmRaf = requestAnimationFrame(loop);
+  }
+
+  window.addEventListener('resize', function(){
+    clearTimeout(window.__mdcT);
+    window.__mdcT = setTimeout(drawAll, 160);
+  });
+  new MutationObserver(drawAll).observe(document.documentElement, { attributes:true, attributeFilter:['data-theme','class','style'] });
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', drawAll);
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', start);
+  } else {
+    start();
+  }
+})();
+</script>
