@@ -16,6 +16,7 @@
   - [3.5 Ecuaciones de equilibrio: traslación y rotación](#35-ecuaciones-de-equilibrio-traslación-y-rotación)
   - [3.6 Transformación de coordenadas](#36-transformación-de-coordenadas)
   - [3.7 Condiciones de borde en tensiones](#37-condiciones-de-borde-en-tensiones)
+    - [📝 Cómo cae exactamente en el Parcial 1](#-cómo-cae-exactamente-en-el-parcial-1)
   - [📝 Cómo cae la U3 en el parcial](#-cómo-cae-la-u3-en-el-parcial)
 - [UNIDAD 4 — TENSIONES Y DIRECCIONES PRINCIPALES](#unidad-4--tensiones-y-direcciones-principales)
   - [4.0 El problema](#40-el-problema)
@@ -201,14 +202,240 @@ $$\boxed{\tau'_{km} = \tau_{ji}\,\beta_{kj}\,\beta_{mi}}$$
 
 ## 3.7 Condiciones de borde en tensiones
 
-En la interfaz entre dos medios, el vector de tensión debe equilibrarse: $\overset{\nu}{\mathbf T}^{(1)} = -\overset{\nu}{\mathbf T}^{(2)}$. Las componentes que "atraviesan" la superficie (normal y las de corte alineadas con ella) son continuas; la componente paralela a la superficie **puede ser discontinua** (⚠️ trampa típica: asumir que todo $\sigma$ es continuo en una interfaz). Caso límite de frontera libre (contacto con un medio mucho más blando, ej. acero-aire): $\overset{\nu}{\mathbf T}=\mathbf 0$.
+### El planteo: dos medios pegados por una superficie
+
+Dos medios, (1) y (2), en contacto a través de una superficie. Elegimos ejes locales con **$z$ perpendicular a la superficie** — siempre se puede, es una elección de sistema, y por §3.6 sabemos cómo rotar después. El tensor de tensiones a cada lado, **entero** (ya simétrico por §3.5, así que son 6 números independientes por lado, 12 en juego):
+
+$$\boldsymbol\sigma^{(1)}=\begin{bmatrix}\sigma^{(1)}_{xx}&\sigma^{(1)}_{xy}&\sigma^{(1)}_{xz}\\ \sigma^{(1)}_{xy}&\sigma^{(1)}_{yy}&\sigma^{(1)}_{yz}\\ \sigma^{(1)}_{xz}&\sigma^{(1)}_{yz}&\sigma^{(1)}_{zz}\end{bmatrix}
+\qquad
+\boldsymbol\sigma^{(2)}=\begin{bmatrix}\sigma^{(2)}_{xx}&\sigma^{(2)}_{xy}&\sigma^{(2)}_{xz}\\ \sigma^{(2)}_{xy}&\sigma^{(2)}_{yy}&\sigma^{(2)}_{yz}\\ \sigma^{(2)}_{xz}&\sigma^{(2)}_{yz}&\sigma^{(2)}_{zz}\end{bmatrix}$$
+
+La superficie es **una sola**, pero cada medio la ve con **su propia normal exterior**, y esas dos normales son opuestas:
+
+$$\boldsymbol\nu^{(1)}=+\mathbf e_z,\qquad \boldsymbol\nu^{(2)}=-\mathbf e_z$$
+
+⚠️ Acá está el 90% de los errores del tema: usar la misma normal para los dos lados. La normal exterior de (1) apunta *hacia afuera de (1)*, o sea hacia (2); la de (2) apunta al revés.
+
+### La cuenta
+
+Cauchy ($T_i=\sigma_{ij}\nu_j$) en cada medio. Como $\boldsymbol\nu=\pm\mathbf e_z$, el producto $\boldsymbol\sigma\cdot\boldsymbol\nu$ **selecciona la tercera columna** del tensor y descarta el resto:
+
+$$\overset{\nu}{\mathbf T}^{(1)}=\boldsymbol\sigma^{(1)}\mathbf e_z=\begin{Bmatrix}\sigma^{(1)}_{xz}\\\sigma^{(1)}_{yz}\\\sigma^{(1)}_{zz}\end{Bmatrix}
+\qquad
+\overset{\nu}{\mathbf T}^{(2)}=-\boldsymbol\sigma^{(2)}\mathbf e_z=-\begin{Bmatrix}\sigma^{(2)}_{xz}\\\sigma^{(2)}_{yz}\\\sigma^{(2)}_{zz}\end{Bmatrix}$$
+
+Ahora la física. Aislo una **pastilla** de espesor $h$ que envuelve un pedacito $\Delta S$ de la superficie, con una cara en el medio (1) y la otra en el (2), y hago $h\to0$. El volumen (y con él la masa $\rho\,\Delta S\,h$ y la fuerza de cuerpo $\int\mathbf X\,dV$) se va como $h$; el área de las dos caras queda fija en $\Delta S$. En el límite, las fuerzas de volumen desaparecen frente a las de superficie y sobrevive sólo el equilibrio de las dos tracciones:
+
+$$\boxed{\overset{\nu}{\mathbf T}^{(1)}+\overset{\nu}{\mathbf T}^{(2)}=\mathbf 0\quad\Longleftrightarrow\quad \overset{\nu}{\mathbf T}^{(1)}=-\overset{\nu}{\mathbf T}^{(2)}}$$
+
+💡 Es exactamente el mismo argumento de límite del tetraedro de §3.4 (fuerzas de cuerpo $\sim h^3$, de superficie $\sim h^2$) y el mismo corolario de acción-reacción punto a punto — pero ahora aplicado a una superficie material real (una interfaz entre dos materiales) en vez de a una superficie imaginaria dentro de un mismo cuerpo.
+
+Reemplazando y cancelando el signo:
+
+$$\boxed{\sigma^{(1)}_{xz}=\sigma^{(2)}_{xz}\qquad \sigma^{(1)}_{yz}=\sigma^{(2)}_{yz}\qquad \sigma^{(1)}_{zz}=\sigma^{(2)}_{zz}}$$
+
+### Qué se conserva y qué NO — mirando el tensor entero
+
+$$\boldsymbol\sigma=\left[\begin{array}{cc|c}
+\sigma_{xx}&\sigma_{xy}&\sigma_{xz}\\
+\sigma_{xy}&\sigma_{yy}&\sigma_{yz}\\
+\sigma_{xz}&\sigma_{yz}&\sigma_{zz}
+\end{array}\right]\qquad\text{la columna a la derecha de la barra es }\boldsymbol\sigma\cdot\mathbf e_z=\overset{\nu}{\mathbf T}$$
+
+| | Componentes | ¿Continuas al cruzar? |
+|---|---|---|
+| **Columna de la normal** | $\sigma_{xz},\ \sigma_{yz},\ \sigma_{zz}$ | ✅ **SÍ**, siempre |
+| **Bloque en el plano** | $\sigma_{xx},\ \sigma_{yy},\ \sigma_{xy}$ | ❌ **pueden saltar** |
+
+De las 6 componentes independientes, la condición de borde **ata 3 y deja 3 completamente sueltas**. No es "casi todo continuo con alguna excepción rara": es mitad y mitad.
+
+⚠️ Trampa clásica de parcial: escribir "$\boldsymbol\sigma^{(1)}=\boldsymbol\sigma^{(2)}$ en la interfaz". **Falso.** Lo continuo es el vector $\boldsymbol\sigma\cdot\mathbf n$, no el tensor.
+
+### Por qué justo esas tres (el argumento serio)
+
+No es arbitrario. Mirá la ecuación de equilibrio (§3.5) en la dirección $x$, escrita en cartesianas:
+
+$$\frac{\partial\sigma_{xx}}{\partial x}+\frac{\partial\sigma_{xy}}{\partial y}+\underbrace{\frac{\partial\sigma_{xz}}{\partial z}}_{\text{única derivada en }z}+\,X_x=0$$
+
+La única componente que se deriva **respecto de $z$** —la dirección en la que cruzás la interfaz— es $\sigma_{xz}$. Si $\sigma_{xz}$ saltara, $\partial\sigma_{xz}/\partial z$ sería una delta de Dirac: una fuerza finita concentrada sobre masa nula ⇒ aceleración infinita. Imposible. Lo mismo para $\sigma_{yz}$ (ecuación en $y$) y $\sigma_{zz}$ (ecuación en $z$).
+
+En cambio $\sigma_{xx}$ sólo aparece derivada respecto de $x$, dirección **a lo largo** de la interfaz, donde no hay ningún salto. Puede valer lo que quiera de cada lado sin violar nada.
+
+💡 **Regla general, para cualquier normal (no sólo $z$):** lo continuo es el vector $\boldsymbol\sigma\cdot\mathbf n$. Punto. Si la normal es oblicua, hacés Cauchy con esa $\mathbf n$ y listo — no hace falta reorientar ejes.
+
+### Ejemplo 1 — El cubo de acero rodeado de aire: las CB te dan el tensor entero
+
+Cubo de acero de lado $a$, apoyado sobre una mesa rígida, con una **presión $q$ aplicada sobre la cara superior**, y las **4 caras laterales en contacto con el aire**. Fuerzas de cuerpo despreciables. Queremos $\boldsymbol\sigma$.
+
+El aire en reposo es un fluido: no transmite corte, y su tensión es puramente presión (§ constitutivas, U8): $\boldsymbol\sigma^{\text{aire}}=-p_{\text{atm}}\mathbf I$. Con $p_{\text{atm}}\approx0{,}1$ MPa, frente a tensiones de servicio del acero del orden de $100$–$300$ MPa, es **tres órdenes de magnitud menos** ⇒ lo tomamos como $\overset{\nu}{\mathbf T}=\mathbf 0$. Ese es el significado preciso de **"superficie libre"**: no es que no haya nada del otro lado, es que lo que hay aporta una tracción despreciable.
+
+Vamos cara por cara. Cada cara libre mata **una columna** del tensor:
+
+**Cara $x=a$**, normal $\mathbf n=\mathbf e_x$ ⇒ Cauchy toma la **primera** columna:
+
+$$\overset{\nu}{\mathbf T}=\begin{Bmatrix}\sigma_{xx}\\\sigma_{xy}\\\sigma_{xz}\end{Bmatrix}=\begin{Bmatrix}0\\0\\0\end{Bmatrix}\;\Rightarrow\; \sigma_{xx}=\sigma_{xy}=\sigma_{xz}=0$$
+
+**Cara $y=a$**, normal $\mathbf n=\mathbf e_y$ ⇒ **segunda** columna:
+
+$$\begin{Bmatrix}\sigma_{xy}\\\sigma_{yy}\\\sigma_{yz}\end{Bmatrix}=\mathbf 0\;\Rightarrow\;\sigma_{yy}=\sigma_{yz}=0\quad(\sigma_{xy}\text{ ya era }0\text{: redundante, y eso confirma la simetría})$$
+
+**Cara $z=a$** (la cargada), normal $\mathbf n=\mathbf e_z$ ⇒ **tercera** columna. Del otro lado hay un pistón que aprieta con $q$, o sea $\overset{\nu}{\mathbf T}=(0,0,-q)$ (negativo = compresión):
+
+$$\begin{Bmatrix}\sigma_{xz}\\\sigma_{yz}\\\sigma_{zz}\end{Bmatrix}=\begin{Bmatrix}0\\0\\-q\end{Bmatrix}\;\Rightarrow\;\sigma_{zz}=-q$$
+
+Resultado, el tensor completo:
+
+$$\boldsymbol\sigma=\begin{bmatrix}0&0&0\\0&0&0\\0&0&-q\end{bmatrix}$$
+
+💡 **Compresión uniaxial pura, deducida *sólo* de condiciones de borde**, sin tocar la constitutiva ni resolver ninguna ecuación diferencial. Las 3 direcciones principales son los ejes coordenados, $\sigma_1=\sigma_2=0$, $\sigma_3=-q$, y el corte máximo es $q/2$ a 45° (⇒ el círculo de Mohr sale de taquito).
+
+⚠️ **El contraste que hace entender el tema:** si el mismo cubo estuviera **confinado lateralmente** dentro de una matriz rígida, las caras laterales ya *no* son libres — hay contacto, y ahí $\sigma_{xx}=\sigma_{yy}=-\frac{\nu}{1-\nu}q\neq0$. Cambió el vecino, cambió la condición de borde, cambió el tensor. La geometría y la carga son idénticas: lo único que cambió es **quién está del otro lado de la superficie**.
+
+### Ejemplo 2 — La chapa: el estado plano de tensiones ES una condición de borde
+
+Chapa (lámina) delgada de espesor $t$ en el plano $xy$, caras $z=0$ y $z=t$ **al aire**, cargada en su plano.
+
+En ambas caras, normal $\pm\mathbf e_z$ ⇒ tercera columna nula:
+
+$$\sigma_{xz}=\sigma_{yz}=\sigma_{zz}=0\quad\text{en }z=0\text{ y }z=t$$
+
+Como la chapa es delgada, esas tres componentes no tienen "espacio" para crecer entre una cara y la otra, así que se las toma nulas **en todo el espesor**:
+
+$$\boldsymbol\sigma=\begin{bmatrix}\sigma_{xx}&\sigma_{xy}&0\\\sigma_{xy}&\sigma_{yy}&0\\0&0&0\end{bmatrix}$$
+
+💡 **Eso es exactamente el estado plano de tensiones.** No es una hipótesis sacada de la galera ni un truco de cálculo: es la condición de borde de superficie libre en las dos caras, extendida al interior porque el espesor es chico. 🔗 Es la hipótesis bajo la que vive **todo** el ejercicio de Airy de U6-U7.
+
+⚠️ Y fijate lo que la condición **NO** dice: $\sigma_{xx}$ en la cara libre puede ser **enorme**. De hecho, en una viga flexionada la tensión longitudinal es **máxima justo en la fibra externa** — la que está tocando el aire. "Superficie libre" significa *sin tracción en la dirección de la normal*, **no** "sin tensión". Confundir esas dos cosas es el error conceptual más caro del tema.
+
+### Ejemplo 3 — Bilámina pegada: la interfaz donde SÍ hay salto
+
+Dos chapas pegadas en $z=0$, estiradas en $x$: acero abajo ($E_1=200$ GPa), aluminio arriba ($E_2=70$ GPa). Caras exteriores libres.
+
+Como están **pegadas**, comparten el desplazamiento en el plano ⇒ comparten la deformación: $\varepsilon_{xx}=10^{-3}$ en las dos. Entonces (uniaxial, ignorando Poisson):
+
+$$\sigma^{(1)}_{xx}=200\ \text{GPa}\cdot10^{-3}=200\ \text{MPa}\qquad \sigma^{(2)}_{xx}=70\ \text{GPa}\cdot10^{-3}=70\ \text{MPa}$$
+
+**Salto de 130 MPa cruzando la interfaz** — y está perfecto. Verificamos la condición de borde con $\mathbf n=\mathbf e_z$:
+
+$$\sigma^{(1)}_{xz}=\sigma^{(2)}_{xz}=0\quad\checkmark\qquad \sigma^{(1)}_{yz}=\sigma^{(2)}_{yz}=0\quad\checkmark\qquad \sigma^{(1)}_{zz}=\sigma^{(2)}_{zz}=0\quad\checkmark$$
+
+$\overset{\nu}{\mathbf T}^{(1)}=\overset{\nu}{\mathbf T}^{(2)}=\mathbf 0$: se cumple **exactamente**, con un salto brutal en $\sigma_{xx}$. Cada capa se banca su propia tensión longitudinal internamente; la interfaz no tiene que transmitir nada de eso.
+
+Los dos tensores, uno al lado del otro:
+
+$$\boldsymbol\sigma^{(1)}=\begin{bmatrix}200&0&0\\0&0&0\\0&0&0\end{bmatrix}\text{MPa}
+\qquad
+\boldsymbol\sigma^{(2)}=\begin{bmatrix}70&0&0\\0&0&0\\0&0&0\end{bmatrix}\text{MPa}$$
+
+Distintos en la componente $xx$, idénticos en toda la tercera columna. Eso es la condición de borde en acción.
+
+### Ejemplo 4 — Sólido en contacto con fluido
+
+Presa de hormigón con agua apoyada contra el paramento, o pistón sobre aceite. El fluido en reposo tiene $\boldsymbol\sigma^{\text{fl}}=-p\,\mathbf I$. Con normal $\mathbf n$ a la superficie de contacto:
+
+$$\overset{\nu}{\mathbf T}^{\text{fl}}=-p\,\mathbf I\cdot\mathbf n=-p\,\mathbf n$$
+
+⇒ en el sólido, sobre esa cara: **componente normal** $=-p$ (compresión, con $p=\rho g h$ si es hidrostática) y **componente de corte** $=0$. Un fluido en reposo (o invíscido) **no puede transmitir corte**: esa es toda la información que da la interfaz. Las componentes del sólido paralelas a la cara siguen libres.
+
+### Mnemotécnico para el parcial
+
+En una interfaz pegada con normal $z$ hay una **dualidad perfecta**:
+
+| Componentes | Tensión | Deformación |
+|---|---|---|
+| **En el plano** ($xx$, $yy$, $xy$) | puede **saltar** | **continua** (están pegadas) |
+| **Fuera del plano** ($zz$, $xz$, $yz$) | **continua** (Cauchy) | puede **saltar** |
+
+Si te acordás de una fila, la otra sale por descarte. La razón profunda: la continuidad de tensiones viene de **equilibrio**, la de deformaciones viene de **compatibilidad geométrica**, y cada una ata las componentes que la otra deja libres.
 
 🔗 Esta es exactamente la condición de borde natural $\Gamma_\sigma$ de todo el bloque variacional de U9-U10 (sección 4 de ese apunte): "$\sigma_{ij}n_j=\overset{n}{T}_i$ en $\Gamma_\sigma$" no es un dato nuevo ahí — es esta misma ecuación, con el lado "(2)" reemplazado por el valor de tracción prescripto.
+
+### 📝 Cómo cae exactamente en el Parcial 1
+
+Este tema **casi nunca aparece con el nombre "condición de borde"**. Aparece disfrazado. Los tres disfraces reales:
+
+---
+
+**🔹 Disfraz 1 — "mostrar que la tracción es nula en la frontera"** (P1 2011, ej. 1c)
+
+Cilindro de radio $a$, eje $x_3$, a torsión. Se da:
+
+$$\sigma_{13}=-\frac{\partial\psi}{\partial x_2},\quad \sigma_{23}=\frac{\partial\psi}{\partial x_1},\quad \sigma_{11}=\sigma_{12}=\sigma_{22}=\sigma_{33}=0$$
+
+Para el caso $\psi=r^2=x_1^2+x_2^2$: $\;\sigma_{13}=-2x_2$, $\;\sigma_{23}=2x_1$. Tensor entero:
+
+$$\boldsymbol\sigma=\begin{bmatrix}0&0&-2x_2\\0&0&2x_1\\-2x_2&2x_1&0\end{bmatrix}$$
+
+*Superficie lateral $r=a$* (la que toca el aire). Normal exterior $\mathbf n=\left(\tfrac{x_1}{a},\tfrac{x_2}{a},0\right)$:
+
+$$T_1=\sigma_{11}n_1+\sigma_{12}n_2+\sigma_{13}n_3=0$$
+$$T_2=\sigma_{21}n_1+\sigma_{22}n_2+\sigma_{23}n_3=0$$
+$$T_3=\sigma_{31}n_1+\sigma_{32}n_2+\sigma_{33}n_3=(-2x_2)\frac{x_1}{a}+(2x_1)\frac{x_2}{a}=0$$
+
+⇒ $\overset{\nu}{\mathbf T}=\mathbf 0$ **entera**: normal y corte nulos. La superficie lateral es libre, como tiene que ser (el cilindro está rodeado de aire y nadie lo aprieta de costado). Esto es lo que valida que la solución propuesta es físicamente admisible.
+
+*Caras de extremidad $x_3=\pm L$.* Normal $\mathbf n=\pm\mathbf e_3$ ⇒ tercera columna:
+
+$$\overset{\nu}{\mathbf T}=\pm(-2x_2,\;2x_1,\;0)$$
+
+Componente **normal**: $\overset{\nu}{\mathbf T}\cdot\mathbf n=\pm T_3=\sigma_{33}=0$ ⇒ **nula** ✓ (no se tira ni se comprime axialmente). Componente **de corte**: módulo $2\sqrt{x_1^2+x_2^2}=2r\neq0$ ⇒ **no nula** ✓. Ese corte es precisamente lo que transmite la cupla:
+
+$$M=\int_A(\sigma_{32}x_1-\sigma_{31}x_2)\,dA=\int_A 2(x_1^2+x_2^2)\,dA=2\int_A r^2dA=2\cdot\frac{\pi a^4}{2}=\pi a^4$$
+
+💡 El ejercicio entero es leer el tensor en dos superficies distintas con dos normales distintas. Nada más.
+
+---
+
+**🔹 Disfraz 2 — "hallar la dirección $\mathbf n$ para la cual $\overset{n}{\mathbf T}=\mathbf 0$"** (P1 2013 ej. 3 **y** P1 2015 ej. 3 — el mismo problema, palabra por palabra, dos años distintos ⇒ **candidato fuerte a repetirse**)
+
+$$\sigma_{ij}=\begin{bmatrix}\sigma_{11}&2&1\\2&0&2\\1&2&0\end{bmatrix},\qquad \sigma_{11}\ \text{desconocido}$$
+
+Piden: la dirección $\mathbf n$ tal que $\overset{n}{\mathbf T}=\mathbf 0$, y el valor de $\sigma_{11}$ que lo hace posible.
+
+**Traducción:** *"encontrá el plano que, en ese punto, se comporta como superficie libre"* — o, en lenguaje de U4, la dirección principal de autovalor cero.
+
+*Paso 1 — cuándo existe.* $\boldsymbol\sigma\,\mathbf n=\mathbf 0$ con $\mathbf n\neq\mathbf 0$ es un sistema homogéneo con solución no trivial ⇒ necesita $\det\boldsymbol\sigma=0$:
+
+$$\det = \sigma_{11}(0\cdot0-2\cdot2)-2(2\cdot0-2\cdot1)+1(2\cdot2-0\cdot1)=-4\sigma_{11}+4+4$$
+
+$$-4\sigma_{11}+8=0\;\Longrightarrow\;\boxed{\sigma_{11}=2}$$
+
+*Paso 2 — cuál es.* Con $\sigma_{11}=2$, resolvemos $\boldsymbol\sigma\,\mathbf n=\mathbf 0$:
+
+$$\begin{cases}2n_1+2n_2+n_3=0\\ 2n_1+0+2n_3=0\;\Rightarrow\;n_1=-n_3\\ n_1+2n_2+0=0\;\Rightarrow\;n_1=-2n_2\end{cases}$$
+
+Tomando $n_1=2$: $n_3=-2$, $n_2=-1$. Verificación en la 1ª ecuación: $4-2-2=0$ ✓. Normalizando ($\|(2,-1,-2)\|=3$):
+
+$$\boxed{\mathbf n=\tfrac13(2,\,-1,\,-2)}$$
+
+⚠️ El paso que se saltea todo el mundo es el **Paso 1**: contestan la dirección sin justificar por qué hace falta $\det\boldsymbol\sigma=0$. El determinante nulo *es* la respuesta al inciso "qué valor debe tener $\sigma_{11}$".
+
+💡 Conexión con U4: $\det\boldsymbol\sigma=I_3=0$ significa que **un autovalor es cero**, y $\mathbf n$ es su autovector. "Existe un plano libre de tracción" ⟺ "$\sigma_3=0$" ⟺ "$I_3=0$". Tres formas de decir lo mismo.
+
+---
+
+**🔹 Disfraz 3 — "graficar los vectores tensión que actúan sobre la cara F1"** (P1 2025, ej. 4b-4d — Airy en un cuarto de círculo, $\Phi=x^2y$)
+
+El enunciado 2025 dice textualmente *"los vectores tensión (**condición de borde de fuerza**) que actúan sobre la cara F1"*. Acá el tema aparece con nombre y apellido. La receta: en cada cara del dominio identificás la normal exterior, aplicás Cauchy $t_i=\sigma_{ij}n_j$, y graficás/integrás.
+
+⚠️ **El error de signo que cuesta el ejercicio:** siempre **normal exterior**. En el borde inferior $\mathbf n=(0,-1)$, así que $t_x=-\sigma_{xy}$ y $t_y=-\sigma_{yy}$. En el borde izquierdo $\mathbf n=(-1,0)$, $t_x=-\sigma_{xx}$. Poner $\mathbf n=(0,+1)$ "porque el eje $y$ apunta para arriba" invierte todo el diagrama.
+
+Para resultantes sobre una cara: $N=\int t_n\,ds$, $\;Q=\int t_t\,ds$, $\;M_z=\int t_n\,\xi\,ds$ (brazo $\xi$ desde el punto de reducción).
+
+---
+
+**🔹 Y la teórica corta.** P1 2025 pregunta *"¿Qué indica la fórmula de Cauchy?"* y *"escriba las condiciones que deben cumplirse para que un campo de tensiones esté en equilibrio"*. La respuesta completa a la segunda son **dos** cosas, y la mitad de la gente escribe sólo la primera:
+
+1. **En el interior:** $\sigma_{ji,j}+X_i=0$ (y $\sigma_{ij}=\sigma_{ji}$).
+2. **En el borde:** $\sigma_{ij}n_j=\overset{n}{T}_i$ — la tracción que sale del tensor tiene que coincidir con la carga aplicada (o con la del medio vecino, o con $\mathbf 0$ si es superficie libre).
+
+💡 Un campo que satisface la PDE pero no las CB **no es solución del problema**. Es la frase que conviene tener lista para cerrar cualquier pregunta de "¿este campo de tensiones es válido?".
 
 ## 📝 Cómo cae la U3 en el parcial
 
 - Rara vez se pregunta sola: aparece **adentro** de casi todos los ejercicios de tensión (Airy, verificación de un $\sigma$ propuesto, demostraciones de U9-U10) como el paso "plantear equilibrio $\tau_{ji,j}+X_i=0$" o "usar Cauchy $T_i=\tau_{ji}\nu_j$", sin que el enunciado lo repita.
 - Teóricas: derivar la fórmula de Cauchy (tetraedro), derivar la simetría de σ (cubo, equilibrio de momentos), condición de borde libre vs. interfaz entre medios.
+- **Condiciones de borde (§3.7): cayeron en 2011, 2013, 2015 y 2025**, siempre disfrazadas ("mostrar que la tracción es nula en la frontera", "hallar $\mathbf n$ tal que $\overset{n}{\mathbf T}=\mathbf 0$", "graficar los vectores tensión sobre la cara F1"). Los tres disfraces están resueltos paso a paso al final de §3.7.
 
 ---
 
