@@ -258,7 +258,7 @@ Sobre un plano de normal $\boldsymbol\nu$ arbitraria: $\overset{\nu}{\mathbf T} 
 
 **Desviador de tensión:** $\sigma'_{ij} = \sigma_{ij} - \sigma_0\delta_{ij}$, con $\sigma_0=\tfrac13\mathrm{tr}\,\sigma=\tfrac13 I_1$ la **tensión media** (parte hidrostática/esférica). Por construcción $\sigma'_{ii}=0$: el desviador no tiene parte esférica. Invariantes propios $J_1=0$, $J_2=\tfrac12\sigma'_{ij}\sigma'_{ij}$, $J_3=\det\sigma'$; sus autovalores son $\sigma'_K=\sigma_K-\sigma_0$, con los mismos autovectores que $\sigma$.
 
-💡🔗 **Esta es la separación tamaño/forma que organiza medio apunte.** U4 la introduce para la tensión — antes de que U5 introduzca la misma construcción (mismo nombre, "desviador") para la deformación, y antes de que U7 la use como "la clave del capítulo" para partir Hooke en dos leyes desacopladas: $K$ para $\sigma_0\leftrightarrow\varepsilon_0$, $2\mu$ para $\sigma'\leftrightarrow\varepsilon'$ (ver [`U7/fig_vol_desviador.png`](U7/fig_vol_desviador.png)). No es una idea nueva en cada unidad: es la misma descomposición (esférico + desviador), aplicada en orden a la tensión (U4), a la deformación (U5), y a la ley que las conecta (U7).
+💡🔗 **Esta es la separación tamaño/forma que organiza medio apunte.** U4 la introduce para la tensión — antes de que U5 introduzca la misma construcción (mismo nombre, "desviador") para la deformación, y antes de que U7 la use como "la clave del capítulo" para partir Hooke en dos leyes desacopladas: $K$ para $\sigma_0\leftrightarrow\varepsilon_0$, $2\mu$ para $\sigma'\leftrightarrow\varepsilon'$ (ver [`Visualizaciones/fig_vol_desviador.png`](../Visualizaciones/fig_vol_desviador.png)). No es una idea nueva en cada unidad: es la misma descomposición (esférico + desviador), aplicada en orden a la tensión (U4), a la deformación (U5), y a la ley que las conecta (U7).
 
 ## 📝 Cómo cae la U4 en el parcial
 
@@ -421,7 +421,7 @@ $$u_x = -\kappa\,x\,y, \qquad u_y = \frac{\kappa}{2}\left(x^2+\nu y^2-\nu z^2\ri
 
 con $\kappa=1/R$ la curvatura impuesta. Derivando (es un ejercicio directo, hacelo vos): $\varepsilon_{xx}=-\kappa y$, $\varepsilon_{yy}=\varepsilon_{zz}=-\nu\varepsilon_{xx}$, el resto nulo.
 
-![Flexión pura de una viga: fibras y alabeo anticlástico](U5/fig_viga_flexion.png)
+![Flexión pura de una viga: fibras y alabeo anticlástico](../Visualizaciones/fig_viga_flexion.png)
 
 **Panel derecho** es 5.6 puro y en 2D: cada fibra horizontal se convierte en un arco alrededor de un centro común a distancia $R=1/\kappa$; la de $y=0$ (fibra neutra) no cambia de longitud; las de $y>0$ se acortan (compresión, $\varepsilon_{xx}<0$); las de $y<0$ se alargan (tensión, $\varepsilon_{xx}>0$) — literalmente $\varepsilon_{11}=(ds-ds_0)/ds_0$ de la sección 5.6, con signo, para cada altura. Las secciones verdes confirman "planas y perpendiculares a la fibra neutra se mantienen": la hipótesis clásica de vigas no es un axioma aparte, sale de este mismo campo de $u$.
 
@@ -429,7 +429,7 @@ con $\kappa=1/R$ la curvatura impuesta. Derivando (es un ejercicio directo, hace
 
 💡 **La moraleja:** el efecto Poisson no es "una corrección menor que se agrega al final" — es una consecuencia geométrica de que $\varepsilon$ es un **tensor** (actúa en todas las direcciones a la vez, sección 5.8), y solo se vuelve visible como *forma* cuando mirás las tres dimensiones juntas. En 2D, el efecto Poisson es una fórmula; en 3D, es una silla de montar que podés dibujar.
 
-*(Generado con `U5/visualizacion_viga_flexion.py`.)*
+*(Generado con `Visualizaciones/visualizacion_viga_flexion.py`.)*
 
 ---
 
@@ -542,7 +542,7 @@ $$\frac{\partial v_i}{\partial x_j} = \underbrace{\frac{1}{2}\left(\frac{\partia
 
 ### 🖼️ Visualización: el corte simple partido en sus dos piezas
 
-![Corte simple = deformación pura + rotación pura](U6/fig3_shear_descompuesto.png)
+![Corte simple = deformación pura + rotación pura](../Visualizaciones/fig3_shear_descompuesto.png)
 
 Campo $v_x = ky$, $v_y=0$ (corte simple, $k=1$). El panel izquierdo dibuja $\nabla v$ tal cual (todas las flechas apuntan en $x$, con magnitud creciente en $y$: así "se ve" un gradiente de velocidad crudo, sin descomponer). Los paneles central y derecho son la **misma matriz** partida en su parte simétrica y antisimétrica:
 
@@ -550,7 +550,7 @@ $$\nabla v = \begin{bmatrix}0&1\\0&0\end{bmatrix} = \underbrace{\begin{bmatrix}0
 
 💡 El panel central ($V$) es un campo tipo "silla" — estira a 45° y comprime a $-45°$: pura deformación, sin preferencia de giro. El panel derecho ($-\Omega$) es un campo de rotación rígida pura alrededor del origen. Sumados (con el signo del apéndice, $\nabla v = V - \Omega$) dan exactamente el corte simple del panel izquierdo. **Esto es la sección 6.1 hecha dibujo:** un mismo gradiente de velocidad admite una sola lectura algebraica (la matriz) pero dos lecturas físicas simultáneas (estira + gira), y la figura las separa para que se vean por separado.
 
-*(Generado con `U6/visualizacion_cinematica.py`, función `figura_descomposicion_shear()`. Corré el script para regenerar o cambiar `k`.)*
+*(Generado con `Visualizaciones/visualizacion_cinematica.py`, función `figura_descomposicion_shear()`. Corré el script para regenerar o cambiar `k`.)*
 
 ## 6.2 Vorticidad y el factor 2
 
@@ -584,7 +584,7 @@ $$V_{xy} = \frac{k}{2}, \qquad |\Omega_{xy}| = \frac{k}{2}$$
 
 ### 🖼️ Visualización: soltar una "boyita" en cada flujo
 
-![Deformación vs rotación: boyita advectada en cuatro flujos](U6/fig2_deformacion_vs_rotacion.png)
+![Deformación vs rotación: boyita advectada en cuatro flujos](../Visualizaciones/fig2_deformacion_vs_rotacion.png)
 
 Se toma un círculo de trazadores con una cruz adentro (línea gris punteada = estado inicial) y se lo deja "flotar" un instante corto en cada campo de velocidad (integración numérica de trayectorias), dejando el resultado en color:
 
@@ -595,7 +595,7 @@ Se toma un círculo de trazadores con una cruz adentro (línea gris punteada = e
 
 💡 **La lectura clave de la figura:** la *forma final* (círculo → elipse, con qué inclinación) es la huella visual de $V$; el *giro de la cruz* respecto de los ejes de la elipse es la huella visual de $\Omega$. Es literalmente la descomposición algebraica de 6.1 puesta a fluir.
 
-*(Generado con `figura_deformacion()` en `U6/visualizacion_cinematica.py`.)*
+*(Generado con `figura_deformacion()` en `Visualizaciones/visualizacion_cinematica.py`.)*
 
 ### 🖼️ Visualización 3D: la contraparte fluida de la viga — Poiseuille en un tubo
 
@@ -603,7 +603,7 @@ Si la viga de la sección 5.7 es el ejemplo 3D del lado sólido, el análogo del
 
 $$v_x = v_{max}\left(1-\frac{r^2}{a^2}\right), \qquad v_y=v_z=0, \qquad r^2=y^2+z^2$$
 
-![Poiseuille en tubo: perfil de velocidad y vorticidad azimutal](U6/fig7_poiseuille_3d.png)
+![Poiseuille en tubo: perfil de velocidad y vorticidad azimutal](../Visualizaciones/fig7_poiseuille_3d.png)
 
 **Panel izquierdo:** el perfil "bala" clásico de cualquier curso de fluidos — velocidad máxima en el eje, cero en la pared (condición de no deslizamiento).
 
@@ -615,7 +615,7 @@ El campo de vorticidad es **azimutal** (rodea el eje del tubo) y crece linealmen
 
 💡 **Por qué esto no es un detalle de examen sino LA idea de 6.3(c):** "trayectoria recta" describe el camino del *centro* de un elemento de fluido; "irrotacional" describe si ese elemento gira *sobre su propio eje* mientras viaja. Son preguntas independientes, y Poiseuille —el flujo real más estudiado de toda la mecánica de fluidos elemental— las separa con total claridad: recta con vorticidad máxima en la pared, cero solo exactamente en el eje. 🔗 Es el mismo argumento que el vórtice irrotacional del zoológico (fig1) pero **al revés**: allá trayectorias curvas con vorticidad nula; acá trayectorias rectas con vorticidad no nula. Tené los dos ejemplos a mano: cualquier combinación de "¿la trayectoria es recta/curva?" con "¿es irrotacional?" tiene un contraejemplo construible.
 
-*(Generado con `U6/visualizacion_poiseuille_3d.py`.)*
+*(Generado con `Visualizaciones/visualizacion_poiseuille_3d.py`.)*
 
 ## 6.4 Incompresibilidad: la traza de V
 
@@ -637,7 +637,7 @@ $$\nabla\mathbf{v} \;\to\; \underbrace{\tfrac{1}{3}\mathrm{tr}(\mathbf{V})\,\bol
 
 ### 🖼️ Visualización: el zoológico completo de flujos 2D
 
-![Zoológico de flujos: color = divergencia](U6/fig1_zoologico_divergencia.png)
+![Zoológico de flujos: color = divergencia](../Visualizaciones/fig1_zoologico_divergencia.png)
 
 Seis campos de velocidad canónicos, con **color = divergencia** (rojo se expande, azul se contrae, blanco = incompresible) y flechas = dirección del flujo:
 
@@ -652,7 +652,7 @@ Seis campos de velocidad canónicos, con **color = divergencia** (rojo se expand
 
 💡 **El panel que rompe la intuición** es el último: gira alrededor del centro (las flechas describen círculos) y sin embargo el mapa de color da blanco en todo punto salvo el origen — vorticidad cero. Confirma numéricamente lo que dice el texto de 6.3(c): *trayectoria curva* no es lo mismo que *elemento que rota sobre sí mismo*. Compará ese panel con "Rotación rígida" (mismo aspecto de giro global, vorticidad $+2$ en todos lados): son el par de ejemplos que hay que tener listos si el parcial pregunta "¿puede un flujo con trayectorias circulares ser irrotacional?".
 
-*(Generado con `figura_zoologico()` en `U6/visualizacion_cinematica.py`; corré `tabla_resumen()` del mismo script para ver estos números impresos en consola.)*
+*(Generado con `figura_zoologico()` en `Visualizaciones/visualizacion_cinematica.py`; corré `tabla_resumen()` del mismo script para ver estos números impresos en consola.)*
 
 ## 6.5 Compatibilidad: la pregunta inversa
 
@@ -734,11 +734,11 @@ $$\boxed{\sigma_{ij} = \lambda\,\varepsilon_{kk}\,\delta_{ij} + 2\mu\,\varepsilo
 
 Para que la diferencia deje de ser una fórmula y se vea como comportamiento, impongamos la **misma** historia cinemática de corte a los tres modelos (rampa → meseta → rampa inversa → cero) y grafiquemos la tensión resultante:
 
-![Los tres modelos constitutivos ante la misma historia de deformación](U7/fig_tres_modelos_tiempo.png)
+![Los tres modelos constitutivos ante la misma historia de deformación](../Visualizaciones/fig_tres_modelos_tiempo.png)
 
 El invíscido nunca responde (línea plana en cero: sin respuesta al desviador). El **Newtoniano** produce un pulso rectangular — porque $\sigma\propto V$ (la tasa), y la tasa de una rampa es una constante, así que la tensión "salta" al empezar y al terminar cada tramo y vale exactamente cero durante las mesetas (ahí $V=0$ aunque la deformación acumulada sea máxima). El **Hookeano** literalmente repite la forma de la entrada — porque $\sigma\propto\varepsilon$, no le importa la velocidad, solo cuánto se apartó de su referencia *ahora*. Esa es la "memoria de forma" de 7.1 hecha curva.
 
-*(Generado con `U7/visualizacion_constitutivas.py`.)*
+*(Generado con `Visualizaciones/visualizacion_constitutivas.py`.)*
 
 ## 7.2 Lectura volumétrico/desviador de Hooke (la clave del capítulo)
 
@@ -761,13 +761,13 @@ En un isótropo, apretar volumétricamente no distorsiona y distorsionar no camb
 
 Tomemos una deformación 2D genérica $\varepsilon$ y separémosla en $\varepsilon_{vol}=\tfrac{\varepsilon_{kk}}{2}\delta_{ij}$ (análogo 2D de $\varepsilon_{kk}/3$) y $\varepsilon' = \varepsilon-\varepsilon_{vol}$:
 
-![Descomposición volumétrico/desviador de una deformación](U7/fig_vol_desviador.png)
+![Descomposición volumétrico/desviador de una deformación](../Visualizaciones/fig_vol_desviador.png)
 
 El panel del medio (solo la parte volumétrica) **sigue siendo un cuadrado** — cambió de área pero no de forma. El panel derecho (solo la parte desviadora) es un paralelogramo cuya área casi no cambió — cambió de forma pero no de tamaño. Esa es la lectura geométrica exacta de "apretar no distorsiona, distorsionar no cambia volumen".
 
 ⚠️ El pequeño remanente de cambio de área en el panel desviador (no exactamente 0%) **no es un error**: es un efecto de segundo orden, $\det(I+\varepsilon')-1 = \det(\varepsilon')\neq 0$ para $\varepsilon'$ finito. La teoría lineal (U5, sección 5.5) es exacta solo a primer orden — por eso se llama "deformaciones **infinitesimales**". Con un $\varepsilon$ realmente pequeño ese remanente desaparece; acá se exageró la magnitud para que la figura se vea.
 
-*(Generado con `U7/visualizacion_constitutivas.py`.)*
+*(Generado con `Visualizaciones/visualizacion_constitutivas.py`.)*
 
 ## 7.3 Relación inversa y constantes de laboratorio
 
@@ -789,11 +789,11 @@ $$\varepsilon_{xx} = \frac{1}{E}\sigma_{xx} - \frac{\nu}{E}(\sigma_{yy}+\sigma_{
 
 ### 🖼️ Visualización: el despegue de K y λ cuando ν→1/2
 
-![K y lambda divergen cuando nu tiende a 1/2](U7/fig_incompresibilidad_limite.png)
+![K y lambda divergen cuando nu tiende a 1/2](../Visualizaciones/fig_incompresibilidad_limite.png)
 
 $\mu$ es una curva mansa, acotada entre $E/3$ y $E/2$: nunca "se entera" de la incompresibilidad. $K$ y $\lambda$, en cambio, se disparan a medida que $\nu$ se acerca a $1/2$, ambas arrastradas por el mismo denominador $(1-2\nu)$. Es la firma numérica exacta de por qué materiales casi incompresibles (goma, tejido biológico, agua) son un dolor de cabeza en simulación: cualquier error pequeño en $\nu$ cerca de $0{,}5$ se amplifica brutalmente en $K$.
 
-*(Generado con `U7/visualizacion_constitutivas.py`.)*
+*(Generado con `Visualizaciones/visualizacion_constitutivas.py`.)*
 
 ## 7.4 Casos particulares = apagar términos
 
@@ -865,7 +865,7 @@ $$\gamma = 0 \qquad \Longrightarrow \qquad \boxed{C_{ijkl} = \lambda\,\delta_{ij
 
 8.1 usa un puñado de rotaciones astutas (180°, 90°) porque alcanzan para la demostración. Para verlo sin atajos, apliquemos **todos** los ángulos $\theta\in[0,2\pi)$ y grafiquemos cómo responde cada objeto:
 
-![Test de rotación para vectores y tensores de rango 2](U8/fig_test_isotropia_rotacion.png)
+![Test de rotación para vectores y tensores de rango 2](../Visualizaciones/fig_test_isotropia_rotacion.png)
 
 **Panel izquierdo (rango 1):** un vector genérico $v\neq 0$ rotado barre un círculo completo — cambia con $\theta$. El único punto que se queda quieto para *todo* ángulo es $v=\mathbf{0}$: literalmente no hay otra opción, por eso "el único vector isótropo es el nulo".
 
@@ -873,7 +873,7 @@ $$\gamma = 0 \qquad \Longrightarrow \qquad \boxed{C_{ijkl} = \lambda\,\delta_{ij
 
 💡 Fijate que $A_{12}$ y $A_{21}$ (líneas verde y violeta) son curvas *distintas* para el tensor genérico (no es simétrico, así que $A_{12}\neq A_{21}$) pero **ambas** colapsan a la misma recta en cero para el isótropo: en un tensor isótropo no sobrevive ni la parte simétrica no-diagonal ni la antisimétrica.
 
-*(Generado con `U8/visualizacion_isotropia_rotacion.py`.)*
+*(Generado con `Visualizaciones/visualizacion_isotropia_rotacion.py`.)*
 
 ## 8.2 La cadena lógica completa (para tener clarísima)
 
@@ -1131,7 +1131,7 @@ $$\varepsilon(\mathbf{n}_{bc}) = 10^{-3}\left[10\cdot\tfrac12 + 20\cdot\tfrac12 
 
 $l_1 = 1$, $l_2 = \sqrt2$ (a 45°), $l_3 = \sqrt3$ (a 30°).
 
-![Geometría de la fibra quebrada l1-l2-l3](U5/fig_geometria_fibra.png)
+![Geometría de la fibra quebrada l1-l2-l3](../Visualizaciones/fig_geometria_fibra.png)
 
 **(a) Térmica homogénea:** $\varepsilon_{ij} = \alpha\,\delta_{ij}\,\Delta T = 10^{-5}\cdot 10\cdot\delta_{ij} = 10^{-4}\,\delta_{ij}$. Como el tensor es **esférico**:
 $$\varepsilon(\mathbf{n}) = 10^{-4}\,\delta_{ij}n_in_j = 10^{-4}\,\underbrace{n_in_i}_{=1} = 10^{-4} \quad \textbf{para toda dirección}$$
@@ -1146,7 +1146,7 @@ $$\Delta L_3 = \sqrt3 \times 1{,}43\times10^{-4} \approx 2{,}48\times10^{-4}$$
 
 **⚠️ El criterio exacto para "darte cuenta" (la parte que rinde puntos):** $A_{ij}$ es isótropo $\iff A_{ij}=\alpha\,\delta_{ij}$ — eso exige **dos** cosas a la vez: (1) diagonal toda igual, **y** (2) fuera de la diagonal, todo cero. El tensor de (a), $10^{-4}\delta_{ij}$, cumple ambas. El de (b), $10^{-4}\begin{bmatrix}1&0{,}5\\0{,}5&1\end{bmatrix}$, tiene la diagonal igual (¡1 y 1!) pero el $0{,}5$ fuera de la diagonal lo saca de la forma $\alpha\delta_{ij}$ — **no es isótropo**, aunque a primera vista "se parezca" por tener la diagonal pareja. Esa mirada rápida a la diagonal sin chequear el resto es el error más común de este ítem.
 
-![Comparación de isotropía: círculo perfecto vs óvalo](U5/fig_isotropia_comparacion.png)
+![Comparación de isotropía: círculo perfecto vs óvalo](../Visualizaciones/fig_isotropia_comparacion.png)
 
 💡 **La figura es el criterio hecho dibujo.** Arriba, el diagrama polar de $\varepsilon(\mathbf{n})=\varepsilon_{ij}n_in_j$ recorriendo todos los $\theta$: para (a) es un **círculo perfecto** (mismo estiramiento en cualquier dirección — la firma geométrica de $\alpha\delta_{ij}$); para (b) es un **óvalo de dos lóbulos**, con máximo ($1{,}5\times10^{-4}$) a $45°$ y mínimo ($0{,}5\times10^{-4}$) a $135°$ — esas son sus direcciones principales, y no coinciden con los ejes $x,y$ originales. Abajo, el mismo hecho pero mirando qué le pasa a un círculo de material: en (a) un círculo se deforma en **otro círculo** (más grande, sin distorsión); en (b) se deforma en una **elipse** inclinada a 45°. Ver la elipse *es* ver la anisotropía.
 
@@ -1391,7 +1391,7 @@ $$\frac{\partial v_1}{\partial x_1} = \frac{x_2^2-x_1^2}{r^4}, \qquad \frac{\par
 **¿Irrotacional?**
 $$(\mathrm{rot}\,\mathbf{v})_3 = \frac{\partial v_2}{\partial x_1}-\frac{\partial v_1}{\partial x_2} = \frac{-2x_1x_2}{r^4} - \frac{-2x_1x_2}{r^4} = 0 \quad\checkmark$$
 
-![Fuente puntual: flujo potencial 1/r](U6/fig4_fuente_potencial.png)
+![Fuente puntual: flujo potencial 1/r](../Visualizaciones/fig4_fuente_potencial.png)
 
 💡 **Por qué vale la pena pararse en este ejercicio (más allá de repetir la cuenta):** el campo es exactamente $\mathbf{v} = \nabla\varphi$ con $\varphi = \ln r$ — verificalo: $\partial_{x_1}\ln r = x_1/r^2$ ✔. Es la **fuente puntual del flujo potencial** (la misma que aparece en aerodinámica/hidráulica como singularidad elemental), y conecta directo con la dualidad potencial↔corriente de la sección II.6: acá tenés el ejemplo concreto de "$\varphi$ existe ⟹ irrotacional por construcción" con números reales, no abstracto. El panel derecho muestra que $v_r$ decae como $1/r$ — la firma de cualquier fuente/sumidero puntual en 2D.
 
@@ -1403,7 +1403,7 @@ $$\text{(a) } \mathbf{v} = \lambda\left\{H^4-(H-z)^4,\ 0,\ 0\right\} \qquad\qqua
 
 **Caso (b):** $V_{13}=V_{31}=\alpha/2$, $V_{33}=-\alpha$ (el resto nulo). $\nabla\cdot\mathbf{v} = 0+0-\alpha = -\alpha \neq 0$ ⟹ **NO incompresible**, salvo que $\alpha=0$.
 
-![Dos perfiles de corte en z](U6/fig5_perfiles_corte_z.png)
+![Dos perfiles de corte en z](../Visualizaciones/fig5_perfiles_corte_z.png)
 
 💡 **La comparación es el punto del ejercicio:** ambos son perfiles de corte "tipo capa límite" con la misma estructura algebraica superficial ($v_x$ función de $z$), pero (a) tiene la forma particular que hace que la tasa de corte se **anule en $z=H$** (pensalo como el centro de un conducto: ahí no hay deslizamiento relativo) mientras que (b) le agregó una componente $v_z=-\alpha z$ que, sola, ya rompe la incompresibilidad — **el termino de corte $V_{13}$ nunca es el problema para la traza; el problema es cualquier componente que dependa linealmente de "su propia" coordenada** (aquí $v_3$ de $x_3$). Es el mismo diagnóstico de 6.4 aplicado sin rodeos.
 
@@ -1415,7 +1415,7 @@ $$\nabla\mathbf{v} = \begin{bmatrix}0&-3&1\\3&0&-5\\-1&5&0\end{bmatrix} \qquad\t
 
 $$\boldsymbol\Omega_{\text{vector}} = \mathrm{rot}\,\mathbf{v} = (10,\,2,\,6) \qquad\Longrightarrow\qquad \text{velocidad angular local} = \tfrac12\boldsymbol\Omega_{\text{vector}} = (5,\,1,\,3)$$
 
-![Rotación rígida alrededor de un eje oblicuo](U6/fig6_rotacion_eje_oblicuo.png)
+![Rotación rígida alrededor de un eje oblicuo](../Visualizaciones/fig6_rotacion_eje_oblicuo.png)
 
 💡 **Qué agrega este ejercicio frente al caso "de manual" de 6.3(a):** ahí la rotación rígida era en el plano $xy$, alrededor del eje $z$ — el caso más fácil de imaginar. Acá el eje de rotación **no coincide con ningún eje coordenado**: es la dirección $(5,1,3)$, escondida dentro de una matriz que a primera vista no "se ve" como una rotación. La receta para destaparlo es mecánica y no depende de adivinar el eje: calculás $\nabla v$, verificás que es antisimétrica ($V=0$), y el vector dual (= rot v / 2) **te da el eje y la velocidad angular directamente**, sin necesidad de imaginarte la geometría de antemano. La figura confirma: en el plano perpendicular a $(5,1,3)$ el campo dibuja círculos concéntricos con rapidez proporcional al radio — exactamente la firma de una rotación de cuerpo rígido, solo que vista de costado.
 
@@ -1431,7 +1431,7 @@ $$\alpha_i = \frac{\partial v_i}{\partial t} + v_k\,\frac{\partial v_i}{\partial
 
 💡 **Qué te dice esta identidad que la fórmula "local + convectivo" (sección II.7) no muestra tan claro:** el término convectivo $v_k\partial v_i/\partial x_k$ —que parece una sola cosa— en realidad son **dos efectos físicos distintos** empaquetados: la parte de $(\mathbf{v}\cdot\nabla)\mathbf{v}$ que gira la velocidad sin cambiar su módulo ($\boldsymbol\omega\times\mathbf{v}$, como la aceleración centrípeta) y la parte que viene de que el módulo de $\mathbf{v}$ cambia de un punto a otro ($\tfrac12\nabla v^2$). En un flujo **irrotacional** ($\boldsymbol\omega=0$) toda la aceleración convectiva es gradiente de energía cinética — la base de la ecuación de Bernoulli.
 
-**Verificación numérica (con el propio campo del ejercicio (c) de arriba, que es estacionario):** en $\mathbf{p}=(0{,}7,\,-0{,}4,\,0{,}3)$, calculando ambos lados por separado (`U6/visualizacion_parciales_viejos.py`, función `figura_rotacion_eje_oblicuo`):
+**Verificación numérica (con el propio campo del ejercicio (c) de arriba, que es estacionario):** en $\mathbf{p}=(0{,}7,\,-0{,}4,\,0{,}3)$, calculando ambos lados por separado (`Visualizaciones/visualizacion_parciales_viejos.py`, función `figura_rotacion_eje_oblicuo`):
 
 $$(\mathbf{v}\cdot\nabla)\mathbf{v} = (-4{,}5,\ 18{,}0,\ 1{,}5) \qquad = \qquad \boldsymbol\omega\times\mathbf{v} + \tfrac12\nabla(v^2) = (-4{,}5,\ 18{,}0,\ 1{,}5) \quad\checkmark$$
 
@@ -1591,7 +1591,7 @@ Vale para CUALQUIER propiedad transportada (velocidad, temperatura, cada compone
 
 Antes del ejemplo de examen, el caso más limpio posible para que la fórmula de arriba deje de ser álgebra: un campo escalar **no estacionario** $T(x,t)=\sin(x-t)$ (una onda viajando sola, a velocidad de fase 1), visto por un sensor fijo en $x_0$ y por una partícula que viaja más rápido que la onda, con velocidad $V=2$:
 
-![Derivada material: lagrangiano vs euleriano](U9-U10/fig_derivada_material_lagr_euler.png)
+![Derivada material: lagrangiano vs euleriano](../Visualizaciones/fig_derivada_material_lagr_euler.png)
 
 **Panel izquierdo:** el diagrama espacio-tiempo de $T(x,t)$. La línea vertical punteada es el sensor fijo — corta siempre la misma $x$. La línea diagonal amarilla es la partícula — al ir más rápido que la onda, la **atraviesa**: cruza crestas y valles con más frecuencia de la que la onda los genera.
 
@@ -1601,19 +1601,19 @@ Antes del ejemplo de examen, el caso más limpio posible para que la fórmula de
 
 💡 Si $V=0$ (partícula quieta) o si $T$ no dependiera de $x$ (campo espacialmente uniforme), el término convectivo se anula y $DT/Dt=\partial T/\partial t$: sensor fijo y partícula coinciden. Es exactamente el caso trivial que hace que mucha gente confunda ambas derivadas — coinciden justo cuando uno de los dos ingredientes (movimiento o no-uniformidad) falta.
 
-*(Generado con `U9-U10/visualizacion_derivada_material_lagr_euler.py`.)*
+*(Generado con `Visualizaciones/visualizacion_derivada_material_lagr_euler.py`.)*
 
 ### 🖼️ Visualización: observador fijo vs. observador que viaja con la partícula (parcial 2023-1, tipo T2)
 
 La trampa conceptual de este tramo se vuelve intuitiva con un ejemplo concreto. El campo $\mathbf{v}=(0,z,y)$ es **estacionario** (no depende de $t$) y sale de derivar el mapeo del ejercicio 2023-1 (resuelto completo en la Parte 6, tipo T2):
 
-![Observador fijo vs observador viajero](U9-U10/fig_observador_fijo_vs_viajero.png)
+![Observador fijo vs observador viajero](../Visualizaciones/fig_observador_fijo_vs_viajero.png)
 
 **Panel izquierdo:** es un flujo tipo *silla*: las líneas de corriente se alejan del origen a lo largo de la diagonal $y=z$ y se acercan por la otra. La partícula que en $t=0$ está en $(1,1)$ se queda **para siempre** sobre esa diagonal, alejándose como $e^t$.
 
 **Panel derecho** es el núcleo de la trampa: un observador **fijo** en $(1,1,1)$ mide $D\mathbf{v}/Dt$ evaluado en ese punto espacial — como el campo es estacionario, ese valor es **siempre el mismo**, $(1,1)$, aunque a cada instante sea una partícula distinta la que está pasando por ahí. Un observador que **viaja** con la partícula que nació en $(1,1,1)$ mide la aceleración de esa partícula específica, que crece como $e^t$. Coinciden solo en $t=0$, porque ahí —y solo ahí— ambas descripciones señalan a la misma partícula en el mismo lugar. Es exactamente la diferencia $\partial/\partial t$ (sensor fijo) vs. $D/Dt$ (la hoja que flota) de la sección 1.2, hecha número.
 
-*(Generado con `U9-U10/visualizacion_derivada_material_2023_1.py`.)*
+*(Generado con `Visualizaciones/visualizacion_derivada_material_2023_1.py`.)*
 
 ## 1.3 Transporte de Reynolds
 
@@ -1633,13 +1633,13 @@ $$\boxed{\frac{D}{Dt}\int_V\rho A\,dV=\int_V\rho\frac{DA}{Dt}\,dV}$$
 
 Gauss (1.1) y Reynolds (esta sección) son ambas, en el fondo, el mismo tipo de argumento: relacionar lo que pasa **en el borde** con lo que pasa **adentro**. Verlas una al lado de la otra deja clara la familia:
 
-![Gauss y Reynolds, lado a lado](U9-U10/fig_gauss_reynolds.png)
+![Gauss y Reynolds, lado a lado](../Visualizaciones/fig_gauss_reynolds.png)
 
 **Izquierda (Gauss):** la demostración de 1.1 rebana el volumen en tubos paralelos a $x_1$; cada tubo entra con normal $\nu_1<0$ (flecha roja) y sale con $\nu_1>0$ (flecha verde), y el teorema fundamental del cálculo a lo largo de cada tubo, sumado sobre todos, ES la demostración.
 
 **Derecha (Reynolds):** el mismo volumen material en $t$ y $t+dt$, bajo un campo que lo expande. La cáscara sombreada entre ambos contornos es exactamente $(\mathbf{v}\cdot\mathbf{n})\,dt\,dS$ integrada sobre el borde — el término extra que hace que $D/Dt$ no conmute con $\int_V$. 🔗 Es la misma "geometría de superficie" de Gauss, ahora con el borde moviéndose en vez de quieto.
 
-*(Generado con `U9-U10/visualizacion_gauss_reynolds.py`.)*
+*(Generado con `Visualizaciones/visualizacion_gauss_reynolds.py`.)*
 
 ## 1.4 Volumen arbitrario / lema fundamental
 
