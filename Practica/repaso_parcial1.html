@@ -1,0 +1,1379 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parcial 1 — Mecánica del Continuo · consola de repaso</title>
+</head>
+<body>
+<style>
+/* ============ TOKENS (heredados de repaso_furioso.html) ============ */
+:root{
+  --paper:#E9EEEE;
+  --panel:#F6F9F9;
+  --panel-2:#DCE6E6;
+  --ink:#122228;
+  --ink-2:#42585F;
+  --ink-3:#71888F;
+  --line:#C2D0D1;
+  --line-2:#A9BCBE;
+  --accent:#0A6E78;
+  --accent-2:#0E8B92;
+  --accent-soft:#D2E6E7;
+  --heat:#8F520F;
+  --heat-soft:#EFDFC6;
+  --alarm:#94302E;
+  --alarm-soft:#F1DAD7;
+  --ok:#2C6B45;
+  --ok-soft:#D6E7DC;
+
+  /* semánticos del dominio: convención de tensiones */
+  --traccion:#94302E;
+  --compresion:#0A6E78;
+
+  --font-display:Constantia,Cambria,"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --font-body:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --font-math:"Cambria Math",Cambria,Constantia,"STIX Two Math","Latin Modern Math",Georgia,serif;
+  --font-mono:"Cascadia Mono",Consolas,"SF Mono",ui-monospace,"Roboto Mono",monospace;
+
+  --r:3px;
+  --maxw:1180px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#0B1317; --panel:#121E23; --panel-2:#1A2A31;
+    --ink:#DDE8E9; --ink-2:#A1B5B9; --ink-3:#7A9095;
+    --line:#25373E; --line-2:#354C54;
+    --accent:#45B7C0; --accent-2:#63CDD4; --accent-soft:#0E3237;
+    --heat:#D8A05C; --heat-soft:#372817;
+    --alarm:#E0837A; --alarm-soft:#3A1D1B;
+    --ok:#7FBF97; --ok-soft:#152A1E;
+    --traccion:#E0837A; --compresion:#45B7C0;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0B1317; --panel:#121E23; --panel-2:#1A2A31;
+  --ink:#DDE8E9; --ink-2:#A1B5B9; --ink-3:#7A9095;
+  --line:#25373E; --line-2:#354C54;
+  --accent:#45B7C0; --accent-2:#63CDD4; --accent-soft:#0E3237;
+  --heat:#D8A05C; --heat-soft:#372817;
+  --alarm:#E0837A; --alarm-soft:#3A1D1B;
+  --ok:#7FBF97; --ok-soft:#152A1E;
+  --traccion:#E0837A; --compresion:#45B7C0;
+}
+:root[data-theme="light"]{
+  --paper:#E9EEEE; --panel:#F6F9F9; --panel-2:#DCE6E6;
+  --ink:#122228; --ink-2:#42585F; --ink-3:#71888F;
+  --line:#C2D0D1; --line-2:#A9BCBE;
+  --accent:#0A6E78; --accent-2:#0E8B92; --accent-soft:#D2E6E7;
+  --heat:#8F520F; --heat-soft:#EFDFC6;
+  --alarm:#94302E; --alarm-soft:#F1DAD7;
+  --ok:#2C6B45; --ok-soft:#D6E7DC;
+  --traccion:#94302E; --compresion:#0A6E78;
+}
+
+/* ============ BASE ============ */
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:var(--font-body); font-size:16.5px; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px}
+h1,h2,h3,h4{font-family:var(--font-display);text-wrap:balance;margin:0;font-weight:600;line-height:1.22}
+p{margin:0}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent-soft)}
+a:hover{border-bottom-color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent-2);outline-offset:2px}
+hr{border:none;border-top:1px solid var(--line);margin:0}
+
+/* ============ MATH ============ */
+.m{font-family:var(--font-math);font-size:1.06em;font-style:italic}
+.m .op,.m .num{font-style:normal}
+.eq{
+  font-family:var(--font-math); font-size:1.1em;
+  display:block; padding:10px 14px; margin:0;
+  background:var(--panel); border-left:2px solid var(--line-2);
+  border-radius:0 var(--r) var(--r) 0;
+  overflow-x:auto; white-space:nowrap;
+}
+.eq.center{text-align:center}
+sub,sup{font-size:.72em;line-height:0}
+
+/* matriz con corchetes reales */
+.mat{display:inline-grid;gap:2px 14px;position:relative;padding:4px 12px;
+     font-family:var(--font-math);vertical-align:middle;text-align:center;font-style:normal}
+.mat::before,.mat::after{
+  content:"";position:absolute;top:0;bottom:0;width:6px;
+  border:1.6px solid currentColor;
+}
+.mat::before{left:0;border-right:none}
+.mat::after{right:0;border-left:none}
+.mat>span{padding:1px 2px;white-space:nowrap}
+.matwrap{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-family:var(--font-math)}
+
+/* ============ HEADER ============ */
+.top{
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,var(--panel) 0%,var(--paper) 100%);
+}
+.top .wrap{padding-top:30px;padding-bottom:24px}
+.eyebrow{
+  font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:600;margin-bottom:10px;
+}
+.top h1{font-size:clamp(28px,4.6vw,44px);letter-spacing:-.01em}
+.top .sub{color:var(--ink-2);margin-top:10px;max-width:60ch;font-size:16px}
+.statline{display:flex;gap:26px;flex-wrap:wrap;margin-top:20px;
+          font-family:var(--font-mono);font-size:12.5px;color:var(--ink-2)}
+.statline b{color:var(--accent);font-size:18px;font-weight:700;display:block;
+            font-variant-numeric:tabular-nums;line-height:1.1}
+.statline span{display:block}
+
+/* ============ LAYOUT ============ */
+.shell{display:grid;grid-template-columns:210px minmax(0,1fr);gap:34px;
+       align-items:start;padding:28px 0 70px}
+@media(max-width:880px){.shell{grid-template-columns:1fr;gap:18px}}
+
+.rail{position:sticky;top:14px;display:flex;flex-direction:column;gap:3px}
+@media(max-width:880px){
+  .rail{position:static;flex-direction:row;overflow-x:auto;gap:6px;
+        padding-bottom:8px;border-bottom:1px solid var(--line)}
+}
+.rail .railhead{font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;
+                color:var(--ink-3);font-weight:700;padding:0 8px 8px}
+@media(max-width:880px){.rail .railhead{display:none}}
+.rail a{
+  display:flex;justify-content:space-between;align-items:baseline;gap:8px;
+  padding:7px 9px;border-radius:var(--r);border:none;
+  color:var(--ink-2);font-size:13.5px;white-space:nowrap;
+}
+.rail a:hover{background:var(--panel-2);color:var(--ink)}
+.rail a .n{font-family:var(--font-mono);font-size:11px;color:var(--ink-3)}
+
+/* ============ SECTIONS ============ */
+section{scroll-margin-top:14px}
+.sechead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;
+         margin:44px 0 4px;padding-bottom:9px;border-bottom:2px solid var(--accent)}
+section:first-of-type .sechead{margin-top:0}
+.sechead h2{font-size:23px}
+.sechead .tag{
+  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--accent);background:var(--accent-soft);
+  padding:3px 7px;border-radius:var(--r);font-weight:600;
+}
+.lede{color:var(--ink-2);margin:14px 0 0;max-width:66ch}
+
+/* ============ CARDS ============ */
+.card{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
+  padding:16px 18px;margin-top:14px;
+}
+.card>*+*{margin-top:12px}
+.cardhead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.prov{
+  font-family:var(--font-mono);font-size:11px;font-weight:600;
+  color:var(--ink-3);border:1px solid var(--line-2);border-radius:var(--r);
+  padding:2px 6px;white-space:nowrap;
+}
+.prov.hot{color:var(--alarm);border-color:var(--alarm);background:var(--alarm-soft)}
+.cardhead h3{font-size:17px;flex:1;min-width:200px}
+
+/* revelar */
+details.sol{border-top:1px dashed var(--line-2);padding-top:12px}
+details.sol>summary{
+  list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;
+  font-size:13px;font-weight:600;color:var(--heat);
+  background:var(--heat-soft);border:1px solid transparent;
+  padding:6px 12px;border-radius:var(--r);user-select:none;
+}
+details.sol>summary::-webkit-details-marker{display:none}
+details.sol>summary::before{content:"▸";font-size:11px;transition:transform .15s}
+details.sol[open]>summary::before{transform:rotate(90deg)}
+details.sol>summary:hover{border-color:var(--heat)}
+details.sol[open]>summary{margin-bottom:12px}
+.solbody>*+*{margin-top:11px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* pasos */
+ol.steps{margin:0;padding-left:0;list-style:none;counter-reset:s;
+         display:flex;flex-direction:column;gap:11px}
+ol.steps>li{counter-increment:s;padding-left:30px;position:relative}
+ol.steps>li::before{
+  content:counter(s);position:absolute;left:0;top:1px;
+  width:20px;height:20px;border-radius:50%;
+  background:var(--accent-soft);color:var(--accent);
+  font-family:var(--font-mono);font-size:11px;font-weight:700;
+  display:grid;place-items:center;
+}
+ol.steps>li>*+*{margin-top:7px}
+
+/* callouts */
+.note{border-left:3px solid var(--accent);background:var(--accent-soft);
+      padding:10px 13px;border-radius:0 var(--r) var(--r) 0;font-size:14.5px}
+.trap{border-left:3px solid var(--alarm);background:var(--alarm-soft);
+      padding:10px 13px;border-radius:0 var(--r) var(--r) 0;font-size:14.5px}
+.key{border-left:3px solid var(--heat);background:var(--heat-soft);
+     padding:10px 13px;border-radius:0 var(--r) var(--r) 0;font-size:14.5px}
+.note b,.trap b,.key b{font-weight:700}
+.res{border-left:3px solid var(--ok);background:var(--ok-soft);
+     padding:10px 13px;border-radius:0 var(--r) var(--r) 0;
+     font-family:var(--font-math);font-size:1.06em}
+
+/* tablas */
+.tablescroll{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r)}
+table{border-collapse:collapse;width:100%;font-size:14px;background:var(--panel)}
+th,td{border-bottom:1px solid var(--line);padding:7px 11px;text-align:left;vertical-align:top}
+th{background:var(--panel-2);font-size:11.5px;letter-spacing:.06em;
+   text-transform:uppercase;color:var(--ink-2);font-weight:700;white-space:nowrap}
+tr:last-child td{border-bottom:none}
+td.num{font-family:var(--font-mono);font-variant-numeric:tabular-nums;text-align:right}
+.hit{color:var(--accent);font-weight:700;text-align:center}
+.hit.dim{color:var(--ink-3);font-weight:400}
+
+/* formulario */
+.formgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:12px;margin-top:16px}
+.fcard{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);
+       border-radius:0 var(--r) var(--r) 0;padding:12px 14px}
+.fcard h4{font-size:13px;font-family:var(--font-body);color:var(--ink-2);
+          text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin-bottom:8px}
+.fcard .m,.fcard .eq{font-size:1.02em}
+.fcard .eq{background:transparent;border:none;padding:0;margin-top:6px}
+.fcard p{font-size:13.5px;color:var(--ink-2);margin-top:7px}
+
+/* mohr */
+.mohr{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(240px,1fr);gap:22px;
+      background:var(--panel);border:1px solid var(--line);border-radius:var(--r);
+      padding:18px;margin-top:16px;align-items:start}
+@media(max-width:760px){.mohr{grid-template-columns:1fr}}
+#mohrcv{width:100%;height:auto;display:block;border-radius:var(--r);background:transparent}
+.ctrl{display:flex;flex-direction:column;gap:14px}
+.ctrl label{display:block;font-size:12px;letter-spacing:.05em;text-transform:uppercase;
+            color:var(--ink-2);font-weight:700;margin-bottom:5px}
+.ctrl .val{font-family:var(--font-mono);font-size:14px;color:var(--ink);
+           font-variant-numeric:tabular-nums;float:right;text-transform:none;letter-spacing:0}
+.ctrl input[type=range]{width:100%;accent-color:var(--accent);margin:0}
+.readout{display:grid;grid-template-columns:1fr 1fr;gap:8px;
+         border-top:1px solid var(--line);padding-top:13px}
+.readout div{background:var(--paper);border-radius:var(--r);padding:7px 9px}
+.readout span{display:block;font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);font-weight:700}
+.readout b{font-family:var(--font-mono);font-size:15px;font-variant-numeric:tabular-nums;font-weight:700}
+.presets{display:flex;gap:6px;flex-wrap:wrap}
+.presets button{
+  font-family:var(--font-body);font-size:12px;padding:5px 10px;cursor:pointer;
+  background:var(--paper);color:var(--ink-2);border:1px solid var(--line-2);
+  border-radius:var(--r);
+}
+.presets button:hover{border-color:var(--accent);color:var(--accent)}
+
+/* misc */
+.pill{display:inline-block;font-family:var(--font-mono);font-size:11px;
+      padding:2px 7px;border-radius:var(--r);background:var(--panel-2);color:var(--ink-2)}
+ul.tight{margin:0;padding-left:19px;display:flex;flex-direction:column;gap:6px}
+ul.tight li::marker{color:var(--ink-3)}
+.foot{border-top:1px solid var(--line);padding:22px 0 60px;color:var(--ink-3);font-size:13.5px}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <p class="eyebrow">Mecánica del Continuo · UNL · FICH</p>
+    <h1>Consola de repaso — Parcial 1</h1>
+    <p class="sub">Unidades 1 a 4. Todos los parciales que hay en el repo, agrupados por <em>tipo de ejercicio</em> en vez de por año: así se ve qué se repite y qué receta lo resuelve. La solución está tapada a propósito — intentá el ejercicio primero.</p>
+    <div class="statline">
+      <span><b>10</b>parciales relevados</span>
+      <span><b>8</b>tipos de ejercicio</span>
+      <span><b>2011–2025</b>rango cubierto</span>
+      <span><b>4</b>tipos que caen casi siempre</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap shell">
+
+  <nav class="rail" aria-label="Tipos de ejercicio">
+    <p class="railhead">Navegación</p>
+    <a href="#formulario"><span>Formulario</span></a>
+    <a href="#mohr"><span>Mohr</span><span class="n">7</span></a>
+    <a href="#t1"><span>Indicial</span><span class="n">9</span></a>
+    <a href="#t2"><span>Cauchy</span><span class="n">7</span></a>
+    <a href="#t3"><span>Equilibrio</span><span class="n">4</span></a>
+    <a href="#t4"><span>Principales</span><span class="n">7</span></a>
+    <a href="#t6"><span>Cambio de base</span><span class="n">6</span></a>
+    <a href="#t7"><span>Cond. de borde</span><span class="n">3</span></a>
+    <a href="#t8"><span>Integrados</span><span class="n">3</span></a>
+    <a href="#freq"><span>Qué priorizar</span></a>
+  </nav>
+
+  <main>
+
+<!-- ==================== FORMULARIO ==================== -->
+<section id="formulario">
+  <div class="sechead">
+    <h2>Formulario relámpago</h2>
+    <span class="tag">lo que resuelve el 90 %</span>
+  </div>
+  <p class="lede">Si te sabés estas doce cosas, no hay ejercicio del P1 que no puedas empezar. Todo lo demás es álgebra.</p>
+
+  <div class="formgrid">
+
+    <div class="fcard">
+      <h4>Identidad ε-δ · la madre de todas</h4>
+      <p class="eq"><span class="m">e<sub>ijk</sub> e<sub>imn</sub> = δ<sub>jm</sub>δ<sub>kn</sub> − δ<sub>jn</sub>δ<sub>km</sub></span></p>
+      <p>Índice repetido primero. Resuelve <em>toda</em> identidad con doble producto vectorial.</p>
+    </div>
+
+    <div class="fcard">
+      <h4>Derivadas básicas</h4>
+      <p class="eq"><span class="m">∂x<sub>i</sub>/∂x<sub>j</sub> = δ<sub>ij</sub>&nbsp;&nbsp;&nbsp; ∂r/∂x<sub>i</sub> = x<sub>i</sub>/r&nbsp;&nbsp;&nbsp; δ<sub>ii</sub> = 3</span></p>
+      <p>Con <span class="m">r<sup>2</sup> = x<sub>i</sub>x<sub>i</sub></span>. El 90 % de los ejercicios de <span class="m">r</span> sale con estas tres.</p>
+    </div>
+
+    <div class="fcard">
+      <h4>Simétrico × antisimétrico = 0</h4>
+      <p class="eq"><span class="m">e<sub>ijk</sub> σ<sub>jk</sub> = 0&nbsp;&nbsp; si σ<sub>jk</sub>=σ<sub>kj</sub></span></p>
+      <p>También <span class="m">e<sub>ijk</sub>x<sub>j</sub>x<sub>k</sub>=0</span>. Truco: renombrás mudos, sale <span class="m">A=−A</span>.</p>
+    </div>
+
+    <div class="fcard">
+      <h4>Fórmula de Cauchy</h4>
+      <p class="eq"><span class="m">T<sub>i</sub> = σ<sub>ji</sub> ν<sub>j</sub></span> &nbsp;&nbsp;<span class="m">T = σ·ν</span></p>
+      <p>Con <span class="m">ν</span> unitaria y <strong>exterior</strong>. 9 números dan la tracción en infinitos planos.</p>
+    </div>
+
+    <div class="fcard">
+      <h4>Normal de un plano / superficie</h4>
+      <p class="eq"><span class="m">ax<sub>1</sub>+bx<sub>2</sub>+cx<sub>3</sub>=d ⟹ ν ∝ (a,b,c)</span></p>
+      <p>Superficie curva <span class="m">f=0</span>: <span class="m">ν ∝ ∇f</span> evaluado en el punto. Siempre normalizar.</p>
+    </div>
+
+    <div class="fcard">
+      <h4>Descomposición de T</h4>
+      <p class="eq"><span class="m">σ<sub>n</sub> = T·ν&nbsp;&nbsp;&nbsp; τ<sup>2</sup> = |T|<sup>2</sup> − σ<sub>n</sub><sup>2</sup></span></p>
+      <p>Pitágoras: la normal y la tangencial son perpendiculares. <span class="m">e<sub>τ</sub> = (T − σ<sub>n</sub>ν)/τ</span>.</p>
+    </div>
+
+    <div class="fcard">
+      <h4>Equilibrio</h4>
+      <p class="eq"><span class="m">σ<sub>ji,j</sub> + X<sub>i</sub> = 0&nbsp;&nbsp;&nbsp; σ<sub>ij</sub>=σ<sub>ji</sub></span></p>
+      <p>Tres ecuaciones, una por cada <span class="m">i</span>. Si <span class="m">X=0</span> y da cero, el campo es <em>autoequilibrado</em>.</p>
+    </div>
+
+    <div class="fcard">
+      <h4>Problema de autovalores</h4>
+      <p class="eq"><span class="m">λ<sup>3</sup> − I<sub>1</sub>λ<sup>2</sup> + I<sub>2</sub>λ − I<sub>3</sub> = 0</span></p>
+      <p><span class="m">I<sub>1</sub>=σ<sub>ii</sub></span> (traza), <span class="m">I<sub>3</sub>=det σ</span>. Son <strong>invariantes</strong>: no cambian al rotar ejes.</p>
+    </div>
+
+    <div class="fcard">
+      <h4>Cambio de base</h4>
+      <p class="eq"><span class="m">v′<sub>k</sub> = β<sub>ki</sub>v<sub>i</sub>&nbsp;&nbsp;&nbsp; σ′<sub>km</sub> = β<sub>kj</sub>β<sub>mi</sub>σ<sub>ji</sub></span></p>
+      <p><span class="m">β<sub>ki</sub> = e′<sub>k</sub>·e<sub>i</sub></span>. Un índice por rango: vector uno, tensor dos.</p>
+    </div>
+
+    <div class="fcard">
+      <h4>Condición de borde</h4>
+      <p class="eq"><span class="m">σ<sub>ij</sub>n<sub>j</sub> = T<sub>i</sub></span> &nbsp;·&nbsp; libre: <span class="m">T = 0</span></p>
+      <p>Lo continuo en una interfaz es <span class="m">σ·n</span>, <strong>no</strong> el tensor entero.</p>
+    </div>
+
+    <div class="fcard" style="border-left-color:var(--heat)">
+      <h4>Mohr · principales</h4>
+      <p class="eq"><span class="m">σ<sub>1,2</sub> = c ± R</span></p>
+      <p class="eq"><span class="m">c = (σ<sub>x</sub>+σ<sub>y</sub>)/2&nbsp;&nbsp; R = √[((σ<sub>x</sub>−σ<sub>y</sub>)/2)<sup>2</sup> + τ<sub>xy</sub><sup>2</sup>]</span></p>
+    </div>
+
+    <div class="fcard" style="border-left-color:var(--heat)">
+      <h4>Mohr · corte máximo</h4>
+      <p class="eq"><span class="m">τ<sub>máx</sub> = R = (σ<sub>1</sub>−σ<sub>2</sub>)/2</span></p>
+      <p>A <strong>45°</strong> de las direcciones principales. En 3D: <span class="m">τ<sub>máx</sub>=(σ<sub>máx</sub>−σ<sub>mín</sub>)/2</span>.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ==================== MOHR ==================== -->
+<section id="mohr">
+  <div class="sechead">
+    <h2>Círculo de Mohr</h2>
+    <span class="tag">cae siempre · 2012 · 2013 · 2014 · 2015 · 2016 · 2023 · 2025</span>
+  </div>
+  <p class="lede">Es el ejercicio más repetido de todo el P1: aparece en <strong>siete</strong> de los diez parciales relevados. Movés los tres controles y mirás cómo responde el círculo — el objetivo es que en el examen puedas dibujarlo de memoria antes de hacer una sola cuenta.</p>
+
+  <div class="mohr">
+    <div>
+      <canvas id="mohrcv" width="640" height="470" role="img"
+        aria-label="Círculo de Mohr construido a partir de las tensiones del estado plano"></canvas>
+    </div>
+    <div class="ctrl">
+      <div class="presets">
+        <button type="button" data-p="10,-6,4">2023 ej.4</button>
+        <button type="button" data-p="8,2,0">sin corte</button>
+        <button type="button" data-p="0,0,6">corte puro</button>
+        <button type="button" data-p="7,7,0">hidrostático</button>
+      </div>
+      <div>
+        <label for="sx">σ<sub>xx</sub><span class="val" id="vsx">10</span></label>
+        <input type="range" id="sx" min="-14" max="14" step="0.5" value="10">
+      </div>
+      <div>
+        <label for="sy">σ<sub>yy</sub><span class="val" id="vsy">−6</span></label>
+        <input type="range" id="sy" min="-14" max="14" step="0.5" value="-6">
+      </div>
+      <div>
+        <label for="txy">τ<sub>xy</sub><span class="val" id="vtxy">4</span></label>
+        <input type="range" id="txy" min="-12" max="12" step="0.5" value="4">
+      </div>
+      <div class="readout">
+        <div><span>σ₁</span><b id="rs1" style="color:var(--traccion)">—</b></div>
+        <div><span>σ₂</span><b id="rs2" style="color:var(--compresion)">—</b></div>
+        <div><span>centro c</span><b id="rc">—</b></div>
+        <div><span>radio R = τmáx</span><b id="rr">—</b></div>
+        <div><span>θ<sub>p</sub> (principal)</span><b id="rtp">—</b></div>
+        <div><span>θ<sub>s</sub> (corte máx)</span><b id="rts">—</b></div>
+      </div>
+      <p style="font-size:13px;color:var(--ink-2)">Rojo = tracción · azul = compresión. El punto <span class="m">X</span> es la cara de normal <span class="m">x</span>; <span class="m">Y</span> es la de normal <span class="m">y</span>. Están siempre en <strong>extremos opuestos del diámetro</strong>.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="cardhead"><h3>Las ecuaciones, en el orden en que se usan</h3></div>
+
+    <ol class="steps">
+      <li>
+        <p><strong>Estado plano de partida.</strong> Del dibujo del cubo sacás tres números:</p>
+        <p class="eq center"><span class="m">σ = </span><span class="mat" style="grid-template-columns:repeat(2,auto)"><span>σ<sub>xx</sub></span><span>τ<sub>xy</sub></span><span>τ<sub>xy</sub></span><span>σ<sub>yy</sub></span></span></p>
+        <div class="trap"><b>Signos:</b> tracción positiva, compresión negativa. <span class="m">τ<sub>xy</sub>&gt;0</span> si sobre la cara de normal <span class="m">+x</span> el corte apunta hacia <span class="m">+y</span>.</div>
+      </li>
+      <li>
+        <p><strong>Centro y radio.</strong> El centro siempre cae sobre el eje <span class="m">σ</span> — nunca fuera.</p>
+        <p class="eq center"><span class="m">c = (σ<sub>xx</sub> + σ<sub>yy</sub>)/2 &nbsp;&nbsp;&nbsp;&nbsp; R = √[ ((σ<sub>xx</sub> − σ<sub>yy</sub>)/2)<sup>2</sup> + τ<sub>xy</sub><sup>2</sup> ]</span></p>
+      </li>
+      <li>
+        <p><strong>Tensiones principales</strong> = los dos cortes del círculo con el eje horizontal.</p>
+        <p class="eq center"><span class="m">σ<sub>1,2</sub> = (σ<sub>xx</sub>+σ<sub>yy</sub>)/2 ± √[ ((σ<sub>xx</sub>−σ<sub>yy</sub>)/2)<sup>2</sup> + τ<sub>xy</sub><sup>2</sup> ]</span></p>
+      </li>
+      <li>
+        <p><strong>Dirección principal.</strong> Ojo con el factor 2: el círculo vive en ángulos dobles.</p>
+        <p class="eq center"><span class="m">tan 2θ<sub>p</sub> = 2τ<sub>xy</sub> / (σ<sub>xx</sub> − σ<sub>yy</sub>)</span></p>
+        <div class="trap"><b>La trampa que más puntos cuesta:</b> un giro de <span class="m">θ</span> en el cubo real es un giro de <span class="m">2θ</span> en el círculo. Si contestás <span class="m">2θ<sub>p</sub></span> en vez de <span class="m">θ<sub>p</sub></span>, perdés el inciso.</div>
+      </li>
+      <li>
+        <p><strong>Corte máximo</strong> = el radio, y ocurre a 45° de las principales (90° en el círculo).</p>
+        <p class="eq center"><span class="m">τ<sub>máx</sub> = R = (σ<sub>1</sub> − σ<sub>2</sub>)/2 &nbsp;&nbsp;&nbsp;&nbsp; θ<sub>s</sub> = θ<sub>p</sub> ± 45°</span></p>
+        <p>En los planos de corte máximo la tensión normal <strong>no</strong> es nula: vale <span class="m">c</span>.</p>
+      </li>
+      <li>
+        <p><strong>Estado en un plano cualquiera</strong> girado <span class="m">θ</span> (esto responde el típico inciso "calcular σ y τ en un plano a 30°"):</p>
+        <p class="eq center"><span class="m">σ<sub>θ</sub> = c + (σ<sub>xx</sub>−σ<sub>yy</sub>)/2 · cos2θ + τ<sub>xy</sub> sen2θ</span></p>
+        <p class="eq center"><span class="m">τ<sub>θ</sub> = −(σ<sub>xx</sub>−σ<sub>yy</sub>)/2 · sen2θ + τ<sub>xy</sub> cos2θ</span></p>
+      </li>
+    </ol>
+
+    <div class="key"><b>El chequeo de 5 segundos:</b> <span class="m">σ<sub>1</sub>+σ<sub>2</sub> = σ<sub>xx</sub>+σ<sub>yy</sub></span>. Es el invariante <span class="m">I<sub>1</sub></span>. Si no cierra, te equivocaste en una cuenta.</div>
+  </div>
+
+  <div class="card">
+    <div class="cardhead">
+      <span class="prov hot">2014 · ej.2</span><span class="prov hot">2016 · ej.5</span>
+      <h3>¿Este círculo de Mohr tiene realidad física?</h3>
+    </div>
+    <p>Te dan cuatro círculos dibujados y tenés que decir cuáles pueden existir y, en los que sí, dar <span class="m">τ<sub>máx</sub></span> en función de las principales. <strong>Cayó dos años</strong> con el mismo formato.</p>
+    <details class="sol">
+      <summary>Ver el criterio y la respuesta</summary>
+      <div class="solbody">
+        <p>Todo se decide con <strong>una sola regla</strong>:</p>
+        <div class="key"><b>El centro del círculo de Mohr está siempre sobre el eje σ.</b> Nunca por encima ni por debajo.</div>
+        <p>Por qué: el centro es <span class="m">c = (σ<sub>xx</sub>+σ<sub>yy</sub>)/2</span>, un número real puro, sin parte de corte. Un círculo dibujado con el centro corrido hacia arriba diría que existe un estado donde <em>todos</em> los planos tienen corte del mismo signo — imposible, porque las direcciones principales (corte nulo) existen siempre para un tensor simétrico.</p>
+        <ul class="tight">
+          <li><strong>Centro sobre el eje σ</strong> → físicamente posible, sin importar si el círculo queda a la izquierda (compresión), a la derecha (tracción) o a caballo del origen.</li>
+          <li><strong>Centro fuera del eje σ</strong> → imposible. Se descarta sin más cuentas.</li>
+          <li><strong>Círculo que no corta el eje σ</strong> → imposible: no tendría tensiones principales reales, y un tensor simétrico siempre las tiene.</li>
+        </ul>
+        <p>Para los que sí son válidos, la respuesta pedida es siempre la misma:</p>
+        <div class="res">τ<sub>máx</sub> = R = (σ<sub>1</sub> − σ<sub>2</sub>) / 2</div>
+        <div class="note"><b>Si el dibujo es 3D</b> (tres círculos anidados), <span class="m">τ<sub>máx</sub></span> es el radio del <strong>círculo grande</strong>: <span class="m">(σ<sub>máx</sub>−σ<sub>mín</sub>)/2</span>, con las principales ordenadas. Los dos chicos quedan adentro.</div>
+      </div>
+    </details>
+  </div>
+
+  <div class="card">
+    <div class="cardhead">
+      <span class="prov">2012 · ej.4</span><span class="prov">2013 · ej.4</span>
+      <span class="prov">2015 · ej.4</span><span class="prov hot">2023 · ej.4</span>
+      <h3>Estado plano dado por una figura → Mohr completo</h3>
+    </div>
+    <p>El formato es siempre igual: un cuadrado con fuerzas dibujadas en las caras, y los incisos <em>(a)</em> graficar Mohr, <em>(b)</em> principales y direcciones, <em>(c)</em> corte máximo, <em>(d)</em> estado en un plano girado o en ejes rotados.</p>
+    <details class="sol">
+      <summary>Ver resolución tipo</summary>
+      <div class="solbody">
+        <p>Tomo el caso de 2023 con <span class="m">σ<sub>xx</sub>=10</span>, <span class="m">σ<sub>yy</sub>=−6</span>, <span class="m">τ<sub>xy</sub>=4</span> (leé <em>tus</em> signos de la figura y metelos en el widget de arriba — la mecánica no cambia).</p>
+        <ol class="steps">
+          <li><p>Centro y radio:</p>
+            <p class="eq"><span class="m">c = (10 − 6)/2 = 2</span></p>
+            <p class="eq"><span class="m">R = √[ ((10+6)/2)<sup>2</sup> + 4<sup>2</sup> ] = √(64 + 16) = √80 = 4√5 ≈ 8,944</span></p>
+          </li>
+          <li><p>Principales:</p>
+            <div class="res">σ<sub>1</sub> = 2 + 8,944 = 10,94 &nbsp;&nbsp;·&nbsp;&nbsp; σ<sub>2</sub> = 2 − 8,944 = −6,94 &nbsp;&nbsp;·&nbsp;&nbsp; σ<sub>3</sub> = 0</div>
+            <p>Chequeo: <span class="m">10,94 − 6,94 = 4 = 10 − 6</span> ✓</p>
+          </li>
+          <li><p>Dirección principal:</p>
+            <p class="eq"><span class="m">tan 2θ<sub>p</sub> = 2(4)/(10+6) = 8/16 = 0,5 ⟹ 2θ<sub>p</sub> = 26,57° ⟹ θ<sub>p</sub> = 13,28°</span></p>
+          </li>
+          <li><p>Corte máximo <strong>en el plano</strong>: <span class="m">τ = R = 8,94</span> a <span class="m">θ = 13,28 + 45 = 58,28°</span>.</p>
+            <div class="trap"><b>Ojo con el 3D:</b> como <span class="m">σ<sub>3</sub>=0</span> y las otras dos tienen signos opuestos, acá el corte máximo espacial coincide con el del plano. Pero si <span class="m">σ<sub>1</sub></span> y <span class="m">σ<sub>2</sub></span> fueran <em>ambas</em> positivas, el máximo verdadero sería <span class="m">σ<sub>1</sub>/2</span>, usando <span class="m">σ<sub>3</sub>=0</span>. Siempre ordená las tres principales antes de contestar.</div>
+          </li>
+          <li><p>Estado en un plano a <span class="m">θ=30°</span> (inciso <em>d</em> de 2012 y 2023):</p>
+            <p class="eq"><span class="m">σ<sub>30</sub> = 2 + 8·cos60° + 4·sen60° = 2 + 4 + 3,46 = 9,46</span></p>
+            <p class="eq"><span class="m">τ<sub>30</sub> = −8·sen60° + 4·cos60° = −6,93 + 2 = −4,93</span></p>
+          </li>
+        </ol>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ==================== T1 INDICIAL ==================== -->
+<section id="t1">
+  <div class="sechead">
+    <h2>Notación indicial: identidades</h2>
+    <span class="tag">cae siempre · los 10 parciales</span>
+  </div>
+  <p class="lede">No falta en ningún parcial. Siempre es "demostrar usando notación indicial" y siempre sale con la identidad ε-δ, la regla del producto, o el argumento simétrico-por-antisimétrico.</p>
+
+  <div class="card">
+    <div class="cardhead"><h3>La receta única</h3></div>
+    <ol class="steps">
+      <li><p>Escribí la componente <span class="m">i</span>-ésima de todo con <span class="m">e<sub>ijk</sub></span> y <span class="m">δ<sub>ij</sub></span>. Producto vectorial: <span class="m">(a×b)<sub>i</sub> = e<sub>ijk</sub>a<sub>j</sub>b<sub>k</sub></span>. Rotor: <span class="m">(∇×v)<sub>i</sub> = e<sub>ijk</sub>∂<sub>j</sub>v<sub>k</sub></span>.</p></li>
+      <li><p>Si hay <strong>dos</strong> símbolos de permutación, acomodá el índice repetido en primera posición y aplicá ε-δ.</p>
+        <p class="eq"><span class="m">e<sub>ijk</sub>e<sub>imn</sub> = δ<sub>jm</sub>δ<sub>kn</sub> − δ<sub>jn</sub>δ<sub>km</sub></span></p></li>
+      <li><p>Los <span class="m">δ</span> "renombran": <span class="m">δ<sub>jm</sub>a<sub>m</sub> = a<sub>j</sub></span>. Volvé a notación vectorial y listo.</p></li>
+    </ol>
+    <div class="trap"><b>Regla de oro:</b> un índice no puede aparecer más de dos veces en un término. Si te pasa, renombrá el mudo antes de seguir — ahí es donde se rompe todo.</div>
+  </div>
+
+  <div class="card">
+    <div class="cardhead">
+      <span class="prov">2014 · ej.1a</span><span class="prov">2016 · ej.1a</span><span class="prov">2025 · ej.2a-b</span>
+      <h3>Doble producto vectorial y sus variantes</h3>
+    </div>
+    <p class="eq"><span class="m">(a×b)·(c×d) = (a·c)(b·d) − (a·d)(b·c)</span></p>
+    <p class="eq"><span class="m">(a×b)·(a×b) + (a·b)<sup>2</sup> = a<sup>2</sup>b<sup>2</sup></span></p>
+    <p class="eq"><span class="m">u×(v×w) = (u·w)v − (u·v)w</span></p>
+    <p class="eq"><span class="m">u×[u×(u×v)] = −‖u‖<sup>2</sup>(u×v)</span></p>
+    <details class="sol">
+      <summary>Ver las cuatro demostraciones</summary>
+      <div class="solbody">
+        <p><strong>(1) Identidad de Lagrange generalizada.</strong> Es el caso base: las otras tres salen de acá.</p>
+        <p class="eq"><span class="m">(a×b)·(c×d) = e<sub>ijk</sub>a<sub>j</sub>b<sub>k</sub> · e<sub>imn</sub>c<sub>m</sub>d<sub>n</sub> = (δ<sub>jm</sub>δ<sub>kn</sub> − δ<sub>jn</sub>δ<sub>km</sub>) a<sub>j</sub>b<sub>k</sub>c<sub>m</sub>d<sub>n</sub></span></p>
+        <p class="eq"><span class="m">= a<sub>m</sub>c<sub>m</sub> b<sub>n</sub>d<sub>n</sub> − a<sub>n</sub>d<sub>n</sub> b<sub>m</sub>c<sub>m</sub> = (a·c)(b·d) − (a·d)(b·c)</span> ✓</p>
+
+        <p><strong>(2) Lagrange (2016).</strong> Poné <span class="m">c=a</span>, <span class="m">d=b</span> en lo anterior:</p>
+        <p class="eq"><span class="m">(a×b)·(a×b) = (a·a)(b·b) − (a·b)<sup>2</sup> = a<sup>2</sup>b<sup>2</sup> − (a·b)<sup>2</sup></span></p>
+        <p>Pasás el término al otro miembro y queda lo pedido. <em>No hace falta rehacer la cuenta con índices.</em></p>
+
+        <p><strong>(3) BAC-CAB.</strong> Ahora el doble producto es un vector:</p>
+        <p class="eq"><span class="m">[u×(v×w)]<sub>i</sub> = e<sub>ijk</sub>u<sub>j</sub>(v×w)<sub>k</sub> = e<sub>ijk</sub>u<sub>j</sub>e<sub>kmn</sub>v<sub>m</sub>w<sub>n</sub></span></p>
+        <p>Ciclás para poner el repetido primero: <span class="m">e<sub>ijk</sub>e<sub>kmn</sub> = e<sub>kij</sub>e<sub>kmn</sub> = δ<sub>im</sub>δ<sub>jn</sub> − δ<sub>in</sub>δ<sub>jm</sub></span></p>
+        <p class="eq"><span class="m">= u<sub>j</sub>w<sub>j</sub>v<sub>i</sub> − u<sub>j</sub>v<sub>j</sub>w<sub>i</sub> = [(u·w)v − (u·v)w]<sub>i</sub></span> ✓</p>
+
+        <p><strong>(4) El triple anidado (2025 / 2014).</strong> Truco: llamá <span class="m">A = u×v</span> y aplicá BAC-CAB.</p>
+        <p class="eq"><span class="m">u×(u×A) = (u·A)u − (u·u)A</span></p>
+        <p>Pero <span class="m">u·A = u·(u×v) = 0</span> (un producto vectorial es perpendicular a sus factores). Queda</p>
+        <div class="res">u×[u×(u×v)] = −‖u‖<sup>2</sup>(u×v) ✓</div>
+        <div class="key"><b>Estrategia de examen:</b> demostrá <em>una</em> vez la ε-δ y después reusala. Las cuatro son la misma cuenta.</div>
+      </div>
+    </details>
+  </div>
+
+  <div class="card">
+    <div class="cardhead">
+      <span class="prov">2011 · ej.2</span><span class="prov">2012 · ej.2</span><span class="prov">2025 · ej.2d</span><span class="prov">online</span>
+      <h3>Ejercicios con el radio vector <span class="m">r</span></h3>
+    </div>
+    <p class="eq"><span class="m">∇×(r<sup>n</sup> r) = 0</span> &nbsp;·&nbsp; <span class="m">∇×((r−4)r) = 0</span></p>
+    <p class="eq"><span class="m">∇(f(r)) = f′(r) x/r</span> &nbsp;·&nbsp; <span class="m">∇<sup>2</sup>f(r) = f″ + 2f′/r</span> &nbsp;·&nbsp; <span class="m">Δ(r<sup>n</sup>) = n(n+1)r<sup>n−2</sup></span></p>
+    <details class="sol">
+      <summary>Ver resolución</summary>
+      <div class="solbody">
+        <p>Todo arranca con la <strong>única</strong> derivada que hay que saber, de <span class="m">r<sup>2</sup>=x<sub>i</sub>x<sub>i</sub></span>:</p>
+        <p class="eq center"><span class="m">2r ∂r/∂x<sub>i</sub> = 2x<sub>i</sub> ⟹ ∂r/∂x<sub>i</sub> = x<sub>i</sub>/r</span></p>
+
+        <p><strong>Rotor nulo (2011).</strong> Sirve para <span class="m">r<sup>n</sup>r</span>, <span class="m">(r−4)r</span> y cualquier <span class="m">g(r)r</span>:</p>
+        <p class="eq"><span class="m">[∇×(g(r)r)]<sub>i</sub> = e<sub>ijk</sub>∂<sub>j</sub>(g x<sub>k</sub>) = e<sub>ijk</sub>(g′ (x<sub>j</sub>/r) x<sub>k</sub> + g δ<sub>jk</sub>)</span></p>
+        <p>Los dos términos mueren por el mismo motivo:</p>
+        <ul class="tight">
+          <li><span class="m">e<sub>ijk</sub>x<sub>j</sub>x<sub>k</sub> = 0</span> — antisimétrico contraído con simétrico.</li>
+          <li><span class="m">e<sub>ijk</sub>δ<sub>jk</sub> = e<sub>ijj</sub> = 0</span> — dos índices iguales en el símbolo de permutación.</li>
+        </ul>
+        <div class="res">∇×(g(r) r) = 0 &nbsp;para toda g ✓</div>
+        <p style="font-size:14px;color:var(--ink-2)">Es un campo central: siempre irrotacional. Con <span class="m">g=r<sup>n</sup></span> sale 2011, con <span class="m">g=r−4</span> sale el del examen online.</p>
+
+        <p><strong>Gradiente (2012a).</strong> <span class="m">∂f(r)/∂x<sub>i</sub> = f′(r)·∂r/∂x<sub>i</sub> = f′(r) x<sub>i</sub>/r</span> ✓</p>
+
+        <p><strong>Laplaciano (2012b).</strong> Divergencia de lo anterior:</p>
+        <p class="eq"><span class="m">∇<sup>2</sup>f = ∂<sub>i</sub>(f′ x<sub>i</sub>/r) = f″ (x<sub>i</sub>/r)(x<sub>i</sub>/r) + f′ [ δ<sub>ii</sub>/r − x<sub>i</sub>x<sub>i</sub>/r<sup>3</sup> ]</span></p>
+        <p class="eq"><span class="m">= f″ + f′ [ 3/r − r<sup>2</sup>/r<sup>3</sup> ] = f″ + 2f′/r</span> ✓</p>
+        <div class="trap"><b>El error clásico:</b> escribir <span class="m">δ<sub>ii</sub>=1</span>. Vale <strong>3</strong> (índice repetido = suma). De ahí sale el 2 del resultado: <span class="m">3−1=2</span>.</div>
+
+        <p><strong>Δ(r<sup>n</sup>) (2025d).</strong> Caso particular con <span class="m">f=r<sup>n</sup></span>: <span class="m">f′=nr<sup>n−1</sup></span>, <span class="m">f″=n(n−1)r<sup>n−2</sup></span>:</p>
+        <p class="eq"><span class="m">Δ(r<sup>n</sup>) = n(n−1)r<sup>n−2</sup> + 2nr<sup>n−2</sup> = n(n+1)r<sup>n−2</sup></span> ✓</p>
+        <div class="note"><b>Bonus gratis:</b> con <span class="m">n=−1</span> da cero. Ese es el potencial newtoniano <span class="m">1/r</span>, armónico salvo en el origen.</div>
+      </div>
+    </details>
+  </div>
+
+  <div class="card">
+    <div class="cardhead">
+      <span class="prov">2013 · ej.2</span><span class="prov">2015 · ej.2</span><span class="prov">2023 · ej.1</span><span class="prov">2025 · ej.2c</span>
+      <h3>Identidades con operadores diferenciales</h3>
+    </div>
+    <p class="eq"><span class="m">∇·(u×v) = v·(∇×u) − u·(∇×v)</span></p>
+    <p class="eq"><span class="m">∇×(∇×v) = ∇(∇·v) − ∇<sup>2</sup>v</span></p>
+    <p class="eq"><span class="m">∇·(ψ∇φ) = ψΔφ + ∇ψ·∇φ</span></p>
+    <details class="sol">
+      <summary>Ver las tres + el ejercicio 2023</summary>
+      <div class="solbody">
+        <p><strong>Divergencia de un producto vectorial (2013).</strong> Regla del producto y después reacomodar:</p>
+        <p class="eq"><span class="m">∇·(u×v) = ∂<sub>i</sub>(e<sub>ijk</sub>u<sub>j</sub>v<sub>k</sub>) = e<sub>ijk</sub>(∂<sub>i</sub>u<sub>j</sub>)v<sub>k</sub> + e<sub>ijk</sub>u<sub>j</sub>(∂<sub>i</sub>v<sub>k</sub>)</span></p>
+        <p>Primer término: ciclo <span class="m">e<sub>ijk</sub>=e<sub>kij</sub></span> ⟹ <span class="m">v<sub>k</sub>e<sub>kij</sub>∂<sub>i</sub>u<sub>j</sub> = v·(∇×u)</span>.</p>
+        <p>Segundo: <span class="m">e<sub>ijk</sub> = −e<sub>jik</sub></span> ⟹ <span class="m">u<sub>j</sub>e<sub>ijk</sub>∂<sub>i</sub>v<sub>k</sub> = −u<sub>j</sub>e<sub>jik</sub>∂<sub>i</sub>v<sub>k</sub> = −u·(∇×v)</span> ✓</p>
+
+        <p><strong>Rotor del rotor (2015).</strong> El caballito de batalla — reaparece en Navier-Stokes en el P2:</p>
+        <p class="eq"><span class="m">[∇×(∇×v)]<sub>i</sub> = e<sub>ijk</sub>∂<sub>j</sub>(e<sub>kmn</sub>∂<sub>m</sub>v<sub>n</sub>) = e<sub>kij</sub>e<sub>kmn</sub>∂<sub>j</sub>∂<sub>m</sub>v<sub>n</sub></span></p>
+        <p class="eq"><span class="m">= (δ<sub>im</sub>δ<sub>jn</sub> − δ<sub>in</sub>δ<sub>jm</sub>) ∂<sub>j</sub>∂<sub>m</sub>v<sub>n</sub> = ∂<sub>i</sub>(∂<sub>j</sub>v<sub>j</sub>) − ∂<sub>j</sub>∂<sub>j</sub>v<sub>i</sub></span> ✓</p>
+
+        <p><strong>Con campos escalares (2025c).</strong> Pura regla del producto, sin ε-δ:</p>
+        <p class="eq"><span class="m">∂<sub>i</sub>(ψ ∂<sub>i</sub>φ) = ψ ∂<sub>i</sub>∂<sub>i</sub>φ + (∂<sub>i</sub>ψ)(∂<sub>i</sub>φ) = ψΔφ + ∇ψ·∇φ</span> ✓</p>
+
+        <p><strong>El de 2023 (ej.1) — el que parece difícil y no lo es.</strong> Datos: <span class="m">∇·v=0</span>, <span class="m">∇×v=ẇ</span>, <span class="m">∇×w=−v̇</span>. Hay que llegar a <span class="m">∇<sup>2</sup>v = v̈</span>.</p>
+        <ol class="steps">
+          <li><p>Aplicá la identidad del rotor del rotor y usá <span class="m">∇·v=0</span>:</p>
+            <p class="eq"><span class="m">∇×(∇×v) = ∇(∇·v) − ∇<sup>2</sup>v = −∇<sup>2</sup>v</span></p></li>
+          <li><p>Pero por el dato, <span class="m">∇×v = ẇ</span>, así que ese mismo objeto es:</p>
+            <p class="eq"><span class="m">∇×(∇×v) = ∇×ẇ = ∂/∂t(∇×w) = ∂/∂t(−v̇) = −v̈</span></p></li>
+          <li><p>Igualás las dos expresiones:</p>
+            <div class="res">−∇<sup>2</sup>v = −v̈ &nbsp;⟹&nbsp; ∇<sup>2</sup>v = v̈ ✓</div></li>
+        </ol>
+        <div class="note"><b>Qué es:</b> la ecuación de ondas. Es exactamente la estructura de las ecuaciones de Maxwell — por eso el enunciado usa <span class="m">v</span> y <span class="m">w</span> acoplados con rotores cruzados.</div>
+      </div>
+    </details>
+  </div>
+
+  <div class="card">
+    <div class="cardhead">
+      <span class="prov">2012 · ej.1</span><span class="prov">2016 · ej.1b</span><span class="prov">2016 · ej.2</span><span class="prov">2019r · ej.1</span><span class="prov">2019r · ej.3</span>
+      <h3>Los sueltos: determinante, simetría, formas cuadráticas, Taylor</h3>
+    </div>
+    <details class="sol">
+      <summary>Ver los cinco</summary>
+      <div class="solbody">
+        <p><strong>Determinante (2012).</strong> <span class="m">det A = e<sub>ijk</sub>A<sub>1i</sub>A<sub>2j</sub>A<sub>3k</sub></span>. Se prueba desarrollando: <span class="m">e<sub>ijk</sub></span> recorre las 6 permutaciones de (1,2,3) con su signo — que es literalmente la definición de determinante por la regla de Leibniz.</p>
+
+        <p><strong>Simétrico × antisimétrico (2016 ej.1b).</strong> Mostrar <span class="m">e<sub>ijk</sub>σ<sub>jk</sub>=0</span> con <span class="m">σ<sub>jk</sub>=σ<sub>kj</sub></span>. Llamá <span class="m">S = e<sub>ijk</sub>σ<sub>jk</sub></span> e intercambiá los nombres de los mudos <span class="m">j↔k</span>:</p>
+        <p class="eq"><span class="m">S = e<sub>ikj</sub>σ<sub>kj</sub> = (−e<sub>ijk</sub>)(σ<sub>jk</sub>) = −S ⟹ 2S = 0 ⟹ S = 0</span> ✓</p>
+        <div class="key"><b>Este truco vale oro:</b> renombrar mudos y llegar a <span class="m">S=−S</span>. Es la demostración de que la parte antisimétrica de σ no aporta, o sea el origen de <span class="m">σ<sub>ij</sub>=σ<sub>ji</sub></span>.</div>
+
+        <p><strong>Forma cuadrática (2016 ej.2).</strong> <span class="m">A = A<sub>ij</sub>x<sub>i</sub>x<sub>j</sub></span> con <span class="m">A<sub>ij</sub></span> constantes:</p>
+        <p class="eq"><span class="m">∂A/∂x<sub>k</sub> = A<sub>ij</sub>(δ<sub>ik</sub>x<sub>j</sub> + x<sub>i</sub>δ<sub>jk</sub>) = A<sub>kj</sub>x<sub>j</sub> + A<sub>ik</sub>x<sub>i</sub> = (A<sub>kj</sub> + A<sub>jk</sub>)x<sub>j</sub></span></p>
+        <p class="eq"><span class="m">∂<sup>2</sup>A/∂x<sub>k</sub>∂x<sub>l</sub> = A<sub>kl</sub> + A<sub>lk</sub></span></p>
+        <p>Si <span class="m">A</span> es simétrico: <span class="m">2A<sub>kj</sub>x<sub>j</sub></span> y <span class="m">2A<sub>kl</sub></span>.</p>
+
+        <p><strong>Taylor al cuadrado (2019 recu ej.1).</strong> Con <span class="m">f = a + b<sub>i</sub>x<sub>i</sub> + ½c<sub>ij</sub>x<sub>i</sub>x<sub>j</sub></span>, elevás y agrupás por orden:</p>
+        <p class="eq"><span class="m">f<sup>2</sup> = a<sup>2</sup> + 2a b<sub>i</sub>x<sub>i</sub> + (a c<sub>ij</sub> + b<sub>i</sub>b<sub>j</sub>)x<sub>i</sub>x<sub>j</sub> + …</span></p>
+        <div class="res">A = a<sup>2</sup> &nbsp;·&nbsp; B<sub>i</sub> = 2a b<sub>i</sub> &nbsp;·&nbsp; C<sub>ij</sub> = 2(a c<sub>ij</sub> + b<sub>i</sub>b<sub>j</sub>)</div>
+        <p>Y <span class="m">∂f/∂x<sub>i</sub> = b<sub>i</sub> + c<sub>ij</sub>x<sub>j</sub></span> (con <span class="m">c</span> simétrico).</p>
+        <div class="trap"><b>El factor 2 de C<sub>ij</sub>:</b> como la forma se escribe con <span class="m">½C<sub>ij</sub></span>, al identificar coeficientes hay que multiplicar por 2. Es donde se pierde el punto.</div>
+
+        <p><strong>Derivada de un producto vectorial (2019 recu ej.3).</strong> Con <span class="m">u̇ = u×ω</span> y <span class="m">v̇ = v×ω</span>, mostrar <span class="m">d/dt(u×v) = (u×v)×ω</span>:</p>
+        <p class="eq"><span class="m">d/dt(u×v) = u̇×v + u×v̇ = (u×ω)×v + u×(v×ω)</span></p>
+        <p>Y acá entra la <strong>identidad de Jacobi</strong> <span class="m">u×(v×ω) + v×(ω×u) + ω×(u×v) = 0</span>, que despejada da</p>
+        <p class="eq"><span class="m">u×(v×ω) = v×(u×ω) + (u×v)×ω</span></p>
+        <p>Sumando con el primer término <span class="m">(u×ω)×v = −v×(u×ω)</span>, los dos se cancelan:</p>
+        <div class="res">d/dt(u×v) = (u×v)×ω ✓</div>
+        <p style="font-size:14px;color:var(--ink-2)">Interpretación: si <span class="m">u</span> y <span class="m">v</span> giran rígidamente con velocidad angular <span class="m">ω</span>, su producto vectorial gira igual. Cuerpo rígido.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ==================== T2 CAUCHY ==================== -->
+<section id="t2">
+  <div class="sechead">
+    <h2>Cauchy: vector tensión sobre un plano</h2>
+    <span class="tag">cae siempre · 6 apariciones</span>
+  </div>
+  <p class="lede">El ejercicio numérico más seguro del parcial. Te dan <span class="m">σ</span> (a veces campo, a veces matriz de números), un punto y una superficie, y pedís la tracción. Es <strong>siempre</strong> la misma cuenta en cuatro pasos.</p>
+
+  <div class="card">
+    <div class="cardhead"><h3>La receta</h3></div>
+    <ol class="steps">
+      <li><p><strong>Evaluá <span class="m">σ</span> en el punto.</strong> Si es un campo, primero reemplazás las coordenadas. Error frecuente: derivar o rotar antes de evaluar.</p></li>
+      <li><p><strong>Sacá la normal.</strong> Plano <span class="m">ax<sub>1</sub>+bx<sub>2</sub>+cx<sub>3</sub>=d</span> ⟹ <span class="m">ν ∝ (a,b,c)</span>. Superficie curva <span class="m">f(x)=0</span> ⟹ <span class="m">ν ∝ ∇f</span> en el punto (el plano tangente tiene la normal de la superficie).</p></li>
+      <li><p><strong>Normalizá.</strong> <span class="m">ν = (a,b,c)/√(a<sup>2</sup>+b<sup>2</sup>+c<sup>2</sup>)</span>. Si no lo hacés, <span class="m">T</span> queda escalado y todo lo que sigue está mal.</p></li>
+      <li><p><strong>Multiplicá:</strong> <span class="m">T = σ·ν</span>. Y si piden componentes: <span class="m">σ<sub>n</sub> = T·ν</span>, <span class="m">τ = √(|T|<sup>2</sup> − σ<sub>n</sub><sup>2</sup>)</span>.</p></li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="cardhead">
+      <span class="prov hot">2019r · ej.2</span><span class="prov hot">online · ej.1</span>
+      <h3>Plano tangente a una superficie curva</h3>
+    </div>
+    <p><strong>2019 recu:</strong> con el campo de abajo, hallar <span class="m">T</span> en <span class="m">P(1,1,1)</span> sobre el plano tangente a la esfera <span class="m">x<sub>1</sub><sup>2</sup>+x<sub>2</sub><sup>2</sup>+x<sub>3</sub><sup>2</sup>=3</span>.</p>
+    <p class="eq center"><span class="m">σ = </span><span class="mat" style="grid-template-columns:repeat(3,auto)"><span>3x<sub>1</sub>x<sub>2</sub></span><span>3x<sub>2</sub><sup>2</sup></span><span>0</span><span>3x<sub>2</sub><sup>2</sup></span><span>0</span><span>−2x<sub>3</sub></span><span>0</span><span>−2x<sub>3</sub></span><span>0</span></span></p>
+    <details class="sol">
+      <summary>Ver resolución</summary>
+      <div class="solbody">
+        <ol class="steps">
+          <li><p>Evalúo en <span class="m">P(1,1,1)</span>:</p>
+            <p class="eq center"><span class="m">σ(P) = </span><span class="mat" style="grid-template-columns:repeat(3,auto)"><span>3</span><span>3</span><span>0</span><span>3</span><span>0</span><span>−2</span><span>0</span><span>−2</span><span>0</span></span></p></li>
+          <li><p>Normal: <span class="m">f = x<sub>1</sub><sup>2</sup>+x<sub>2</sub><sup>2</sup>+x<sub>3</sub><sup>2</sup>−3</span>, entonces <span class="m">∇f = 2(x<sub>1</sub>,x<sub>2</sub>,x<sub>3</sub>) = (2,2,2)</span> en <span class="m">P</span>.</p>
+            <p class="eq"><span class="m">ν = (1,1,1)/√3</span></p></li>
+          <li><p>Cauchy, <span class="m">T = σν</span>:</p>
+            <p class="eq"><span class="m">T<sub>1</sub> = (3 + 3 + 0)/√3 = 6/√3</span></p>
+            <p class="eq"><span class="m">T<sub>2</sub> = (3 + 0 − 2)/√3 = 1/√3</span></p>
+            <p class="eq"><span class="m">T<sub>3</sub> = (0 − 2 + 0)/√3 = −2/√3</span></p>
+            <div class="res">T = (6, 1, −2)/√3 ≈ (3,46 ; 0,58 ; −1,15)</div></li>
+        </ol>
+        <p><strong>La variante del examen online (cono).</strong> Mismo procedimiento con</p>
+        <p class="eq center"><span class="m">σ = </span><span class="mat" style="grid-template-columns:repeat(3,auto)"><span>0</span><span>x<sub>3</sub><sup>2</sup></span><span>3</span><span>x<sub>3</sub><sup>2</sup></span><span>−x<sub>1</sub>x<sub>2</sub></span><span>5x<sub>2</sub>x<sub>3</sub></span><span>3</span><span>5x<sub>2</sub>x<sub>3</sub></span><span>5x<sub>1</sub>x<sub>3</sub></span></span><span class="m">, P(3,4,5), cono x<sub>1</sub><sup>2</sup>+x<sub>2</sub><sup>2</sup>−x<sub>3</sub><sup>2</sup>=0</span></p>
+        <p>Verificá primero que <span class="m">P</span> está en la superficie: <span class="m">9+16−25=0</span> ✓</p>
+        <p class="eq"><span class="m">∇f = (2x<sub>1</sub>, 2x<sub>2</sub>, −2x<sub>3</sub>) = (6,8,−10) ⟹ ν = (3,4,−5)/(5√2)</span></p>
+        <p class="eq center"><span class="m">σ(P) = </span><span class="mat" style="grid-template-columns:repeat(3,auto)"><span>0</span><span>25</span><span>3</span><span>25</span><span>−12</span><span>100</span><span>3</span><span>100</span><span>75</span></span></p>
+        <p class="eq"><span class="m">T<sub>1</sub> = (0·3 + 25·4 + 3·(−5)) = 85</span></p>
+        <p class="eq"><span class="m">T<sub>2</sub> = (25·3 − 12·4 + 100·(−5)) = 75 − 48 − 500 = −473</span></p>
+        <p class="eq"><span class="m">T<sub>3</sub> = (3·3 + 100·4 + 75·(−5)) = 9 + 400 − 375 = 34</span></p>
+        <div class="res">T = (85, −473, 34) / (5√2)</div>
+        <div class="trap"><b>El paso que se olvida:</b> el enunciado dice "plano tangente en P a la superficie". La normal del plano tangente <strong>es</strong> <span class="m">∇f</span> de la superficie. No hay que parametrizar nada.</div>
+      </div>
+    </details>
+  </div>
+
+  <div class="card">
+    <div class="cardhead">
+      <span class="prov hot">2023 · ej.3</span><span class="prov">2025r · ej.2</span>
+      <h3>Descomponer T en normal y tangencial</h3>
+    </div>
+    <p>Con <span class="m">σ = diag(2,3,4)</span> y <span class="m">ν = (e<sub>1</sub>+3e<sub>2</sub>−e<sub>3</sub>)/√11</span>: hallar <span class="m">σ<sub>n</sub></span>, <span class="m">τ</span> y el versor <span class="m">e<sub>τ</sub></span> tal que <span class="m">T = σ<sub>n</sub>ν + τe<sub>τ</sub></span>.</p>
+    <details class="sol">
+      <summary>Ver resolución</summary>
+      <div class="solbody">
+        <ol class="steps">
+          <li><p><span class="m">T = σν = (2·1, 3·3, 4·(−1))/√11 = (2, 9, −4)/√11</span></p></li>
+          <li><p>Componente normal, proyección sobre <span class="m">ν</span>:</p>
+            <p class="eq"><span class="m">σ<sub>n</sub> = T·ν = (2·1 + 9·3 + (−4)(−1))/11 = 33/11 = 3</span></p></li>
+          <li><p>Tangencial por Pitágoras:</p>
+            <p class="eq"><span class="m">|T|<sup>2</sup> = (4+81+16)/11 = 101/11</span></p>
+            <p class="eq"><span class="m">τ<sup>2</sup> = 101/11 − 9 = 2/11 ⟹ τ = √(2/11) ≈ 0,426</span></p></li>
+          <li><p>El versor tangencial sale restando la parte normal:</p>
+            <p class="eq"><span class="m">T − σ<sub>n</sub>ν = (2,9,−4)/√11 − 3(1,3,−1)/√11 = (−1, 0, −1)/√11</span></p>
+            <p>Su módulo es <span class="m">√2/√11 = τ</span> ✓ (buen chequeo), así que</p>
+            <div class="res">σ<sub>n</sub> = 3 &nbsp;·&nbsp; τ = √22/11 ≈ 0,426 &nbsp;·&nbsp; e<sub>τ</sub> = (−1, 0, −1)/√2</div></li>
+        </ol>
+        <div class="note"><b>La demostración teórica (2025 recu ej.2)</b> es esto mismo en general: <span class="m">T = T<sub>n</sub> + T<sub>t</sub></span> con <span class="m">T<sub>n</sub> ⊥ T<sub>t</sub></span>, entonces <span class="m">|T|<sup>2</sup> = |T<sub>n</sub>|<sup>2</sup> + |T<sub>t</sub>|<sup>2</sup></span>. En indicial: <span class="m">T<sub>i</sub>T<sub>i</sub> = (T<sub>j</sub>n<sub>j</sub>)<sup>2</sup> + T<sub>t,i</sub>T<sub>t,i</sub></span>, usando <span class="m">n<sub>i</sub>n<sub>i</sub>=1</span>.</div>
+      </div>
+    </details>
+  </div>
+
+  <div class="card">
+    <div class="cardhead">
+      <span class="prov hot">2014 · ej.3b</span><span class="prov hot">2016 · ej.4a</span><span class="prov">2012 · ej.3</span>
+      <h3>Campo de tensiones + plano dado por su ecuación</h3>
+    </div>
+    <p><strong>Cayó igual en 2014 y 2016.</strong> Con el campo de la sección de equilibrio, evaluar en <span class="m">P(2,−1,6)</span> la tracción sobre <span class="m">3x<sub>1</sub>+6x<sub>2</sub>+2x<sub>3</sub>=12</span>.</p>
+    <details class="sol">
+      <summary>Ver resolución</summary>
+      <div class="solbody">
+        <ol class="steps">
+          <li><p>Evalúo el campo en <span class="m">P(2,−1,6)</span>:</p>
+            <p class="eq"><span class="m">T<sub>11</sub> = (1−x<sub>1</sub><sup>2</sup>)x<sub>2</sub> + ⅔x<sub>2</sub><sup>3</sup> = (1−4)(−1) + ⅔(−1) = 3 − ⅔ = 7/3</span></p>
+            <p class="eq"><span class="m">T<sub>12</sub> = −(4−x<sub>2</sub><sup>2</sup>)x<sub>1</sub> = −(4−1)(2) = −6</span></p>
+            <p class="eq"><span class="m">T<sub>22</sub> = −⅓(x<sub>2</sub><sup>3</sup>−12x<sub>2</sub>) = −⅓(−1+12) = −11/3</span></p>
+            <p class="eq"><span class="m">T<sub>33</sub> = (3−x<sub>1</sub><sup>2</sup>)x<sub>2</sub> = (3−4)(−1) = 1</span></p>
+            <p class="eq center"><span class="m">σ(P) = </span><span class="mat" style="grid-template-columns:repeat(3,auto)"><span>7/3</span><span>−6</span><span>0</span><span>−6</span><span>−11/3</span><span>0</span><span>0</span><span>0</span><span>1</span></span></p></li>
+          <li><p>Normal del plano: coeficientes <span class="m">(3,6,2)</span>, módulo <span class="m">√(9+36+4)=7</span>:</p>
+            <p class="eq"><span class="m">ν = (3, 6, 2)/7</span></p></li>
+          <li><p><span class="m">t = σν</span>:</p>
+            <p class="eq"><span class="m">t<sub>1</sub> = [ (7/3)(3) + (−6)(6) + 0 ] / 7 = (7 − 36)/7 = −29/7</span></p>
+            <p class="eq"><span class="m">t<sub>2</sub> = [ (−6)(3) + (−11/3)(6) + 0 ] / 7 = (−18 − 22)/7 = −40/7</span></p>
+            <p class="eq"><span class="m">t<sub>3</sub> = [ 0 + 0 + (1)(2) ] / 7 = 2/7</span></p>
+            <div class="res">t = (−29, −40, 2)/7 ≈ (−4,14 ; −5,71 ; 0,29)</div></li>
+        </ol>
+        <div class="note"><b>2016 pide además las principales</b> de ese <span class="m">σ(P)</span>. Como <span class="m">T<sub>33</sub>=1</span> está desacoplada, una principal es <strong>1</strong>; las otras dos salen del bloque 2×2 con la fórmula de Mohr: <span class="m">c=−⅔</span>, <span class="m">R=3√5</span>, o sea <span class="m">σ ≈ 6,04</span> y <span class="m">σ ≈ −7,37</span>.</div>
+        <div class="trap"><b>2012 ej.3</b> es el mismo tipo pero el plano viene <em>dibujado</em> por sus intersecciones con los ejes. Si corta en <span class="m">(a,0,0)</span>, <span class="m">(0,b,0)</span>, <span class="m">(0,0,c)</span>, el plano es <span class="m">x<sub>1</sub>/a + x<sub>2</sub>/b + x<sub>3</sub>/c = 1</span> y por lo tanto <span class="m">ν ∝ (1/a, 1/b, 1/c)</span>. Leé bien las cotas de la figura.</div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ==================== T3 EQUILIBRIO ==================== -->
+<section id="t3">
+  <div class="sechead">
+    <h2>Equilibrio y campos autoequilibrados</h2>
+    <span class="tag">4 apariciones</span>
+  </div>
+  <p class="lede">Te dan un campo <span class="m">σ(x)</span> y preguntan si está en equilibrio, o qué fuerzas de volumen hacen falta. Son tres derivadas y listo — es el inciso más rápido de todo el parcial.</p>
+
+  <div class="card">
+    <div class="cardhead"><h3>La receta</h3></div>
+    <p class="eq center"><span class="m">σ<sub>ji,j</sub> + X<sub>i</sub> = 0</span> &nbsp;&nbsp;para <span class="m">i = 1, 2, 3</span></p>
+    <p>Desarrollada, la fila <span class="m">i</span> es: <span class="m">∂σ<sub>1i</sub>/∂x<sub>1</sub> + ∂σ<sub>2i</sub>/∂x<sub>2</sub> + ∂σ<sub>3i</sub>/∂x<sub>3</sub> + X<sub>i</sub> = 0</span>.</p>
+    <ul class="tight">
+      <li>Si da <strong>0</strong> con <span class="m">X=0</span> → el campo está <em>autoequilibrado</em>. Eso es lo que casi siempre piden mostrar.</li>
+      <li>Si <strong>no</strong> da 0 → despejás <span class="m">X<sub>i</sub></span>: las fuerzas de volumen necesarias son menos lo que te dio.</li>
+    </ul>
+    <div class="trap"><b>Chequeo previo gratis:</b> mirá si <span class="m">σ</span> es simétrico. Si no lo es, el campo ya es inadmisible por equilibrio de momentos y no hace falta derivar nada.</div>
+  </div>
+
+  <div class="card">
+    <div class="cardhead">
+      <span class="prov hot">2014 · ej.3a</span><span class="prov hot">2016 · ej.3</span>
+      <h3>El campo que cayó dos veces</h3>
+    </div>
+    <p class="eq center"><span class="m">T = </span><span class="mat" style="grid-template-columns:repeat(3,auto)"><span>(1−x<sub>1</sub><sup>2</sup>)x<sub>2</sub> + ⅔x<sub>2</sub><sup>3</sup></span><span>−(4−x<sub>2</sub><sup>2</sup>)x<sub>1</sub></span><span>0</span><span>−(4−x<sub>2</sub><sup>2</sup>)x<sub>1</sub></span><span>−⅓(x<sub>2</sub><sup>3</sup>−12x<sub>2</sub>)</span><span>0</span><span>0</span><span>0</span><span>(3−x<sub>1</sub><sup>2</sup>)x<sub>2</sub></span></span></p>
+    <p>Mostrar que satisface equilibrio en todo punto con fuerzas de volumen nulas.</p>
+    <details class="sol">
+      <summary>Ver las tres cuentas</summary>
+      <div class="solbody">
+        <p><strong>Dirección 1:</strong></p>
+        <p class="eq"><span class="m">∂T<sub>11</sub>/∂x<sub>1</sub> = −2x<sub>1</sub>x<sub>2</sub></span></p>
+        <p class="eq"><span class="m">∂T<sub>21</sub>/∂x<sub>2</sub> = ∂[−(4−x<sub>2</sub><sup>2</sup>)x<sub>1</sub>]/∂x<sub>2</sub> = 2x<sub>2</sub>x<sub>1</sub></span></p>
+        <p class="eq"><span class="m">∂T<sub>31</sub>/∂x<sub>3</sub> = 0</span></p>
+        <p class="eq"><span class="m">Suma: −2x<sub>1</sub>x<sub>2</sub> + 2x<sub>1</sub>x<sub>2</sub> + 0 = 0</span> ✓</p>
+
+        <p><strong>Dirección 2:</strong></p>
+        <p class="eq"><span class="m">∂T<sub>12</sub>/∂x<sub>1</sub> = −(4−x<sub>2</sub><sup>2</sup>)</span></p>
+        <p class="eq"><span class="m">∂T<sub>22</sub>/∂x<sub>2</sub> = −⅓(3x<sub>2</sub><sup>2</sup>−12) = −x<sub>2</sub><sup>2</sup>+4 = (4−x<sub>2</sub><sup>2</sup>)</span></p>
+        <p class="eq"><span class="m">Suma: −(4−x<sub>2</sub><sup>2</sup>) + (4−x<sub>2</sub><sup>2</sup>) + 0 = 0</span> ✓</p>
+
+        <p><strong>Dirección 3:</strong> las dos primeras derivadas son cero y <span class="m">T<sub>33</sub></span> no depende de <span class="m">x<sub>3</sub></span>:</p>
+        <p class="eq"><span class="m">0 + 0 + ∂[(3−x<sub>1</sub><sup>2</sup>)x<sub>2</sub>]/∂x<sub>3</sub> = 0</span> ✓</p>
+        <div class="res">El campo es autoequilibrado en todo punto, con X = 0 ✓</div>
+        <div class="key"><b>Cómo se contesta rápido:</b> hacé una tabla de tres filas (una por dirección) con las tres derivadas. Escribir "por simetría de σ sólo hay 6 componentes" ya suma, y después son 6 derivadas en total.</div>
+      </div>
+    </details>
+  </div>
+
+  <div class="card">
+    <div class="cardhead">
+      <span class="prov">2011 · ej.1a</span><span class="prov">2025r · ej.3</span>
+      <h3>Torsión (autoequilibrado) y campo con fuerzas de volumen</h3>
+    </div>
+    <details class="sol">
+      <summary>Ver ambos</summary>
+      <div class="solbody">
+        <p><strong>2011 — torsión.</strong> Con <span class="m">σ<sub>13</sub>=−∂ψ/∂x<sub>2</sub></span>, <span class="m">σ<sub>23</sub>=∂ψ/∂x<sub>1</sub></span> y el resto nulo:</p>
+        <p class="eq"><span class="m">i=1: ∂σ<sub>11</sub>/∂x<sub>1</sub>+∂σ<sub>21</sub>/∂x<sub>2</sub>+∂σ<sub>31</sub>/∂x<sub>3</sub> = 0+0+∂(−∂ψ/∂x<sub>2</sub>)/∂x<sub>3</sub> = 0</span></p>
+        <p>porque <span class="m">ψ=ψ(x<sub>1</sub>,x<sub>2</sub>)</span> no depende de <span class="m">x<sub>3</sub></span>. Igual para <span class="m">i=2</span>. Y la interesante:</p>
+        <p class="eq"><span class="m">i=3: ∂σ<sub>13</sub>/∂x<sub>1</sub>+∂σ<sub>23</sub>/∂x<sub>2</sub> = −∂<sup>2</sup>ψ/∂x<sub>1</sub>∂x<sub>2</sub> + ∂<sup>2</sup>ψ/∂x<sub>2</sub>∂x<sub>1</sub> = 0</span> ✓</p>
+        <div class="note">Se anula por <strong>igualdad de derivadas cruzadas</strong>. Es la misma razón por la que la función de Airy funciona: definir las tensiones como derivadas cruzadas de un potencial <em>garantiza</em> el equilibrio.</div>
+
+        <p><strong>2025 recu ej.3 — el que NO está autoequilibrado.</strong></p>
+        <p class="eq center"><span class="m">σ = </span><span class="mat" style="grid-template-columns:repeat(3,auto)"><span>0</span><span>x<sub>2</sub>x<sub>3</sub><sup>2</sup></span><span>0</span><span>x<sub>2</sub>x<sub>3</sub><sup>2</sup></span><span>−x<sub>2</sub><sup>2</sup></span><span>−x<sub>1</sub><sup>2</sup></span><span>0</span><span>−x<sub>1</sub><sup>2</sup></span><span>0</span></span></p>
+        <p class="eq"><span class="m">i=1: 0 + x<sub>3</sub><sup>2</sup> + 0 = x<sub>3</sub><sup>2</sup> ⟹ X<sub>1</sub> = −x<sub>3</sub><sup>2</sup></span></p>
+        <p class="eq"><span class="m">i=2: 0 + (−2x<sub>2</sub>) + 0 = −2x<sub>2</sub> ⟹ X<sub>2</sub> = 2x<sub>2</sub></span></p>
+        <p class="eq"><span class="m">i=3: 0 + 0 + 0 = 0 ⟹ X<sub>3</sub> = 0</span></p>
+        <div class="res">X = (−x<sub>3</sub><sup>2</sup>, 2x<sub>2</sub>, 0)</div>
+        <div class="trap"><b>Aviso:</b> el PDF del recuperatorio 2025 corta los incisos, así que reconstruí el enunciado por el dato. Si la consigna era otra (Cauchy en un plano, principales en un punto), el tensor es el mismo y las recetas están en las otras secciones.</div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ==================== T4 PRINCIPALES ==================== -->
+<section id="t4">
+  <div class="sechead">
+    <h2>Valores y direcciones principales</h2>
+    <span class="tag">cae siempre · 5 apariciones</span>
+  </div>
+  <p class="lede">Autovalores y autovectores de <span class="m">σ</span>, con el pedido casi obligatorio de "verificar que las direcciones son mutuamente ortogonales" y "dar la matriz de rotación que diagonaliza".</p>
+
+  <div class="card">
+    <div class="cardhead"><h3>La receta — y el atajo que ahorra 10 minutos</h3></div>
+    <ol class="steps">
+      <li><p><strong>Buscá filas/columnas desacopladas.</strong> Si una fila tiene un solo elemento no nulo en la diagonal, ese ya es un autovalor y su eje es una dirección principal. El problema baja a un <strong>2×2</strong>.</p>
+        <div class="key"><b>Esto pasa en 2011, 2013 y 2015.</b> Los tres tienen la forma "bloque 2×2 + un valor suelto". Nunca hay que expandir un cúbico completo.</div></li>
+      <li><p>Para el bloque 2×2, usá directamente las fórmulas de Mohr:</p>
+        <p class="eq"><span class="m">λ<sub>1,2</sub> = (a+d)/2 ± √[ ((a−d)/2)<sup>2</sup> + b<sup>2</sup> ]</span> &nbsp;con&nbsp; <span class="m">[[a,b],[b,d]]</span></p></li>
+      <li><p>Direcciones: resolvé <span class="m">(σ − λI)n = 0</span> — con dos ecuaciones alcanza, la tercera es redundante. Normalizá.</p></li>
+      <li><p>Matriz de rotación <span class="m">β</span>: las <strong>filas</strong> son los versores principales. Entonces <span class="m">βσβ<sup>T</sup> = diag(λ<sub>1</sub>,λ<sub>2</sub>,λ<sub>3</sub>)</span>.</p></li>
+    </ol>
+    <div class="trap"><b>Chequeo obligatorio:</b> <span class="m">λ<sub>1</sub>+λ<sub>2</sub>+λ<sub>3</sub> = traza de σ</span>. Si no da, hay error. También <span class="m">λ<sub>1</sub>λ<sub>2</sub>λ<sub>3</sub> = det σ</span>.</div>
+  </div>
+
+  <div class="card">
+    <div class="cardhead">
+      <span class="prov">2011 · ej.3</span><span class="prov">2013 · ej.1</span><span class="prov hot">2015 · ej.1</span>
+      <h3>Los tres tensores numéricos</h3>
+    </div>
+    <div class="matwrap">
+      <span class="m">2011:</span><span class="mat" style="grid-template-columns:repeat(3,auto)"><span>6</span><span>0</span><span>−2</span><span>0</span><span>0</span><span>0</span><span>−2</span><span>0</span><span>6</span></span>
+      <span class="m">2013:</span><span class="mat" style="grid-template-columns:repeat(3,auto)"><span>5/2</span><span>1/2</span><span>0</span><span>1/2</span><span>5/2</span><span>0</span><span>0</span><span>0</span><span>4</span></span>
+      <span class="m">2015:</span><span class="mat" style="grid-template-columns:repeat(3,auto)"><span>21</span><span>0</span><span>12</span><span>0</span><span>20</span><span>0</span><span>12</span><span>0</span><span>14</span></span>
+    </div>
+    <details class="sol">
+      <summary>Ver los tres resueltos</summary>
+      <div class="solbody">
+        <p><strong>2011.</strong> La fila 2 es toda nula ⟹ <span class="m">λ=0</span> con eje <span class="m">e<sub>2</sub></span>. Bloque en <span class="m">x<sub>1</sub>–x<sub>3</sub></span>: <span class="m">[[6,−2],[−2,6]]</span>, con <span class="m">c=6</span>, <span class="m">R=2</span>:</p>
+        <div class="res">σ<sub>1</sub>=8, σ<sub>2</sub>=6−2=4, σ<sub>3</sub>=0 &nbsp;·&nbsp; n<sub>1</sub>=(1,0,−1)/√2, n<sub>2</sub>=(0,1,0), n<sub>3</sub>=(1,0,1)/√2</div>
+        <p>Chequeo traza: <span class="m">8+4+0 = 12 = 6+0+6</span> ✓. Y <span class="m">τ<sub>máx</sub> = (8−0)/2 = 4</span>.</p>
+
+        <p><strong>2013.</strong> Fila 3 desacoplada ⟹ <span class="m">λ=4</span> con eje <span class="m">e<sub>3</sub></span>. Bloque <span class="m">[[5/2,1/2],[1/2,5/2]]</span>: <span class="m">c=5/2</span>, <span class="m">R=1/2</span>:</p>
+        <div class="res">σ = 4, 3, 2 &nbsp;·&nbsp; n(3)=(1,1,0)/√2, n(2)=(−1,1,0)/√2, n(4)=(0,0,1)</div>
+        <p>Matriz de rotación pedida (filas = versores, ordenados para dar <span class="m">diag(4,3,2)</span>):</p>
+        <p class="eq center"><span class="m">β = </span><span class="mat" style="grid-template-columns:repeat(3,auto)"><span>0</span><span>0</span><span>1</span><span>1/√2</span><span>1/√2</span><span>0</span><span>−1/√2</span><span>1/√2</span><span>0</span></span></p>
+
+        <p><strong>2015 — el más completo.</strong> Fila 2 desacoplada ⟹ <span class="m">λ=20</span>, eje <span class="m">e<sub>2</sub></span>. Bloque <span class="m">[[21,12],[12,14]]</span>:</p>
+        <p class="eq"><span class="m">c = (21+14)/2 = 17,5 &nbsp;&nbsp; R = √(3,5<sup>2</sup> + 12<sup>2</sup>) = √(12,25+144) = 12,5</span></p>
+        <div class="res">σ = 30, 20, 5</div>
+        <p>Direcciones. Para <span class="m">λ=30</span>: <span class="m">(21−30)n<sub>1</sub> + 12n<sub>3</sub> = 0 ⟹ 3n<sub>1</sub> = 4n<sub>3</sub></span></p>
+        <p class="eq"><span class="m">n(30) = (4, 0, 3)/5</span></p>
+        <p>Para <span class="m">λ=5</span>: <span class="m">16n<sub>1</sub> + 12n<sub>3</sub> = 0 ⟹ 4n<sub>1</sub> = −3n<sub>3</sub></span></p>
+        <p class="eq"><span class="m">n(5) = (−3, 0, 4)/5 &nbsp;&nbsp;&nbsp; n(20) = (0,1,0)</span></p>
+        <p><strong>Ortogonalidad:</strong> <span class="m">(4,0,3)·(−3,0,4) = −12+12 = 0</span> ✓, y las dos son obviamente perpendiculares a <span class="m">e<sub>2</sub></span>.</p>
+        <p><strong>Inciso (d):</strong> "¿cuáles son los valores principales en otro sistema <span class="m">Ox′</span>?" — respuesta: <strong>los mismos, 30, 20 y 5</strong>. Los valores principales son raíces de la ecuación característica, cuyos coeficientes son los invariantes <span class="m">I<sub>1</sub>, I<sub>2</sub>, I<sub>3</sub></span>. Rotar ejes no cambia el estado físico, sólo cómo lo escribís.</p>
+        <div class="key"><b>Esa pregunta regala puntos:</b> se contesta en dos renglones sin hacer una sola cuenta, y mucha gente se pone a rotar el tensor.</div>
+      </div>
+    </details>
+  </div>
+
+  <div class="card">
+    <div class="cardhead">
+      <span class="prov hot">2014 · ej.5</span>
+      <h3>Principales SIN usar el determinante</h3>
+    </div>
+    <p>Te dan <span class="m">T</span> y las tres direcciones principales, y prohíben explícitamente la ecuación característica.</p>
+    <div class="matwrap">
+      <span class="m">T = </span><span class="mat" style="grid-template-columns:repeat(3,auto)"><span>1,5</span><span>−0,5</span><span>0</span><span>−0,5</span><span>1,5</span><span>0</span><span>0</span><span>0</span><span>0</span></span>
+      <span class="m">v<sub>1</sub>=(1,1,0)/√2 &nbsp; v<sub>2</sub>=(−1,1,0)/√2 &nbsp; v<sub>3</sub>=(0,0,1)</span>
+    </div>
+    <details class="sol">
+      <summary>Ver resolución</summary>
+      <div class="solbody">
+        <p>La idea: si <span class="m">v</span> es dirección principal, entonces <span class="m">Tv = λv</span>. Multiplicás y leés el factor. O más directo, proyectás:</p>
+        <p class="eq center"><span class="m">λ<sub>i</sub> = v<sub>i</sub> · T v<sub>i</sub></span></p>
+        <ol class="steps">
+          <li><p><span class="m">T v<sub>1</sub> = (1,5−0,5 ; −0,5+1,5 ; 0)/√2 = (1, 1, 0)/√2 = 1 · v<sub>1</sub></span></p>
+            <p class="eq"><span class="m">λ<sub>1</sub> = 1</span></p></li>
+          <li><p><span class="m">T v<sub>2</sub> = (−1,5−0,5 ; 0,5+1,5 ; 0)/√2 = (−2, 2, 0)/√2 = 2 · v<sub>2</sub></span></p>
+            <p class="eq"><span class="m">λ<sub>2</sub> = 2</span></p></li>
+          <li><p><span class="m">T v<sub>3</sub> = (0,0,0) = 0 · v<sub>3</sub></span></p>
+            <p class="eq"><span class="m">λ<sub>3</sub> = 0</span></p></li>
+        </ol>
+        <div class="res">Valores principales: 2, 1, 0</div>
+        <p>Chequeo de traza: <span class="m">2+1+0 = 3 = 1,5+1,5+0</span> ✓</p>
+        <div class="note"><b>Por qué lo piden así:</b> quieren que muestres que entendés la <em>definición</em> de dirección principal (<span class="m">Tv ∥ v</span>) y no sólo la receta del determinante. Escribí explícitamente "como <span class="m">Tv<sub>i</sub></span> resulta paralelo a <span class="m">v<sub>i</sub></span>, el factor de proporcionalidad es el valor principal".</div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ==================== T6 CAMBIO DE BASE ==================== -->
+<section id="t6">
+  <div class="sechead">
+    <h2>Cambio de base y rotación de ejes</h2>
+    <span class="tag">6 apariciones · muy teórico</span>
+  </div>
+  <p class="lede">Mitad demostración, mitad cuenta. La clave es entender que <strong>un tensor de rango n necesita n matrices β</strong>, y que los invariantes no se mueven.</p>
+
+  <div class="card">
+    <div class="cardhead"><h3>Las fórmulas y de dónde salen</h3></div>
+    <p class="eq center"><span class="m">β<sub>ki</sub> = e′<sub>k</sub> · e<sub>i</sub></span> &nbsp;&nbsp;(coseno director del eje nuevo <span class="m">k</span> con el viejo <span class="m">i</span>)</p>
+    <p class="eq center"><span class="m">escalar: φ′ = φ &nbsp;&nbsp;·&nbsp;&nbsp; vector: v′<sub>k</sub> = β<sub>ki</sub>v<sub>i</sub> &nbsp;&nbsp;·&nbsp;&nbsp; tensor 2: σ′<sub>km</sub> = β<sub>kj</sub>β<sub>mi</sub>σ<sub>ji</sub></span></p>
+    <p class="eq center"><span class="m">ortogonalidad: β<sub>ki</sub>β<sub>mi</sub> = δ<sub>km</sub> &nbsp;⟺&nbsp; ββ<sup>T</sup> = I &nbsp;·&nbsp; rotación propia: det β = +1</span></p>
+    <details class="sol">
+      <summary>Ver la derivación (2014 ej.4 pide exactamente esto)</summary>
+      <div class="solbody">
+        <p><strong>(a) Para un vector.</strong> El vector es el mismo objeto, cambia la base en que lo escribís:</p>
+        <p class="eq"><span class="m">r = r<sub>i</sub>e<sub>i</sub> = r′<sub>k</sub>e′<sub>k</sub></span></p>
+        <p>Proyectás sobre <span class="m">e′<sub>k</sub></span> y usás <span class="m">e′<sub>k</sub>·e′<sub>m</sub> = δ<sub>km</sub></span>:</p>
+        <p class="eq"><span class="m">r′<sub>k</sub> = r · e′<sub>k</sub> = r<sub>i</sub>(e<sub>i</sub>·e′<sub>k</sub>) = β<sub>ki</sub>r<sub>i</sub></span> ✓</p>
+        <p><strong>(b) Para un tensor de orden 2.</strong> Un tensor come dos vectores y devuelve un escalar; cada "ranura" se transforma como un vector, así que aparecen dos <span class="m">β</span>:</p>
+        <p class="eq"><span class="m">σ′<sub>km</sub> = (e′<sub>k</sub>·e<sub>j</sub>)(e′<sub>m</sub>·e<sub>i</sub>) σ<sub>ji</sub> = β<sub>kj</sub>β<sub>mi</sub>σ<sub>ji</sub></span> ✓</p>
+        <div class="key"><b>La regla general:</b> rango <span class="m">n</span> ⟹ <span class="m">n</span> factores <span class="m">β</span>. Ésa es <em>la definición</em> de tensor cartesiano, y es lo que pregunta la teórica iii de 2025.</div>
+      </div>
+    </details>
+  </div>
+
+  <div class="card">
+    <div class="cardhead">
+      <span class="prov hot">2023 · ej.2</span>
+      <h3>Construir la base nueva y pasar un vector</h3>
+    </div>
+    <p>Dados <span class="m">e′<sub>1</sub> = (2e<sub>1</sub>+2e<sub>2</sub>+e<sub>3</sub>)/3</span> y <span class="m">e′<sub>2</sub> = (e<sub>1</sub>−e<sub>2</sub>)/√2</span>: hallar <span class="m">e′<sub>3</sub></span>, y expresar <span class="m">t = 10e<sub>1</sub>+10e<sub>2</sub>−20e<sub>3</sub></span> en la base nueva.</p>
+    <details class="sol">
+      <summary>Ver resolución</summary>
+      <div class="solbody">
+        <ol class="steps">
+          <li><p><strong>Verificá primero</strong> que son unitarios y ortogonales: <span class="m">|e′<sub>1</sub>|=√(4+4+1)/3=1</span> ✓, <span class="m">|e′<sub>2</sub>|=1</span> ✓, <span class="m">e′<sub>1</sub>·e′<sub>2</sub> = (2−2+0)/(3√2)=0</span> ✓</p></li>
+          <li><p><span class="m">e′<sub>3</sub> = e′<sub>1</sub> × e′<sub>2</sub></span> (así queda terna derecha, <span class="m">det β=+1</span>):</p>
+            <p class="eq"><span class="m">e′<sub>3</sub> = (1/(3√2)) · (2,2,1)×(1,−1,0) = (1/(3√2))(0+1, 1−0, −2−2)</span></p>
+            <div class="res">e′<sub>3</sub> = (e<sub>1</sub> + e<sub>2</sub> − 4e<sub>3</sub>) / (3√2)</div>
+            <p>Chequeo de norma: <span class="m">√(1+1+16) = √18 = 3√2</span> ✓</p></li>
+          <li><p>Componentes de <span class="m">t</span>: proyectás sobre cada versor nuevo.</p>
+            <p class="eq"><span class="m">t′<sub>1</sub> = t·e′<sub>1</sub> = (20+20−20)/3 = 20/3</span></p>
+            <p class="eq"><span class="m">t′<sub>2</sub> = t·e′<sub>2</sub> = (10−10)/√2 = 0</span></p>
+            <p class="eq"><span class="m">t′<sub>3</sub> = t·e′<sub>3</sub> = (10+10+80)/(3√2) = 100/(3√2) = 50√2/3</span></p>
+            <div class="res">t = (20/3) e′<sub>1</sub> + 0 · e′<sub>2</sub> + (50√2/3) e′<sub>3</sub></div></li>
+          <li><p><strong>Chequeo de módulo</strong> (hacelo siempre, cuesta 20 segundos):</p>
+            <p class="eq"><span class="m">|t|<sup>2</sup> = 100+100+400 = 600</span></p>
+            <p class="eq"><span class="m">(20/3)<sup>2</sup> + (50√2/3)<sup>2</sup> = 400/9 + 5000/9 = 600</span> ✓</p></li>
+        </ol>
+        <div class="note"><b>El inciso (c)</b> pide las coordenadas viejas en función de las nuevas: es la transformación inversa, y como <span class="m">β</span> es ortogonal, <span class="m">β<sup>−1</sup> = β<sup>T</sup></span>. O sea <span class="m">x<sub>i</sub> = β<sub>ki</sub>x′<sub>k</sub></span>. Ojo que el origen está corrido a <span class="m">O′(4,−1,−2)</span>: hay que sumar la traslación.</div>
+      </div>
+    </details>
+  </div>
+
+  <div class="card">
+    <div class="cardhead">
+      <span class="prov">2012 · ej.5</span><span class="prov">2025r · ej.1</span>
+      <h3>Tensor isótropo y regla del cociente</h3>
+    </div>
+    <details class="sol">
+      <summary>Ver ambos</summary>
+      <div class="solbody">
+        <p><strong>2012 — el regalo.</strong> Con <span class="m">σ<sub>ij</sub> = τ δ<sub>ij</sub></span>, hallar las componentes en un sistema rotado cualquiera:</p>
+        <p class="eq"><span class="m">σ′<sub>km</sub> = β<sub>kj</sub>β<sub>mi</sub> (τ δ<sub>ji</sub>) = τ β<sub>kj</sub>β<sub>mj</sub> = τ δ<sub>km</sub></span></p>
+        <div class="res">σ′ = σ = τ I &nbsp;— sin cambios, para cualquier rotación</div>
+        <p>Es un estado <strong>hidrostático</strong>: todas las direcciones son principales, no hay corte en ningún plano, y el círculo de Mohr degenera en un punto.</p>
+        <div class="key"><b>Si ves un tensor esférico, contestá en tres renglones.</b> El enunciado dibuja una rotación complicada con ángulos <span class="m">β</span> y <span class="m">π/4</span> para asustar — no hace falta calcular ni un coseno director.</div>
+
+        <p><strong>2025 recu — regla del cociente.</strong> Dado que <span class="m">σ<sub>ij</sub> = C<sub>ijkl</sub>ε<sub>kl</sub></span> con <span class="m">σ</span> y <span class="m">ε</span> tensores, mostrar que <span class="m">C</span> es tensor de orden 4.</p>
+        <ol class="steps">
+          <li><p>En el sistema nuevo vale la misma ley física: <span class="m">σ′<sub>mn</sub> = C′<sub>mnpq</sub>ε′<sub>pq</sub></span></p></li>
+          <li><p>Pero <span class="m">σ</span> y <span class="m">ε</span> transforman como tensores (dato):</p>
+            <p class="eq"><span class="m">σ′<sub>mn</sub> = β<sub>mi</sub>β<sub>nj</sub>σ<sub>ij</sub> = β<sub>mi</sub>β<sub>nj</sub>C<sub>ijkl</sub>ε<sub>kl</sub></span></p></li>
+          <li><p>Y <span class="m">ε<sub>kl</sub> = β<sub>pk</sub>β<sub>ql</sub>ε′<sub>pq</sub></span> (inversa, por ortogonalidad). Reemplazás:</p>
+            <p class="eq"><span class="m">σ′<sub>mn</sub> = (β<sub>mi</sub>β<sub>nj</sub>β<sub>pk</sub>β<sub>ql</sub>C<sub>ijkl</sub>) ε′<sub>pq</sub></span></p></li>
+          <li><p>Comparando con el paso 1, y como <span class="m">ε′<sub>pq</sub></span> es <strong>arbitrario</strong>:</p>
+            <div class="res">C′<sub>mnpq</sub> = β<sub>mi</sub>β<sub>nj</sub>β<sub>pk</sub>β<sub>ql</sub> C<sub>ijkl</sub> ✓ — cuatro β, tensor de orden 4</div></li>
+        </ol>
+        <div class="trap"><b>El paso que hay que decir en voz alta:</b> "como <span class="m">ε′</span> es arbitrario, los paréntesis deben coincidir". Sin esa frase la demostración no cierra — es <em>la</em> regla del cociente.</div>
+      </div>
+    </details>
+  </div>
+
+  <div class="card">
+    <div class="cardhead"><span class="prov hot">2025 · ej.1</span><h3>Las teóricas cortas de 2025</h3></div>
+    <details class="sol">
+      <summary>Ver las siete respuestas</summary>
+      <div class="solbody">
+        <p><strong>i. ¿La rotación de vectores es conmutativa?</strong> No — el producto de matrices de rotación no conmuta, y girar 90° en <span class="m">x</span> y después en <span class="m">y</span> no da lo mismo que al revés. <strong>Pero</strong> las rotaciones <em>infinitesimales</em> sí conmutan: con <span class="m">R ≈ I + Ω</span>, el producto es <span class="m">I + Ω<sub>1</sub> + Ω<sub>2</sub> + O(Ω<sup>2</sup>)</span>, simétrico en el orden a primer orden. Por eso la velocidad angular es un vector.</p>
+        <p><strong>ii. Matriz de rotación ortogonal / propia.</strong> Ortogonal: <span class="m">ββ<sup>T</sup>=I</span>, o sea <span class="m">β<sub>ki</sub>β<sub>mi</sub>=δ<sub>km</sub></span> (conserva módulos y ángulos), lo que fuerza <span class="m">det β = ±1</span>. <strong>Propia</strong> si <span class="m">det β=+1</span>: rotación pura. Si <span class="m">det β=−1</span> hay una reflexión mezclada (impropia) y se invierte la orientación de la terna.</p>
+        <p><strong>iii. Tipos de tensores de segundo orden.</strong> Simétrico <span class="m">σ<sub>ij</sub>=σ<sub>ji</sub></span>, antisimétrico <span class="m">σ<sub>ij</sub>=−σ<sub>ji</sub></span> (diagonal nula, 3 componentes), isótropo <span class="m">σ<sub>ij</sub>=λδ<sub>ij</sub></span> (mismas componentes en toda base). Todo tensor se parte en <span class="m">σ = ½(σ+σ<sup>T</sup>) + ½(σ−σ<sup>T</sup>)</span>.</p>
+        <p><strong>iv. ¿Qué indica la fórmula de Cauchy?</strong> Que la tracción sobre un plano depende sólo de la normal, linealmente: <span class="m">T<sub>i</sub>=σ<sub>ji</sub>ν<sub>j</sub></span>. Nueve números describen el estado en infinitos planos por el punto, y esa linealidad es lo que prueba que <span class="m">σ</span> es un <em>tensor</em>.</p>
+        <p><strong>v. Condiciones de equilibrio.</strong> Son <strong>dos</strong>, y ahí se pierden puntos:</p>
+        <ul class="tight">
+          <li>Interior: <span class="m">σ<sub>ji,j</sub> + X<sub>i</sub> = 0</span> y <span class="m">σ<sub>ij</sub>=σ<sub>ji</sub></span> (momento angular).</li>
+          <li>Borde: <span class="m">σ<sub>ij</sub>n<sub>j</sub> = T<sub>i</sub></span> sobre la superficie cargada.</li>
+        </ul>
+        <p><strong>vi. Por qué <span class="m">I<sub>1</sub></span> es invariante.</strong> <span class="m">I′<sub>1</sub> = σ′<sub>kk</sub> = β<sub>kj</sub>β<sub>ki</sub>σ<sub>ji</sub> = δ<sub>ji</sub>σ<sub>ji</sub> = σ<sub>ii</sub> = I<sub>1</sub></span> ✓ — dos renglones, usando ortogonalidad.</p>
+        <p><strong>vii. Ángulo del corte máximo.</strong> A <strong>45°</strong> de las direcciones principales (90° en el círculo de Mohr).</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ==================== T7 COND BORDE ==================== -->
+<section id="t7">
+  <div class="sechead">
+    <h2>Condiciones de borde</h2>
+    <span class="tag">3 apariciones · siempre disfrazado</span>
+  </div>
+  <p class="lede">Nunca aparece con ese nombre. Aparece como "mostrar que la tracción es nula en la frontera" o "hallar <span class="m">n</span> tal que <span class="m">T=0</span>". Lo continuo al cruzar una interfaz es <span class="m">σ·n</span> — <strong>no</strong> el tensor entero.</p>
+
+  <div class="card">
+    <div class="cardhead">
+      <span class="prov hot">2013 · ej.3</span><span class="prov hot">2015 · ej.3</span>
+      <h3>Hallar la dirección con tracción nula</h3>
+    </div>
+    <p><strong>Idéntico en dos años.</strong> Con <span class="m">σ<sub>11</sub></span> desconocido, hallar <span class="m">n</span> tal que <span class="m">T=0</span>, y el valor que debe tener <span class="m">σ<sub>11</sub></span>.</p>
+    <p class="eq center"><span class="m">σ = </span><span class="mat" style="grid-template-columns:repeat(3,auto)"><span>σ<sub>11</sub></span><span>2</span><span>1</span><span>2</span><span>0</span><span>2</span><span>1</span><span>2</span><span>0</span></span></p>
+    <details class="sol">
+      <summary>Ver resolución</summary>
+      <div class="solbody">
+        <p><strong>Traducción:</strong> "encontrá el plano que se comporta como superficie libre" = la dirección principal de autovalor cero.</p>
+        <ol class="steps">
+          <li><p><strong>Cuándo existe.</strong> <span class="m">σn = 0</span> con <span class="m">n ≠ 0</span> es un sistema homogéneo con solución no trivial ⟹ el determinante debe anularse:</p>
+            <p class="eq"><span class="m">det σ = σ<sub>11</sub>(0−4) − 2(0−2) + 1(4−0) = −4σ<sub>11</sub> + 4 + 4</span></p>
+            <div class="res">−4σ<sub>11</sub> + 8 = 0 ⟹ σ<sub>11</sub> = 2</div></li>
+          <li><p><strong>Cuál es.</strong> Con <span class="m">σ<sub>11</sub>=2</span>, resolvés <span class="m">σn=0</span>:</p>
+            <p class="eq"><span class="m">2n<sub>1</sub> + 2n<sub>2</sub> + n<sub>3</sub> = 0</span></p>
+            <p class="eq"><span class="m">2n<sub>1</sub> + 2n<sub>3</sub> = 0 ⟹ n<sub>1</sub> = −n<sub>3</sub></span></p>
+            <p class="eq"><span class="m">n<sub>1</sub> + 2n<sub>2</sub> = 0 ⟹ n<sub>1</sub> = −2n<sub>2</sub></span></p>
+            <p>Con <span class="m">n<sub>1</sub>=2</span>: <span class="m">n<sub>2</sub>=−1</span>, <span class="m">n<sub>3</sub>=−2</span>. Verifico en la primera: <span class="m">4−2−2=0</span> ✓. Normalizo (<span class="m">‖(2,−1,−2)‖=3</span>):</p>
+            <div class="res">n = (2, −1, −2) / 3</div></li>
+        </ol>
+        <div class="trap"><b>El paso que se saltea todo el mundo:</b> el paso 1. Muchos dan la dirección sin justificar por qué hace falta <span class="m">det σ = 0</span> — y ese determinante <em>es</em> la respuesta al inciso de <span class="m">σ<sub>11</sub></span>.</div>
+        <div class="note"><b>Lectura U4:</b> <span class="m">det σ = I<sub>3</sub> = 0</span> significa que un valor principal es cero, y <span class="m">n</span> es su dirección principal. "Existe un plano libre de tracción" ⟺ "<span class="m">σ<sub>3</sub>=0</span>" ⟺ "<span class="m">I<sub>3</sub>=0</span>": tres formas de decir lo mismo.</div>
+      </div>
+    </details>
+  </div>
+
+  <div class="card">
+    <div class="cardhead"><span class="prov">2011 · ej.1c</span><h3>Tracción nula en la superficie lateral de un cilindro</h3></div>
+    <p>Cilindro de radio <span class="m">a</span> a torsión, con <span class="m">ψ = r<sup>2</sup></span>, o sea <span class="m">σ<sub>13</sub>=−2x<sub>2</sub></span>, <span class="m">σ<sub>23</sub>=2x<sub>1</sub></span> y el resto nulo.</p>
+    <details class="sol">
+      <summary>Ver resolución</summary>
+      <div class="solbody">
+        <p><strong>Superficie lateral <span class="m">r=a</span></strong> (la que toca el aire). Normal exterior radial: <span class="m">n = (x<sub>1</sub>/a, x<sub>2</sub>/a, 0)</span>.</p>
+        <p class="eq"><span class="m">T<sub>1</sub> = σ<sub>11</sub>n<sub>1</sub>+σ<sub>12</sub>n<sub>2</sub>+σ<sub>13</sub>n<sub>3</sub> = 0 + 0 + (−2x<sub>2</sub>)(0) = 0</span></p>
+        <p class="eq"><span class="m">T<sub>2</sub> = 0</span></p>
+        <p class="eq"><span class="m">T<sub>3</sub> = (−2x<sub>2</sub>)(x<sub>1</sub>/a) + (2x<sub>1</sub>)(x<sub>2</sub>/a) = 0</span></p>
+        <div class="res">T = 0 entera: normal y corte nulos ⟹ superficie libre ✓</div>
+        <p><strong>Caras de extremidad <span class="m">x<sub>3</sub>=±L</span>.</strong> Normal <span class="m">±e<sub>3</sub></span> ⟹ tercera columna: <span class="m">T = ±(−2x<sub>2</sub>, 2x<sub>1</sub>, 0)</span>.</p>
+        <ul class="tight">
+          <li>Componente <strong>normal</strong>: <span class="m">T·n = σ<sub>33</sub> = 0</span> ⟹ nula ✓ (no hay tracción axial).</li>
+          <li>Componente <strong>de corte</strong>: módulo <span class="m">2√(x<sub>1</sub><sup>2</sup>+x<sub>2</sub><sup>2</sup>) = 2r ≠ 0</span> ✓ — y eso es justamente lo que transmite la cupla.</li>
+        </ul>
+        <p><strong>Inciso (d), la cupla:</strong></p>
+        <p class="eq"><span class="m">M = ∫(σ<sub>32</sub>x<sub>1</sub> − σ<sub>31</sub>x<sub>2</sub>)dA = ∫2(x<sub>1</sub><sup>2</sup>+x<sub>2</sub><sup>2</sup>)dA = 2∫r<sup>2</sup>dA = 2·(πa<sup>4</sup>/2)</span></p>
+        <div class="res">M = π a<sup>4</sup> ✓</div>
+        <div class="note">Todo el ejercicio es leer el <em>mismo</em> tensor sobre dos superficies con dos normales distintas. Nada más. La versión completa con los cuatro ejemplos está en <span class="pill">apunte_U3-U10.md §3.7</span>.</div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ==================== T8 INTEGRADOS ==================== -->
+<section id="t8">
+  <div class="sechead">
+    <h2>Ejercicios integrados</h2>
+    <span class="tag">valen muchos puntos</span>
+  </div>
+  <p class="lede">Los que combinan media unidad entera. Suelen ser el último ejercicio y valen doble — pero cada inciso se resuelve con una receta ya vista.</p>
+
+  <div class="card">
+    <div class="cardhead"><span class="prov">2011 · ej.1</span><h3>Cilindro a torsión (completo)</h3></div>
+    <p>Cuatro incisos que recorren U3 y U4: <em>(a)</em> equilibrio, <em>(b)</em> principales, <em>(c)</em> condiciones de borde, <em>(d)</em> cupla resultante.</p>
+    <details class="sol">
+      <summary>Ver el inciso (b), que es el único no cubierto arriba</summary>
+      <div class="solbody">
+        <p>Con sólo <span class="m">σ<sub>13</sub></span> y <span class="m">σ<sub>23</sub></span> no nulos, el tensor es</p>
+        <p class="eq center"><span class="m">σ = </span><span class="mat" style="grid-template-columns:repeat(3,auto)"><span>0</span><span>0</span><span>σ<sub>13</sub></span><span>0</span><span>0</span><span>σ<sub>23</sub></span><span>σ<sub>13</sub></span><span>σ<sub>23</sub></span><span>0</span></span></p>
+        <p>Ecuación característica: como <span class="m">I<sub>1</sub> = 0</span> (traza nula) e <span class="m">I<sub>3</sub> = det σ = 0</span>, queda</p>
+        <p class="eq"><span class="m">λ<sup>3</sup> + I<sub>2</sub>λ = 0 ⟹ λ(λ<sup>2</sup> − (σ<sub>13</sub><sup>2</sup>+σ<sub>23</sub><sup>2</sup>)) = 0</span></p>
+        <div class="res">λ = 0, ± √(σ<sub>13</sub><sup>2</sup> + σ<sub>23</sub><sup>2</sup>) = 0, ± √[(∂ψ/∂x<sub>1</sub>)<sup>2</sup> + (∂ψ/∂x<sub>2</sub>)<sup>2</sup>]</div>
+        <p>Por lo tanto la diferencia entre máxima y mínima es <strong>el doble</strong> de esa raíz — que es exactamente lo que pide el enunciado ✓. La segunda principal es <strong>nula</strong>, y su eje sale de <span class="m">σn=0</span>:</p>
+        <p class="eq"><span class="m">σ<sub>13</sub>n<sub>3</sub>=0, σ<sub>23</sub>n<sub>3</sub>=0, σ<sub>13</sub>n<sub>1</sub>+σ<sub>23</sub>n<sub>2</sub>=0</span></p>
+        <div class="res">n = (−σ<sub>23</sub>, σ<sub>13</sub>, 0) / √(σ<sub>13</sub><sup>2</sup>+σ<sub>23</sub><sup>2</sup>)</div>
+        <div class="note"><b>Estado de corte puro:</b> traza nula y principales <span class="m">(τ, 0, −τ)</span>. En Mohr es un círculo centrado en el origen — el mismo preset del widget de arriba.</div>
+      </div>
+    </details>
+  </div>
+
+  <div class="card">
+    <div class="cardhead"><span class="prov hot">2025 · ej.4</span><h3>Airy en un cuarto de círculo (Φ = x²y)</h3></div>
+    <p>Cinco incisos: campo de tensiones, equilibrio, vectores tensión sobre las caras, resultantes de fuerza y momento, principales y Mohr en un punto.</p>
+    <details class="sol">
+      <summary>Ver el camino completo</summary>
+      <div class="solbody">
+        <ol class="steps">
+          <li><p><strong>Tensiones desde Airy</strong> (sin fuerzas de volumen):</p>
+            <p class="eq center"><span class="m">σ<sub>xx</sub> = ∂<sup>2</sup>Φ/∂y<sup>2</sup> &nbsp;&nbsp; σ<sub>yy</sub> = ∂<sup>2</sup>Φ/∂x<sup>2</sup> &nbsp;&nbsp; σ<sub>xy</sub> = −∂<sup>2</sup>Φ/∂x∂y</span></p>
+            <p>Con <span class="m">Φ = x<sup>2</sup>y</span>:</p>
+            <div class="res">σ<sub>xx</sub> = 0 &nbsp;·&nbsp; σ<sub>yy</sub> = 2y &nbsp;·&nbsp; σ<sub>xy</sub> = −2x</div></li>
+          <li><p><strong>¿Equilibrio?</strong> Sí, automáticamente — es la gracia de Airy. Verificalo igual, son dos derivadas:</p>
+            <p class="eq"><span class="m">∂σ<sub>xx</sub>/∂x + ∂σ<sub>xy</sub>/∂y = 0 + 0 = 0</span> ✓</p>
+            <p class="eq"><span class="m">∂σ<sub>xy</sub>/∂x + ∂σ<sub>yy</sub>/∂y = −2 + 2 = 0</span> ✓</p>
+            <p>Compatibilidad: <span class="m">Φ</span> es de grado 3 ⟹ <span class="m">∇<sup>4</sup>Φ = 0</span> trivialmente. Sólo con grado ≥ 4 hay que verificarla en serio.</p></li>
+          <li><p><strong>Vectores tensión en cada cara</strong> (inciso b, "condición de borde de fuerza"): <span class="m">t<sub>i</sub> = σ<sub>ij</sub>n<sub>j</sub></span> con la normal <strong>exterior</strong>.</p>
+            <div class="trap"><b>El signo que arruina el ejercicio:</b> en el borde inferior <span class="m">n=(0,−1)</span>, así que <span class="m">t<sub>x</sub> = −σ<sub>xy</sub></span> y <span class="m">t<sub>y</sub> = −σ<sub>yy</sub></span>. En el izquierdo <span class="m">n=(−1,0)</span>. Poner <span class="m">n=(0,+1)</span> "porque y va para arriba" invierte todo el diagrama.</div></li>
+          <li><p><strong>Resultantes</strong> sobre una cara (inciso c): integrás la tracción a lo largo del borde.</p>
+            <p class="eq center"><span class="m">N = ∫t<sub>n</sub> ds &nbsp;&nbsp; Q = ∫t<sub>t</sub> ds &nbsp;&nbsp; M<sub>z</sub> = ∫(x t<sub>y</sub> − y t<sub>x</sub>) ds</span></p></li>
+          <li><p><strong>Cara curva</strong> (inciso d): en el arco de radio 1, <span class="m">n = (cosθ, senθ)</span> y <span class="m">x=r cosθ</span>, <span class="m">y=r senθ</span>. Sustituís y expresás <span class="m">t</span> en cartesianas pero función de <span class="m">(r,θ)</span>, que es literalmente lo que pide.</p></li>
+          <li><p><strong>Principales en (½,½)</strong> (inciso e): ahí <span class="m">σ<sub>xx</sub>=0</span>, <span class="m">σ<sub>yy</sub>=1</span>, <span class="m">σ<sub>xy</sub>=−1</span>. Mohr:</p>
+            <p class="eq"><span class="m">c = 0,5 &nbsp;&nbsp; R = √(0,25 + 1) = √1,25 ≈ 1,118</span></p>
+            <div class="res">σ<sub>1</sub> ≈ 1,618 &nbsp;·&nbsp; σ<sub>2</sub> ≈ −0,618 &nbsp;·&nbsp; τ<sub>máx</sub> = R ≈ 1,118</div>
+            <p>Metelo en el widget del principio con <span class="m">σ<sub>x</sub>=0, σ<sub>y</sub>=1, τ=−1</span> y te dibuja el círculo que pide el inciso.</p></li>
+        </ol>
+      </div>
+    </details>
+  </div>
+
+  <div class="card">
+    <div class="cardhead"><span class="prov">2025 · ej.3</span><h3>Reticulado: reacciones y esfuerzos en barras</h3></div>
+    <p>Estática pura de Estabilidad, metida en el P1. No requiere nada de tensores.</p>
+    <details class="sol">
+      <summary>Ver el método</summary>
+      <div class="solbody">
+        <ol class="steps">
+          <li><p><strong>Reacciones:</strong> cuerpo libre de <em>todo</em> el reticulado. Tres ecuaciones: <span class="m">ΣF<sub>x</sub>=0</span>, <span class="m">ΣF<sub>y</sub>=0</span>, <span class="m">ΣM=0</span> respecto de un apoyo (elegí el que anule más incógnitas).</p></li>
+          <li><p><strong>Esfuerzos en barras:</strong> dos herramientas —</p>
+            <ul class="tight">
+              <li><em>Nudos:</em> cuerpo libre de un nudo con ≤2 barras desconocidas. Dos ecuaciones por nudo.</li>
+              <li><em>Ritter (secciones):</em> cortás por las 3 barras que te piden y planteás momentos en el punto donde concurren las otras dos. Es <strong>mucho</strong> más rápido si piden barras específicas — que es el caso de "las barras A, B y C".</li>
+            </ul></li>
+          <li><p><strong>Convención:</strong> asumí todas las barras en <em>tracción</em> (flechas saliendo del nudo). Si el resultado da negativo, está comprimida. El enunciado pide explícitamente "el diagrama definitivo con el sentido final de las fuerzas": redibujá con los sentidos reales.</p></li>
+        </ol>
+        <div class="key"><b>Barras de fuerza nula:</b> mirá primero si hay nudos con dos barras no colineales y sin carga (ambas nulas), o tres barras con dos colineales y sin carga (la tercera nula). Suele eliminar la mitad del reticulado en 30 segundos.</div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ==================== FRECUENCIA ==================== -->
+<section id="freq">
+  <div class="sechead">
+    <h2>Qué priorizar</h2>
+    <span class="tag">frecuencia real</span>
+  </div>
+  <p class="lede">Qué apareció en cada parcial. Si el tiempo no alcanza para todo, estudiá de izquierda a derecha.</p>
+
+  <div class="tablescroll">
+    <table>
+      <thead>
+        <tr>
+          <th>Parcial</th><th>Indicial</th><th>Mohr</th><th>Principales</th>
+          <th>Cauchy</th><th>Base</th><th>Equilibrio</th><th>Cond. borde</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>2011</td><td class="hit">●</td><td class="hit dim">—</td><td class="hit">●</td><td class="hit dim">—</td><td class="hit dim">—</td><td class="hit">●</td><td class="hit">●</td></tr>
+        <tr><td>2012</td><td class="hit">●</td><td class="hit">●</td><td class="hit">●</td><td class="hit">●</td><td class="hit">●</td><td class="hit dim">—</td><td class="hit dim">—</td></tr>
+        <tr><td>2013</td><td class="hit">●</td><td class="hit">●</td><td class="hit">●</td><td class="hit dim">—</td><td class="hit">●</td><td class="hit dim">—</td><td class="hit">●</td></tr>
+        <tr><td>2014</td><td class="hit">●</td><td class="hit">●</td><td class="hit">●</td><td class="hit">●</td><td class="hit">●</td><td class="hit">●</td><td class="hit dim">—</td></tr>
+        <tr><td>2015</td><td class="hit">●</td><td class="hit">●</td><td class="hit">●</td><td class="hit dim">—</td><td class="hit">●</td><td class="hit dim">—</td><td class="hit">●</td></tr>
+        <tr><td>2016</td><td class="hit">●</td><td class="hit">●</td><td class="hit">●</td><td class="hit">●</td><td class="hit dim">—</td><td class="hit">●</td><td class="hit dim">—</td></tr>
+        <tr><td>2019 recu</td><td class="hit">●</td><td class="hit dim">—</td><td class="hit dim">—</td><td class="hit">●</td><td class="hit dim">—</td><td class="hit dim">—</td><td class="hit dim">—</td></tr>
+        <tr><td>2023</td><td class="hit">●</td><td class="hit">●</td><td class="hit">●</td><td class="hit">●</td><td class="hit">●</td><td class="hit dim">—</td><td class="hit dim">—</td></tr>
+        <tr><td>2025</td><td class="hit">●</td><td class="hit">●</td><td class="hit">●</td><td class="hit">●</td><td class="hit">●</td><td class="hit">●</td><td class="hit">●</td></tr>
+        <tr><td>2025 recu</td><td class="hit dim">—</td><td class="hit dim">—</td><td class="hit dim">—</td><td class="hit">●</td><td class="hit">●</td><td class="hit">●</td><td class="hit dim">—</td></tr>
+      </tbody>
+      <tfoot>
+        <tr style="border-top:2px solid var(--accent)">
+          <th>Total</th>
+          <td class="num"><b>9/10</b></td><td class="num"><b>7/10</b></td><td class="num"><b>7/10</b></td>
+          <td class="num"><b>7/10</b></td><td class="num"><b>6/10</b></td><td class="num"><b>4/10</b></td><td class="num"><b>4/10</b></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="cardhead"><h3>Si te queda poco tiempo</h3></div>
+    <ol class="steps">
+      <li><p><strong>La identidad ε-δ.</strong> Nueve de diez parciales. Practicá dos identidades de memoria y ya tenés un ejercicio entero asegurado.</p></li>
+      <li><p><strong>Mohr con las cuatro fórmulas</strong> (<span class="m">c</span>, <span class="m">R</span>, <span class="m">tan2θ<sub>p</sub></span>, <span class="m">τ<sub>máx</sub></span>). Siete de diez, y además resuelve el bloque 2×2 de los ejercicios de principales.</p></li>
+      <li><p><strong>Cauchy en cuatro pasos.</strong> Evaluar → normal → normalizar → multiplicar. Es el ejercicio numérico más seguro que existe.</p></li>
+      <li><p><strong>El atajo de la fila desacoplada</strong> en principales. Convierte un cúbico en un 2×2 en los tres parciales donde cayó.</p></li>
+      <li><p><strong>Los dos chequeos:</strong> <span class="m">Σλ<sub>i</sub> = traza</span> y <span class="m">σ<sub>1</sub>+σ<sub>2</sub> = σ<sub>xx</sub>+σ<sub>yy</sub></span>. Detectan casi cualquier error de cuenta en 5 segundos.</p></li>
+    </ol>
+  </div>
+</section>
+
+  </main>
+</div>
+
+<div class="wrap foot">
+  <p>Armado con los diez parciales del repo <span class="pill">Practica/Parciales</span>. Las soluciones están reconstruidas a partir de los enunciados; donde el PDF cortaba el texto está aclarado en el propio ejercicio.</p>
+  <p style="margin-top:8px">Teoría completa en <span class="pill">Teoria/apunte_U3-U10.md</span> · repaso general en <span class="pill">Teoria/repaso_furioso.html</span></p>
+</div>
+
+<script>
+(function(){
+  var cv = document.getElementById('mohrcv');
+  if(!cv) return;
+  var ctx = cv.getContext('2d');
+  var sx = document.getElementById('sx'), sy = document.getElementById('sy'), txy = document.getElementById('txy');
+
+  function css(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function fmt(v){ return (Math.round(v*100)/100).toFixed(2).replace('.', ','); }
+
+  function draw(){
+    var a = parseFloat(sx.value), b = parseFloat(sy.value), t = parseFloat(txy.value);
+    var c = (a+b)/2;
+    var R = Math.sqrt(Math.pow((a-b)/2,2) + t*t);
+    var s1 = c+R, s2 = c-R;
+    var tp = 0.5*Math.atan2(2*t, a-b) * 180/Math.PI;
+
+    document.getElementById('vsx').textContent = fmt(a);
+    document.getElementById('vsy').textContent = fmt(b);
+    document.getElementById('vtxy').textContent = fmt(t);
+    document.getElementById('rs1').textContent = fmt(s1);
+    document.getElementById('rs2').textContent = fmt(s2);
+    document.getElementById('rc').textContent = fmt(c);
+    document.getElementById('rr').textContent = fmt(R);
+    document.getElementById('rtp').textContent = fmt(tp) + '°';
+    document.getElementById('rts').textContent = fmt(tp+45) + '°';
+
+    var W = cv.width, H = cv.height;
+    var ink = css('--ink'), ink2 = css('--ink-2'), ink3 = css('--ink-3');
+    var line = css('--line'), acc = css('--accent');
+    var trac = css('--traccion'), comp = css('--compresion'), heat = css('--heat');
+
+    ctx.clearRect(0,0,W,H);
+    var cx = W/2, cy = H/2, S = 13.5;
+    function X(v){ return cx + v*S; }
+    function Y(v){ return cy - v*S; }
+
+    // grilla
+    ctx.strokeStyle = line; ctx.lineWidth = 1;
+    ctx.beginPath();
+    for(var g=-16; g<=16; g+=4){
+      ctx.moveTo(X(g), 0); ctx.lineTo(X(g), H);
+      ctx.moveTo(0, Y(g)); ctx.lineTo(W, Y(g));
+    }
+    ctx.stroke();
+
+    // ejes
+    ctx.strokeStyle = ink3; ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(0, cy); ctx.lineTo(W, cy);
+    ctx.moveTo(cx, 0); ctx.lineTo(cx, H);
+    ctx.stroke();
+    ctx.fillStyle = ink3;
+    ctx.font = 'italic 14px Cambria, Georgia, serif';
+    ctx.fillText('σ', W-18, cy-8);
+    ctx.fillText('τ', cx+8, 16);
+
+    // círculo
+    ctx.strokeStyle = acc; ctx.lineWidth = 2.2;
+    ctx.beginPath(); ctx.arc(X(c), Y(0), R*S, 0, Math.PI*2); ctx.stroke();
+
+    // diámetro X-Y
+    ctx.strokeStyle = heat; ctx.lineWidth = 1.8;
+    ctx.beginPath(); ctx.moveTo(X(a), Y(t)); ctx.lineTo(X(b), Y(-t)); ctx.stroke();
+
+    // radios a las principales
+    ctx.strokeStyle = ink3; ctx.lineWidth = 1; ctx.setLineDash([3,3]);
+    ctx.beginPath(); ctx.moveTo(X(c), Y(0)); ctx.lineTo(X(c), Y(R)); ctx.stroke();
+    ctx.setLineDash([]);
+
+    function dot(vx, vy, col, label, lx, ly){
+      ctx.fillStyle = col;
+      ctx.beginPath(); ctx.arc(X(vx), Y(vy), 5, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = ink;
+      ctx.font = 'bold 12px "Segoe UI", system-ui, sans-serif';
+      ctx.fillText(label, X(vx)+(lx||8), Y(vy)+(ly||-8));
+    }
+
+    dot(a, t, heat, 'X');
+    dot(b, -t, heat, 'Y');
+    dot(s1, 0, s1>=0?trac:comp, 'σ₁', 6, -9);
+    dot(s2, 0, s2>=0?trac:comp, 'σ₂', -30, -9);
+    dot(c, 0, ink3, 'c', -4, 15);
+    dot(c, R, ink2, 'τmáx', 7, -7);
+
+    // valores
+    ctx.font = '12px "Cascadia Mono", Consolas, monospace';
+    ctx.fillStyle = ink2;
+    ctx.fillText('R = ' + fmt(R), 10, 18);
+    ctx.fillText('c = ' + fmt(c), 10, 34);
+  }
+
+  [sx, sy, txy].forEach(function(el){ el.addEventListener('input', draw); });
+  document.querySelectorAll('.presets button').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var p = btn.getAttribute('data-p').split(',');
+      sx.value = p[0]; sy.value = p[1]; txy.value = p[2]; draw();
+    });
+  });
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', draw);
+  new MutationObserver(draw).observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
+  draw();
+})();
+</script>
+
+</body>
+</html>
