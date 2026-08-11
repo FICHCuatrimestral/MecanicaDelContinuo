@@ -1,0 +1,200 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-noshorthands]{babel}
+\usepackage{amsmath,amssymb}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{enumitem}
+
+\title{Los tres balances: guion de derivación}
+\author{Mecánica del Continuo}
+\date{}
+
+\begin{document}
+\maketitle
+
+\noindent\textbf{Receta común a los tres:}
+\[
+\text{Axioma sobre } V(t)
+\ \longrightarrow\ \text{Reynolds}
+\ \longrightarrow\ \text{Cauchy}
+\ \longrightarrow\ \text{Gauss}
+\ \longrightarrow\ V \text{ arbitrario} \Rightarrow \text{localizar}
+\]
+
+\vspace{1em}
+
+%======================================================================
+\section*{1. Conservación de masa (continuidad)}
+
+Postulo que la masa de un volumen material no cambia:
+\[
+\frac{D}{Dt}\int_{V(t)}\rho\,dV=0 ,
+\]
+donde $\rho$ es la \emph{densidad} (masa por unidad de volumen), no la masa.
+
+Aplico el teorema del transporte de Reynolds y me quedan dos efectos:
+\[
+\int_{V}\Big[\underbrace{\frac{D\rho}{Dt}}_{\substack{\text{cuánto cambia la densidad}\\ \text{siguiendo a la partícula}}}
++\underbrace{\rho\,\frac{\partial v_k}{\partial x_k}}_{\substack{\text{cuánto cambia}\\ \text{su volumen}}}\Big]dV=0 .
+\]
+
+Como el volumen $V$ es \textbf{arbitrario}, el integrando debe anularse (localización):
+\[
+\boxed{\ \frac{D\rho}{Dt}+\rho\,\frac{\partial v_k}{\partial x_k}=0\ }
+\]
+
+El resultado dice que densidad y volumen cambian en \textbf{sentidos opuestos}, de forma
+que la masa quede igual:
+\[
+\frac{D\rho}{Dt}=-\rho\,\frac{\partial v_k}{\partial x_k},
+\qquad\text{donde}\qquad
+\frac{\partial v_k}{\partial x_k}=\nabla\cdot\boldsymbol v=\frac{1}{dV}\frac{D(dV)}{Dt}.
+\]
+
+Si además impongo \textbf{incompresibilidad} ($D\rho/Dt=0$, hipótesis adicional):
+\[
+\boxed{\ \nabla\cdot\boldsymbol v=\frac{\partial v_k}{\partial x_k}=0\ }
+\]
+
+\medskip
+\noindent\textbf{Cuidado:} $\partial\rho/\partial t=0$ es \emph{estacionario};
+$D\rho/Dt=0$ es \emph{incompresible}. Son hipótesis independientes.
+
+%======================================================================
+\section*{2. Balance de cantidad de movimiento lineal}
+
+Postulo la segunda ley de Newton: la tasa de cambio de la cantidad de movimiento
+de un volumen material iguala a las fuerzas de superficie más las de volumen.
+Es un \textbf{balance}, no una conservación (el momento cambia si hay fuerzas).
+\[
+\frac{D}{Dt}\int_{V(t)}\rho v_i\,dV=\int_{S(t)}t_i\,dS+\int_{V(t)}b_i\,dV
+\]
+
+\paragraph{Lado izquierdo.} Aplico Reynolds. Los términos que tienen $v_i$ como
+factor común forman la ecuación de continuidad y \textbf{se anulan} (acá uso
+conservación de masa):
+\[
+\frac{D}{Dt}\int_V\rho v_i\,dV
+=\int_V\Big[\rho\frac{Dv_i}{Dt}
++v_i\underbrace{\Big(\frac{D\rho}{Dt}+\rho\frac{\partial v_k}{\partial x_k}\Big)}_{=\,0}\Big]dV
+=\int_V\rho\frac{Dv_i}{Dt}\,dV
+\]
+
+\paragraph{Lado derecho.} La tracción depende de la orientación del plano,
+$t_i=t_i(\boldsymbol x,\boldsymbol n)$, así que primero uso el \textbf{teorema de Cauchy}
+para introducir el tensor de tensiones,
+\[
+t_i=\sigma_{ij}n_j ,
+\]
+y \emph{recién entonces} aplico \textbf{Gauss} para pasar la integral de superficie a volumen:
+\[
+\int_S t_i\,dS=\int_S\sigma_{ij}n_j\,dS=\int_V\frac{\partial\sigma_{ij}}{\partial x_j}\,dV
+\]
+
+\paragraph{Localización.} Como $V$ es arbitrario:
+\[
+\boxed{\ \rho\,\frac{Dv_i}{Dt}=\frac{\partial\sigma_{ij}}{\partial x_j}+b_i\ }
+\qquad\Longleftrightarrow\qquad
+\rho\,\dot{\boldsymbol v}=\nabla\cdot\boldsymbol\sigma+\boldsymbol b
+\]
+
+\medskip
+\noindent El balance de momento \textbf{angular} no agrega una ecuación nueva:
+da la restricción $\sigma_{ij}=\sigma_{ji}$.
+
+%======================================================================
+\section*{3. Balance de energía (primer principio)}
+
+Postulo el primer principio de la termodinámica: la tasa de cambio de la energía
+total (interna $+$ cinética) de un volumen material es igual a la potencia de las
+fuerzas de superficie y de volumen, más el calor generado internamente
+($q$, \emph{fuente volumétrica}), menos el calor que se escapa por el contorno
+($h_i n_i$, con normal saliente, por eso va con menos):
+\[
+\frac{D}{Dt}\int_{V(t)}\rho\Big(\varepsilon+\tfrac12 v_kv_k\Big)dV
+=\underbrace{\int_S t_iv_i\,dS+\int_V b_iv_i\,dV}_{\text{potencia mecánica}}
++\underbrace{\int_V q\,dV-\int_S h_in_i\,dS}_{\text{potencia calórica}}
+\]
+
+\paragraph{Lado izquierdo.} Por el lema de conservación de masa, $\rho$ sale afuera
+de la derivada:
+\[
+\frac{D}{Dt}\int_V\rho\,\psi\,dV=\int_V\rho\,\frac{D\psi}{Dt}\,dV
+\qquad\text{con}\qquad \psi=\varepsilon+\tfrac12 v_kv_k
+\]
+
+\paragraph{Lado derecho.} Uso Cauchy ($t_i=\sigma_{ij}n_j$) y Gauss para pasar las
+integrales de superficie a volumen. Como $V$ es arbitrario, localizo:
+\[
+\rho\frac{D\varepsilon}{Dt}+\rho v_i\frac{Dv_i}{Dt}
+=v_i\frac{\partial\sigma_{ij}}{\partial x_j}+\sigma_{ij}\frac{\partial v_i}{\partial x_j}
++b_iv_i+q-\frac{\partial h_i}{\partial x_i}
+\]
+
+\paragraph{Resta de la energía mecánica.} Multiplico la ecuación de Cauchy por $v_i$
+(teorema de la energía mecánica),
+\[
+\rho v_i\frac{Dv_i}{Dt}=v_i\frac{\partial\sigma_{ij}}{\partial x_j}+b_iv_i ,
+\]
+y se la resto: se cancelan la energía cinética y el trabajo de $\sigma$ y $b$, y queda
+la ecuación de la \textbf{energía interna}, donde sobrevive $\sigma_{ij}\,\partial v_i/\partial x_j$.
+
+Como $\sigma_{ij}$ es simétrico y la parte antisimétrica del gradiente de velocidad
+($W_{ij}$) es la rotación rígida —que no hace trabajo, $\sigma_{ij}W_{ij}=0$— queda
+$\sigma_{ij}V_{ij}$:
+\[
+\boxed{\ \rho\,\frac{D\varepsilon}{Dt}=\sigma_{ij}V_{ij}+q-\frac{\partial h_i}{\partial x_i}\ }
+\]
+
+%----------------------------------------------------------------------
+\subsection*{Caso particular: conducción en un sólido rígido}
+
+Si el cuerpo es \textbf{rígido} ($V_{ij}=0$), está \textbf{en reposo}
+($D/Dt\to\partial/\partial t$) y es \textbf{estacionario} ($\partial/\partial t=0$):
+\[
+0=q-\frac{\partial h_i}{\partial x_i}
+\]
+
+Con la ley de \textbf{Fourier} $h_i=-k\,\partial T/\partial x_i$ y $k$ uniforme,
+los dos signos menos se cancelan:
+\[
+-\frac{\partial h_i}{\partial x_i}
+=-\frac{\partial}{\partial x_i}\Big(-k\frac{\partial T}{\partial x_i}\Big)
+=+k\frac{\partial^2 T}{\partial x_i\partial x_i}
+\]
+\[
+\boxed{\ k\,\nabla^2 T+q=0\ }
+\]
+
+\medskip
+\noindent Los dos signos menos son \textbf{independientes}: el de
+$-\partial h_i/\partial x_i$ es \emph{geométrico} (normal saliente); el de
+$h_i=-k\,\partial_i T$ es \emph{físico} (el calor va de caliente a frío, segunda ley).
+
+%======================================================================
+\section*{Resumen}
+
+\begin{center}
+\begin{tabular}{@{}llll@{}}
+\hline
+ & Se balancea & Axioma & Resultado local \\
+\hline
+Masa & $\rho$ & $\dfrac{D}{Dt}\displaystyle\int\rho\,dV=0$
+     & $\dfrac{D\rho}{Dt}+\rho\dfrac{\partial v_k}{\partial x_k}=0$ \\[2ex]
+Mom.\ lineal & $\rho v_i$ & Newton
+     & $\rho\dfrac{Dv_i}{Dt}=\dfrac{\partial\sigma_{ij}}{\partial x_j}+b_i$ \\[2ex]
+Mom.\ angular & $\rho\,\epsilon_{ijk}x_jv_k$ & Newton (momentos)
+     & $\sigma_{ij}=\sigma_{ji}$ \\[2ex]
+Energía & $\rho(\varepsilon+\tfrac12 v^2)$ & 1.\textsuperscript{er} principio
+     & $\rho\dfrac{D\varepsilon}{Dt}=\sigma_{ij}V_{ij}+q-\dfrac{\partial h_i}{\partial x_i}$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\vspace{1em}
+\noindent Y después: \textbf{$+$ ley constitutiva $=$ ecuación de campo}
+(Navier / Navier--Stokes / calor).
+
+\end{document}

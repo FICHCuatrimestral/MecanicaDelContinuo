@@ -8,6 +8,20 @@ Practica/         guías, parciales viejos, trabajo práctico
 Visualizaciones/  figuras del apunte, scripts que las generan, simulaciones
 ```
 
+## Temario
+
+Ingeniería en Informática, 4to año, 1er cuatrimestre. 90 hs. Un repaso rápido de qué se ve en cada unidad (la versión completa está en el apunte de abajo):
+
+1. **Introducción.** La idea de "continuo": tratar la materia como si fuera infinitamente divisible (como los números reales), para poder describir fenómenos físicos — una ala deformándose por el peso del avión, un puente colgante, el flujo de calor en una central — con ecuaciones diferenciales sujetas a condiciones de borde, en vez de rastrear partícula por partícula.
+2. **Vectores y tensores.** El álgebra que se usa en todo el curso: operaciones con vectores, notación indicial, cambio de base y transformación de coordenadas — la caja de herramientas matemática antes de entrar en la física.
+3. **Tensiones.** Cómo un cuerpo transmite fuerza internamente. Se distingue entre fuerzas de cuerpo (a distancia, como la gravedad) y fuerzas de superficie (de contacto). El postulado de Cauchy dice que la tracción en un punto depende solo de la normal de la superficie, no de su forma — eso es lo que permite definir el tensor de tensiones y la fórmula de Cauchy, además de las condiciones de borde en tensiones (qué pasa en la interfaz entre dos medios).
+4. **Tensiones y direcciones principales.** Dado el tensor de tensiones de la U3 (6 componentes independientes), ¿existe una orientación de ejes donde se simplifique al máximo? Es un problema de autovalores — la misma estructura que va a reaparecer para las deformaciones (U5) y las velocidades (U6) —, y en 2D es exactamente el Círculo de Mohr.
+5. **Deformaciones.** Un cuerpo puede moverse (trasladarse, rotar) sin deformarse; la deformación tiene que medir el cambio de forma y tamaño, no el movimiento. Se construye comparando distancias entre puntos vecinos antes y después (tensores de Green-Lagrange y de Almansi), y se linealiza para el caso infinitesimal (chico), descomponiendo el gradiente de desplazamiento en una parte simétrica (deformación) y una antisimétrica (rotación rígida).
+6. **Velocidad y relaciones de compatibilidad.** Si la U5 compara dos "fotos" (antes/después), la U6 mira la "película": la tasa a la que cambia la forma de un fluido. El gradiente de velocidad se descompone en tasa de deformación y vorticidad (spin), con los mismos casos canónicos (corte simple, Poiseuille, flujos rígidos) resueltos explícitamente. La compatibilidad es la pregunta inversa: dado un campo de deformaciones, ¿existe un campo de desplazamientos que lo genere?
+7. **Ecuaciones constitutivas.** El equilibrio y la cinemática valen para cualquier material — y por eso solos no alcanzan para resolver nada (acero y miel responden distinto a la misma carga). La constitutiva es lo que distingue un material de otro: fluido invíscido, fluido Newtoniano, sólido Hookeano — modelos, no leyes exactas, cada uno con su rango de validez.
+8. **Isotropía.** Demuestra por qué la forma que usa Hooke para un material isótropo (sin direcciones privilegiadas) es la única posible, reduciendo 81 coeficientes elásticos a solo 2 (los parámetros de Lamé, o equivalentemente el módulo de Young y el de Poisson).
+9-10. **Ecuaciones de campo y principios variacionales.** Los balances universales — masa (continuidad), cantidad de movimiento (lineal y angular) y energía — combinados con la constitutiva de la U7 dan las ecuaciones diferenciales que gobiernan el movimiento de un continuo: Navier-Stokes para fluidos, la ecuación de Navier para sólidos elásticos. Es el cierre de todo el curso: cinemática + equilibrio + constitutiva en una sola ecuación.
+
 ## Material de estudio
 
 | Archivo | Qué es |
