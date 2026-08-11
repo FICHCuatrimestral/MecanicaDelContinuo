@@ -32,6 +32,13 @@ Los capítulos de la cátedra (`Cap01`...`Cap10`), la bibliografía (`Fung1994.p
 
 Todas las figuras del apunte (`fig_*.png`), los scripts que las generan (`visualizacion_*.py`) y las simulaciones de partículas (fluido SPH vs. sólido masa-resorte). Cada script guarda su salida en esa misma carpeta, así que se corre desde ahí sin argumentos. Ver [`Visualizaciones/README.md`](Visualizaciones/README.md) para el mapa de qué script genera qué figura.
 
+## Proyectos relacionados
+
+Dos proyectos personales que nacieron de la simulación de fluidos de `Visualizaciones/` y se independizaron:
+
+- **[FluidSim](https://github.com/FICHCuatrimestral/FluidSim)** — simulación de fluidos SPH en Unity (C#).
+- **[FluidWeb](https://github.com/FICHCuatrimestral/FluidWeb)** — la misma idea, corriendo en el navegador (TypeScript + WebGL).
+
 ## Convención de nombres
 
 Sin espacios, sin acentos y sin caracteres especiales, para que los enlaces funcionen y los archivos ordenen alfabéticamente.
